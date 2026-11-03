@@ -37,14 +37,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 구글 시트 CSV 요청은 캐시를 절대 타지 않고 항상 네트워크(실시간)에서 가져오도록 강제
+// 구글 시트 및 앱스크립트 요청은 캐시를 절대 타지 않고 항상 실시간 네트워크에서 최신 데이터를 가져오도록 설정
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = request.url;
 
   if (url.includes('docs.google.com/spreadsheets') || url.includes('script.google.com')) {
     event.respondWith(
-      fetch(request, { cache: 'no-store' }).catch(() => {
+      fetch(request, { cache: 'reload', headers: { 'Cache-Control': 'no-cache, no-store' } }).catch(() => {
         return caches.match(request);
       })
     );
