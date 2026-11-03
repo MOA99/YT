@@ -44,6 +44,14 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
         html.dark body { background-color: #020617; color: #f1f5f9; }
 
+        /* 전역 스크롤바 스타일링 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
         .overflow-x-auto::-webkit-scrollbar {
             height: 6px;
         }
@@ -51,12 +59,21 @@
             background: #f1f5f9;
             border-radius: 4px;
         }
+        .dark .overflow-x-auto::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
         .overflow-x-auto::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
+        .dark .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
         .overflow-x-auto::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
+        }
+        .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
         .sticky-col-1 {
             position: sticky;
@@ -129,6 +146,9 @@
         .matrix-scroll-wrapper::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
+        }
+        .dark .matrix-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: #334155;
         }
 
         /* Pull to Refresh 인디케이터 */
