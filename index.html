@@ -477,86 +477,86 @@
 
             <!-- 3. YT 평가 등록 탭 -->
             <section id="tab-register" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
-                    <div class="p-6 sm:p-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors flex flex-col">
+                    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between shrink-0">
                         <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 평가 등록</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">승/하차 시 차량 상태를 항목별로 평가하고 기록합니다.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">YT 평가 등록</h3>
+                            <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">승/하차 시 차량 상태를 항목별로 평가하고 기록합니다.</p>
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-base shadow-2xs">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm sm:text-base shadow-2xs">
                             ✏️
                         </div>
                     </div>
                     
-                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-4 sm:p-6 space-y-4 sm:space-y-6 flex-1">
+                        <div class="grid grid-cols-2 gap-3 sm:gap-5">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
+                                <label class="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3 sm:h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
                                 </label>
-                                <input type="text" id="reg-author" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                                <input type="text" id="reg-author" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 입력" class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호
+                                <label class="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3 sm:h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호
                                 </label>
-                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" maxlength="3" required placeholder="예: 227" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3 sm:h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
                             </label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
-                                    <input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <label class="flex items-center justify-center space-x-1.5 sm:space-x-2.5 cursor-pointer py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="샤크만" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span>샤크만</span>
                                 </label>
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
-                                    <input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                <label class="flex items-center justify-center space-x-1.5 sm:space-x-2.5 cursor-pointer py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="카파" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span>카파</span>
                                 </label>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3 sm:h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
                             </label>
-                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                                <table class="w-full text-center border-collapse text-xs">
+                            <div class="overflow-x-auto rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                <table class="w-full text-center border-collapse text-[10px] sm:text-xs">
                                     <thead>
-                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">구분</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">기동</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(상하)</span></th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(앞뒤)</span></th>
-                                            <th class="py-3 px-3 w-1/5">의자</th>
+                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold leading-tight">
+                                            <th class="py-1.5 sm:py-3 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">구분</th>
+                                            <th class="py-1.5 sm:py-3 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">기동</th>
+                                            <th class="py-1.5 sm:py-3 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[8px] sm:text-[10px] font-normal text-slate-500 dark:text-slate-400">(상하)</span></th>
+                                            <th class="py-1.5 sm:py-3 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[8px] sm:text-[10px] font-normal text-slate-500 dark:text-slate-400">(앞뒤)</span></th>
+                                            <th class="py-1.5 sm:py-3 px-1 sm:px-3 w-1/5">의자</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
                                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400">상 (25)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 whitespace-nowrap">상 <span class="hidden sm:inline">(25)</span></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3"><input type="radio" name="eval-uija" value="상" checked class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
                                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-amber-600 dark:text-amber-400">중 (15)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-amber-600 dark:text-amber-400 whitespace-nowrap">중 <span class="hidden sm:inline">(15)</span></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3"><input type="radio" name="eval-uija" value="중" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
                                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400">하 (5)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 whitespace-nowrap">하 <span class="hidden sm:inline">(5)</span></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="하" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="하" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="하" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-2 sm:py-3.5 px-1 sm:px-3"><input type="radio" name="eval-uija" value="하" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -564,15 +564,15 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항
+                            <label class="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3 sm:h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항
                             </label>
-                            <textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea>
+                            <textarea id="reg-memo" rows="2" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항을 간단히 입력해주세요." class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea>
                         </div>
 
-                        <div class="pt-2">
-                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
-                                <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
+                        <div class="pt-1 sm:pt-2">
+                            <button type="submit" id="submit-btn" class="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
+                                <span id="submit-btn-text" class="text-sm sm:text-base font-bold">평가 제출하기</span>
                             </button>
                         </div>
                     </form>
