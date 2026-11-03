@@ -1100,12 +1100,14 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 6000);
                 
-                const nocacheUrl = `${SHEET_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                // 브라우저 및 구글 CDN 캐시를 완전히 무력화하기 위해 고유 타임스탬프 및 난수(Math.random) 추가
+                const nocacheUrl = `${SHEET_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
                 const response = await fetch(nocacheUrl, { 
                     cache: 'reload',
                     headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
                     },
                     signal: controller.signal
                 });
@@ -1122,10 +1124,14 @@
 
         async function fetchMiniBoardSheetData() {
             try {
-                const nocacheUrl = `${GUESTBOOK_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                const nocacheUrl = `${GUESTBOOK_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
                 const response = await fetch(nocacheUrl, { 
                     cache: 'reload',
-                    headers: { 'Cache-Control': 'no-cache, no-store' }
+                    headers: { 
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
                 if (!response.ok) throw new Error('Network error');
                 const text = await response.text();
@@ -1158,10 +1164,14 @@
 
         async function fetchBerthDataFromSheet() {
             try {
-                const nocacheUrl = `${BERTH_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                const nocacheUrl = `${BERTH_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
                 const response = await fetch(nocacheUrl, { 
                     cache: 'reload',
-                    headers: { 'Cache-Control': 'no-cache, no-store' }
+                    headers: { 
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
                 });
                 if (!response.ok) throw new Error('Sheet network response failed');
                 const csvText = await response.text();
