@@ -130,6 +130,7 @@
             color: #6366f1;
             font-size: 12px;
             font-weight: 600;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -141,47 +142,47 @@
         <span id="toast-msg">성공적으로 처리되었습니다.</span>
     </div>
 
-    <!-- 모바일 홈 화면 설치 플로팅 배너 (PWA Install Prompt Banner) -->
-    <div id="pwa-install-banner" class="hidden fixed bottom-16 left-3 right-3 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700 backdrop-blur-md">
-        <div class="flex items-center space-x-3">
+    <!-- 홈 화면 설치 플로팅 배너 (데스크탑에서는 좌측 사이드바를 피해서 우측 하단에 깔끔하게 배치) -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md">
+        <div class="flex items-center space-x-3 min-w-0">
             <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             </div>
-            <div>
+            <div class="truncate">
                 <h4 class="font-bold text-xs">YT 대시보드 앱 설치</h4>
-                <p class="text-[11px] text-slate-400">홈 화면에 추가하고 빠르게 실행하세요!</p>
+                <p class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p>
             </div>
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg">닫기</button>
-            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm">설치</button>
+        <div class="flex items-center space-x-1.5 shrink-0 ml-2">
+            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg transition-colors">닫기</button>
+            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button>
         </div>
     </div>
 
     <!-- 상단 이동 플로팅 버튼 -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 md:bottom-8 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-30 flex items-center justify-around px-2 py-1.5 transform translate-z-0 backface-hidden">
-        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 z-30 flex items-center justify-around px-2 select-none">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-400 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">이력조회</span>
         </button>
-        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">평가등록</span>
         </button>
-        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">선석현황</span>
         </button>
-        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">게시판</span>
         </button>
-        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">전체메뉴</span>
         </button>
@@ -263,14 +264,14 @@
         <!-- Pull to Refresh 인디케이터 -->
         <div id="ptr-indicator">
             <svg id="ptr-icon" class="w-5 h-5 animate-spin inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span id="ptr-text">새로고침 중...</span>
+            <span id="ptr-text">최신 데이터 동기화 중...</span>
         </div>
 
         <!-- 데스크톱 헤더 -->
         <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20 transition-colors">
             <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             <div class="flex items-center space-x-3">
-                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors" title="구글 시트 데이터 즉시 동기화">
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer" title="구글 시트 데이터 즉시 동기화">
                     <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
@@ -534,7 +535,6 @@
                         </div>
 
                         <div class="pt-2">
-                            <!-- 전체 디자인과 어울리는 프리미엄 인디고(Indigo) 그라데이션 색상 적용 -->
                             <button type="submit" id="submit-btn" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
                                 <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
                             </button>
@@ -1053,7 +1053,9 @@
                     updateDarkModeUI(true);
                 }
             } catch (e) {}
-            renderActiveTab();
+            if (cachedData.length > 0) {
+                renderActiveTab();
+            }
         }
 
         function toggleDarkMode() {
@@ -1081,58 +1083,34 @@
             const dIcon = document.getElementById('desktop-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
 
-            try {
-                localStorage.removeItem('yt_dashboard_data_v48');
-                localStorage.removeItem('yt_berth_data_cache_v9');
-            } catch (e) {}
-
             await Promise.allSettled([
-                fetchGoogleSheetData(false),
-                fetchMiniBoardSheetData(),
+                fetchGoogleSheetData(false, true),
+                fetchMiniBoardSheetData(true),
                 fetchBerthDataFromSheet()
             ]);
 
             if (dIcon) dIcon.classList.remove('animate-spin');
         }
 
-        async function fetchGoogleSheetData(silent = true) {
+        // CORS Preflight 에러를 유발하던 커스텀 headers 객체를 완전히 제거하여 구글 시트와 100% 정상 통신 보장
+        async function fetchGoogleSheetData(silent = true, forceClean = false) {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000);
-                
-                // 브라우저 및 구글 CDN 캐시를 완전히 무력화하기 위해 고유 타임스탬프 및 난수(Math.random) 추가
-                const nocacheUrl = `${SHEET_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
-                const response = await fetch(nocacheUrl, { 
-                    cache: 'reload',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    },
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-                
+                const url = `${SHEET_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Network error');
                 const csvText = await response.text();
-                parseCSV(csvText);
+                parseCSV(csvText, forceClean);
                 if (!silent) showToast('최신 실시간 데이터로 동기화되었습니다.');
             } catch (err) {
-                if (!silent) showToast('동기화 중 네트워크 지연이 발생했습니다.', true);
+                console.error('구글 시트 데이터 로드 오류:', err);
+                if (!silent) showToast('데이터 동기화 중 오류가 발생했습니다.', true);
             }
         }
 
-        async function fetchMiniBoardSheetData() {
+        async function fetchMiniBoardSheetData(forceClean = false) {
             try {
-                const nocacheUrl = `${GUESTBOOK_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
-                const response = await fetch(nocacheUrl, { 
-                    cache: 'reload',
-                    headers: { 
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
+                const url = `${GUESTBOOK_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Network error');
                 const text = await response.text();
                 const rows = parseCSVTableFast(text);
@@ -1151,28 +1129,27 @@
                         }
                     }
                     if (parsed.length > 0) {
-                        const existing = getStoredBoardData();
-                        const map = new Map(existing.map(item => [`${item.date}_${item.author}_${item.content}`, item]));
-                        parsed.forEach(item => map.set(`${item.date}_${item.author}_${item.content}`, item));
-                        cachedBoardData = Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+                        if (forceClean) {
+                            cachedBoardData = parsed.sort((a, b) => b.date.localeCompare(a.date));
+                        } else {
+                            const existing = getStoredBoardData();
+                            const map = new Map(existing.map(item => [`${item.date}_${item.author}_${item.content}`, item]));
+                            parsed.forEach(item => map.set(`${item.date}_${item.author}_${item.content}`, item));
+                            cachedBoardData = Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+                        }
                         saveStoredBoardData(cachedBoardData);
                         if (currentActiveTab === 'board') renderBoardList();
                     }
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error('방명록 데이터 로드 오류:', e);
+            }
         }
 
         async function fetchBerthDataFromSheet() {
             try {
-                const nocacheUrl = `${BERTH_CSV_URL}&_t=${Date.now()}&rand=${Math.random()}&nocache=1`;
-                const response = await fetch(nocacheUrl, { 
-                    cache: 'reload',
-                    headers: { 
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
+                const url = `${BERTH_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Sheet network response failed');
                 const csvText = await response.text();
                 const allRows = parseCSVTableFast(csvText);
@@ -1259,10 +1236,12 @@
                         }
                     }
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error('선석 데이터 로드 오류:', err);
+            }
         }
 
-        function parseCSV(text) {
+        function parseCSV(text, forceClean = false) {
             const rows = parseCSVTableFast(text);
             if (rows.length <= 1) return;
 
@@ -1287,11 +1266,14 @@
             }
 
             if (parsed.length > 0) {
-                const existing = getStoredData();
-                const existingMap = new Map(existing.map(item => [`${item.date}_${item.ytNum}_${item.author}`, item]));
-                parsed.forEach(item => existingMap.set(`${item.date}_${item.ytNum}_${item.author}`, item));
-
-                cachedData = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+                if (forceClean) {
+                    cachedData = parsed.sort((a, b) => b.date.localeCompare(a.date));
+                } else {
+                    const existing = getStoredData();
+                    const existingMap = new Map(existing.map(item => [`${item.date}_${item.ytNum}_${item.author}`, item]));
+                    parsed.forEach(item => existingMap.set(`${item.date}_${item.ytNum}_${item.author}`, item));
+                    cachedData = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+                }
                 try {
                     localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(cachedData));
                 } catch(e) {}
@@ -1369,9 +1351,9 @@
             document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
                 const btnTab = btn.getAttribute('data-bottom-tab');
                 if (btnTab === tabId) {
-                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors";
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-400 transition-colors";
                 } else {
-                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors";
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors";
                 }
             });
 
@@ -2824,7 +2806,6 @@
                 const match = transformVal.match(/translateY\(([\d.]+)px\)/);
                 if (match && parseFloat(match[1]) > 70) {
                     ptrIndicator.style.transform = 'translateY(60px)';
-                    showToast('최신 데이터로 새로고침 중...');
                     await manualRefreshAll();
                 }
                 ptrIndicator.style.transform = 'translateY(0px)';
@@ -2904,8 +2885,8 @@
                 switchTab(currentActiveTab);
             }
 
-            fetchGoogleSheetData(true);
-            fetchMiniBoardSheetData();
+            fetchGoogleSheetData(true, false);
+            fetchMiniBoardSheetData(false);
             fetchBerthDataFromSheet();
 
             updateKSTClock();

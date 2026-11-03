@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yt-dashboard-cache-v4';
+const CACHE_NAME = 'yt-dashboard-cache-v5';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -37,12 +37,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 외부 구글 시트 및 API 요청은 서비스 워커가 개입하지 않고 브라우저가 직접 네트워크로 처리하도록 예외 처리
+// 구글 시트 및 외부 API 요청은 서비스 워커가 절대 가로채지 않고 브라우저 기본 네트워크에 위임
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = request.url;
 
-  if (url.includes('docs.google.com') || url.includes('script.google.com')) {
+  if (
+    url.includes('docs.google.com') ||
+    url.includes('script.google.com') ||
+    url.includes('googleusercontent.com')
+  ) {
     return;
   }
 
