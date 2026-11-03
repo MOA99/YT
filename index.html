@@ -1799,13 +1799,18 @@
                 }
             });
 
+            // 모바일: 화면 높이에서 상하단바/검색창 등(약 420px)을 제외한 가용 공간을 행 높이(약 55px)로 나누어 동적 계산 (최소 3개, 최대 10개)
+            const currentRowsPerPage = window.innerWidth < 768 
+                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 420) / 55), 10)) 
+                : rowsPerPage;
+
             const totalRows = filtered.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+            const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
             if (historyCurrentPage > totalPages) historyCurrentPage = totalPages;
             if (historyCurrentPage < 1) historyCurrentPage = 1;
 
-            const startIndex = (historyCurrentPage - 1) * rowsPerPage;
-            const endIndex = startIndex + rowsPerPage;
+            const startIndex = (historyCurrentPage - 1) * currentRowsPerPage;
+            const endIndex = startIndex + currentRowsPerPage;
             const paginatedData = filtered.slice(startIndex, endIndex);
 
             const historyBody = document.getElementById('history-table-body');
@@ -1897,7 +1902,11 @@
                 }
             });
 
-            const currentRowsPerPage = window.innerWidth < 768 ? 5 : rowsPerPage;
+            // 모바일: 화면 높이에서 상하단바/타이틀 등(약 380px)을 제외한 가용 공간을 행 높이(약 60px)로 나누어 동적 계산
+            const currentRowsPerPage = window.innerWidth < 768 
+                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 380) / 60), 10)) 
+                : rowsPerPage;
+
             const totalRows = integratedData.length;
             const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
             if (integratedCurrentPage > totalPages) integratedCurrentPage = totalPages;
@@ -1989,7 +1998,11 @@
                 }
             });
 
-            const currentRowsPerPage = window.innerWidth < 768 ? 5 : rowsPerPage;
+            // 모바일: 화면 높이에서 상하단바/통계카드 등(약 520px)을 제외한 가용 공간을 행 높이(약 55px)로 나누어 동적 계산
+            const currentRowsPerPage = window.innerWidth < 768 
+                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 520) / 55), 10)) 
+                : rowsPerPage;
+
             const totalRows = data.length;
             const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
             if (rawCurrentPage > totalPages) rawCurrentPage = totalPages;
@@ -2940,8 +2953,10 @@
                         renderBerthGraphicMatrix();
                         if (mobileBerthViewMode === 'card') renderBerthCardView();
                     }
+                    if (currentActiveTab === 'history') renderHistoryTable();
                     if (currentActiveTab === 'integrated') renderIntegratedTable();
                     if (currentActiveTab === 'rawdata') renderRawTable();
+                    if (currentActiveTab === 'board') renderBoardList();
                 }, 150);
             });
         };
