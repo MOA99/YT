@@ -1,4 +1,3 @@
-<!-- ... html, head ... -->
 <!DOCTYPE html>
 <html lang="ko" class="h-full">
 <head>
@@ -842,7 +841,6 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        // 로컬스토리지에서 마지막 활성 탭 불러오기 (기본값 'history')
         let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
 
         let historySort = { field: 'date', order: 'desc' };
@@ -868,11 +866,9 @@
         let resizeTimer = null;
         let deferredPrompt = null;
 
-        // Pull to refresh 관련 변수
         let touchStartY = 0;
         let isPulling = false;
 
-        // XSS 및 HTML 깨짐 방지용 이스케이프 유틸리티
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1052,7 +1048,6 @@
                     alignTimelineToDataset();
                 }
 
-                // 저장된 다크모드 설정 로드
                 if (localStorage.getItem('yt_dark_mode') === 'true') {
                     document.documentElement.classList.add('dark');
                     updateDarkModeUI(true);
@@ -1086,7 +1081,6 @@
             const dIcon = document.getElementById('desktop-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
 
-            // 로컬 캐시 초기화 후 최신 실시간 데이터 강제 페치
             try {
                 localStorage.removeItem('yt_dashboard_data_v48');
                 localStorage.removeItem('yt_berth_data_cache_v9');
@@ -1106,7 +1100,6 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 6000);
                 
-                // 캐시 완전 무력화를 위한 고유 타임스탬프 및 헤더 추가
                 const nocacheUrl = `${SHEET_CSV_URL}&_t=${Date.now()}&nocache=1`;
                 const response = await fetch(nocacheUrl, { 
                     cache: 'reload',
@@ -2272,7 +2265,6 @@
             document.getElementById('evaluation-form').reset();
             loadAuthorFromStorage();
 
-            // 입력 완료 시 키보드 자동 내리기 위해 포커스 해제 및 입력창 blur
             document.activeElement?.blur();
             
             if (submitBtn && submitBtnText) {
@@ -2298,7 +2290,6 @@
             renderHistoryTable();
         }
 
-        // 타임라인 관련 렌더링 함수들
         function setBerthTimeRange(mode) {
             berthTimeRangeMode = mode;
             ['24h', '48h', '72h'].forEach(m => {
@@ -2795,7 +2786,6 @@
             });
         }
 
-        // Pull-to-refresh 및 모바일 스와이프 인터랙션 설정
         function setupPullToRefresh() {
             const mainContainer = document.getElementById('main-scroll-container');
             const ptrIndicator = document.getElementById('ptr-indicator');
@@ -2900,7 +2890,6 @@
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
 
-            // 저장된 탭으로 초기 화면 전환 적용
             if (currentActiveTab && currentActiveTab !== 'history') {
                 switchTab(currentActiveTab);
             }
