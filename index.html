@@ -1,22 +1,34 @@
+<!-- ... html, head ... -->
 <!DOCTYPE html>
 <html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- iOS 사파리 전용 전체 화면 모드 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- PWA 및 테마 메타태그 설정 -->
+    <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="YT 데이터 대시보드">
-    <!-- 안드로이드 크롬 / 일반 브라우저 웹앱 모드 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="YT 대시보드">
     <meta name="mobile-web-app-capable" content="yes">
-	<link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
-	<link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
+    <meta name="application-name" content="YT 대시보드">
+
+    <!-- Web App Manifest 연동 -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
+
     <title>YT 데이터 대시보드</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .overflow-x-auto::-webkit-scrollbar {
             height: 6px;
         }
@@ -37,11 +49,21 @@
             background-color: #ffffff;
             z-index: 10;
         }
+        .dark .sticky-col-1 {
+            background-color: #0f172a;
+        }
         tr:hover .sticky-col-1 {
             background-color: #f8fafc;
         }
+        .dark tr:hover .sticky-col-1 {
+            background-color: #1e293b;
+        }
         thead .sticky-col-1 {
             background-color: #f8fafc;
+            z-index: 20;
+        }
+        .dark thead .sticky-col-1 {
+            background-color: #1e293b;
             z-index: 20;
         }
 
@@ -52,13 +74,12 @@
         .hour-tick-border {
             border-right: 1px solid rgba(148, 163, 184, 0.22);
         }
+        .dark .hour-tick-border {
+            border-right: 1px solid rgba(71, 85, 105, 0.3);
+        }
         .six-hour-border {
             border-right: 2px solid rgba(79, 70, 229, 0.4);
             background-color: rgba(99, 102, 241, 0.03);
-        }
-        .day-end-border {
-            border-right: 2.5px solid rgba(15, 23, 42, 0.55);
-            background-color: rgba(15, 23, 42, 0.04);
         }
         .now-indicator-line {
             background-color: rgba(239, 68, 68, 0.55);
@@ -83,6 +104,10 @@
             background-color: #f8fafc;
             box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.06);
         }
+        .dark .sticky-berth-col {
+            background-color: #0f172a;
+            box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.3);
+        }
         .matrix-scroll-wrapper::-webkit-scrollbar {
             height: 7px;
         }
@@ -90,9 +115,26 @@
             background: #cbd5e1;
             border-radius: 4px;
         }
+
+        /* Pull to Refresh 인디케이터 */
+        #ptr-indicator {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            z-index: 45;
+            color: #6366f1;
+            font-size: 12px;
+            font-weight: 600;
+        }
     </style>
 </head>
-<body class="bg-slate-50 h-full flex flex-col md:flex-row text-slate-800 overflow-hidden">
+<body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0 transition-colors duration-200">
 
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm pointer-events-none">
@@ -100,38 +142,63 @@
         <span id="toast-msg">성공적으로 처리되었습니다.</span>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-700 text-white p-3.5 rounded-full shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95" title="맨 위로 이동">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
-    </button>
-
-    <!-- 모바일 상단 바 -->
-    <header class="md:hidden bg-slate-900 text-white flex items-center justify-between px-6 py-4 shadow-md z-30">
+    <!-- 모바일 홈 화면 설치 플로팅 배너 (PWA Install Prompt Banner) -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-16 left-3 right-3 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700 backdrop-blur-md">
         <div class="flex items-center space-x-3">
-            <div class="bg-indigo-600 p-2 rounded-lg text-white font-bold">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             </div>
-            <span class="font-bold text-lg tracking-tight">YT Dashboard</span>
+            <div>
+                <h4 class="font-bold text-xs">YT 대시보드 앱 설치</h4>
+                <p class="text-[11px] text-slate-400">홈 화면에 추가하고 빠르게 실행하세요!</p>
+            </div>
         </div>
         <div class="flex items-center space-x-2">
-            <button onclick="manualRefreshAll()" class="text-slate-300 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="데이터 새로고침">
-                <svg id="mobile-refresh-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            </button>
-            <button onclick="toggleMobileSidebar()" class="text-slate-300 hover:text-white focus:outline-none text-xl p-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
+            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg">닫기</button>
+            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm">설치</button>
         </div>
-    </header>
+    </div>
+
+    <!-- 상단 이동 플로팅 버튼 -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- 모바일 하단 고정 네비게이션 바 -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-30 flex items-center justify-around px-2 py-1.5">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">이력조회</span>
+        </button>
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">평가등록</span>
+        </button>
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">선석현황</span>
+        </button>
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">게시판</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">전체메뉴</span>
+        </button>
+    </nav>
 
     <!-- 좌측 사이드바 네비게이션 -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
-        <div class="p-6 hidden md:flex items-center space-x-3 border-b border-slate-800">
-            <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            </div>
-            <div>
-                <h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1>
-                <p class="text-xs text-slate-400">YT 차량 평가 시스템</p>
+        <div class="p-6 flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1>
+                    <p class="text-xs text-slate-400">YT 차량 평가 시스템</p>
+                </div>
             </div>
         </div>
         
@@ -166,10 +233,25 @@
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span>이용 가이드</span>
             </button>
+
+            <!-- 앱 설치하기 버튼 -->
+            <button id="sidebar-install-btn" onclick="triggerPwaInstall()" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors text-indigo-300 hover:bg-indigo-950/60 hover:text-white text-left border border-dashed border-indigo-700/50 mt-2">
+                <svg class="w-5 h-5 flex-shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                <span>앱 설치하기</span>
+            </button>
         </nav>
 
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
-            <span>YT Information System v3.2</span>
+        <!-- 다크 모드 토글 스위치 -->
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                다크 모드
+            </span>
+            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-slate-700 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
+                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"></div>
+            </button>
         </div>
     </aside>
 
@@ -177,17 +259,23 @@
     <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
     <!-- 본문 메인 영역 -->
-    <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64">
+    <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
         
+        <!-- Pull to Refresh 인디케이터 -->
+        <div id="ptr-indicator">
+            <svg id="ptr-icon" class="w-5 h-5 animate-spin inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span id="ptr-text">새로고침 중...</span>
+        </div>
+
         <!-- 데스크톱 헤더 -->
-        <header class="bg-white border-b border-slate-200 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20">
-            <h2 id="page-title" class="text-xl font-bold text-slate-800">YT 이력 조회</h2>
+        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20 transition-colors">
+            <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             <div class="flex items-center space-x-3">
-                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-semibold border border-slate-200 flex items-center gap-1.5 transition-colors" title="구글 시트 데이터 즉시 동기화">
-                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors" title="구글 시트 데이터 즉시 동기화">
+                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
-                <div class="text-xs bg-indigo-50/80 text-indigo-700 px-3 py-1.5 rounded-full font-medium border border-indigo-100 flex items-center gap-2 shadow-2xs">
+                <div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2">
                     <span class="relative flex h-2.5 w-2.5">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
@@ -204,52 +292,52 @@
 
             <!-- 1. 선석 현황 탭 -->
             <section id="tab-berth" class="tab-content hidden space-y-4 sm:space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                    <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="w-full md:w-auto flex items-center justify-between">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h3 class="font-bold text-slate-800 text-sm sm:text-base">선석 배정 현황</h3>
-                                    <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">타임라인</span>
+                                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">선석 배정 현황</h3>
+                                    <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">타임라인</span>
                                 </div>
-                                <p id="berth-subtitle" class="text-xs text-slate-500 mt-0.5">2일간 선석별 접안 일정</p>
+                                <p id="berth-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2일간 선석별 접안 일정</p>
                             </div>
-                            <div class="flex md:hidden items-center bg-slate-200/80 p-0.5 rounded-xl">
-                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-indigo-600 shadow-xs transition-all">
+                            <div class="flex md:hidden items-center bg-slate-200 dark:bg-slate-800 p-0.5 rounded-xl">
+                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">
                                     타임라인
                                 </button>
-                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">
                                     선석별
                                 </button>
                             </div>
                         </div>
 
                         <div class="w-full md:w-auto flex items-center justify-between sm:justify-end gap-2 flex-wrap">
-                            <button onclick="scrollMatrixToNow()" class="px-2.5 py-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs transition-colors">
+                            <button onclick="scrollMatrixToNow()" class="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs transition-colors">
                                 현재 시각 이동
                             </button>
-                            <div class="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200 text-xs font-semibold">
-                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900">24시간</button>
-                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs font-bold">48시간</button>
-                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900">72시간</button>
+                            <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">24시간</button>
+                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold">48시간</button>
+                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">72시간</button>
                             </div>
                         </div>
                     </div>
 
                     <div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-2 sm:p-4">
-                        <div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 rounded-xl overflow-hidden shadow-2xs bg-white flex flex-col">
-                            <div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 border-b border-slate-200 select-none">
+                        <div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs bg-white dark:bg-slate-900 flex flex-col">
+                            <div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 select-none">
                             </div>
-                            <div id="matrixBody" class="flex flex-col relative h-[340px] sm:h-[370px] bg-slate-50/20 select-none">
+                            <div id="matrixBody" class="flex flex-col relative h-[340px] sm:h-[370px] bg-slate-50/20 dark:bg-slate-900/40 select-none">
                             </div>
                         </div>
                     </div>
 
-                    <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60">
+                    <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
                     </div>
 
-                    <div class="px-4 sm:px-5 py-3 border-t border-slate-200 bg-slate-50/70 flex items-center justify-end gap-2 text-xs text-slate-600">
-                        <span id="kst-clock" class="font-mono-num font-bold text-slate-800">--:--:--</span>
+                    <div class="px-4 sm:px-5 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
                         <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
                     </div>
                 </div>
@@ -257,73 +345,86 @@
 
             <!-- 2. YT 이력 조회 탭 -->
             <section id="tab-history" class="tab-content space-y-6">
-                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
-                        <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700">
+                        <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                             <option value="ytNum">YT번호 검색</option>
                             <option value="author">작성자 검색</option>
                             <option value="all">전체 검색</option>
                         </select>
                         <div class="relative w-full md:w-96">
                             <svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" inputmode="numeric" enterkeyhint="search" id="search-input" maxlength="3" oninput="onSearchInput(this)" onkeydown="onSearchKeyDown(event)" placeholder="YT번호 입력 (예: 227)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                            <input type="search" inputmode="numeric" enterkeyhint="search" id="search-input" maxlength="3" oninput="onSearchInput(this)" onkeydown="onSearchKeyDown(event)" placeholder="YT번호 입력 (예: 227)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                         </div>
                     </div>
                 </div>
 
-                <div id="yt-search-summary-container" class="hidden bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
                     <div class="flex items-center space-x-4">
                         <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <h3 id="summary-yt-title" class="text-base sm:text-lg font-bold text-slate-800">YT 000</h3>
-                                <span id="summary-yt-type" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">샤크만</span>
+                                <h3 id="summary-yt-title" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">YT 000</h3>
+                                <span id="summary-yt-type" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900">샤크만</span>
                                 <span id="summary-dday-badge" class="hidden px-2 py-0.5 rounded-md text-xs font-bold"></span>
                                 <span id="summary-warning-badge" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">주의</span>
                             </div>
-                            <p id="summary-desc" class="text-xs text-slate-500 mt-0.5">해당 차량의 누적 평가 집계 결과입니다.</p>
+                            <p id="summary-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">해당 차량의 누적 평가 집계 결과입니다.</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 lg:gap-8 border-t lg:border-t-0 pt-4 lg:pt-0 w-full lg:w-auto">
+                    <div class="grid grid-cols-3 gap-4 lg:gap-8 border-t lg:border-t-0 border-slate-100 dark:border-slate-800 pt-4 lg:pt-0 w-full lg:w-auto">
                         <div class="text-center px-2">
                             <p id="summary-lbl-1" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평균 총점</p>
-                            <h4 id="summary-val-1" class="text-lg sm:text-xl font-bold text-indigo-600 mt-0.5">0점</h4>
+                            <h4 id="summary-val-1" class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">0점</h4>
                         </div>
-                        <div class="text-center px-2 border-x border-slate-100">
+                        <div class="text-center px-2 border-x border-slate-100 dark:border-slate-800">
                             <p id="summary-lbl-2" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평가 횟수</p>
-                            <h4 id="summary-val-2" class="text-lg sm:text-xl font-bold text-slate-800 mt-0.5">0회</h4>
+                            <h4 id="summary-val-2" class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5">0회</h4>
                         </div>
                         <div class="text-center px-2 flex flex-col items-center justify-center">
                             <p id="summary-lbl-3" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">최근 평가일</p>
                             <div class="flex items-center gap-1 mt-1">
-                                <h4 id="summary-val-3" class="text-xs sm:text-sm font-semibold text-slate-700 truncate">-</h4>
+                                <h4 id="summary-val-3" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">-</h4>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="history-table-container-wrapper" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <div id="history-scroll-pane" class="overflow-x-auto">
                         <table class="w-full text-left border-collapse table-auto min-w-[780px]">
                             <thead>
-                                <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 text-xs tracking-wider font-bold">
-                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortHistoryTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-hist-date" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100" onclick="sortHistoryTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortHistoryTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortHistoryTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                <tr class="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs tracking-wider font-bold">
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-hist-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">기동</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(상하)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
-                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-3 whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
-                            <tbody id="history-table-body" class="divide-y divide-slate-100 text-xs text-slate-700">
+                            <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                                <!-- 스켈레톤 UI 초기 렌더링 -->
+                                <tr class="animate-pulse">
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-14"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-12"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-16"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-32"></div></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div id="history-pagination" class="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 text-xs text-slate-600">
+                    <div id="history-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                     <div id="no-history-data" class="hidden py-16 text-center space-y-4">
                         <div>
@@ -340,13 +441,13 @@
 
             <!-- 3. YT 평가 등록 탭 -->
             <section id="tab-register" class="tab-content hidden space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 max-w-2xl mx-auto overflow-hidden">
-                    <div class="p-6 sm:p-7 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
+                    <div class="p-6 sm:p-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold text-slate-800">YT 평가 등록</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">승/하차 시 차량 상태를 항목별로 평가하고 기록합니다.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 평가 등록</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">승/하차 시 차량 상태를 항목별로 평가하고 기록합니다.</p>
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-base shadow-2xs">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-base shadow-2xs">
                             ✏️
                         </div>
                     </div>
@@ -354,30 +455,30 @@
                     <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                     <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
                                 </label>
-                                <input type="text" id="reg-author" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 font-normal text-slate-700 placeholder:text-slate-400 placeholder:font-normal">
+                                <input type="text" id="reg-author" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                     <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호
                                 </label>
-                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 font-normal text-slate-700 placeholder:text-slate-400 placeholder:font-normal">
+                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
                             </label>
                             <div class="grid grid-cols-2 gap-3">
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-100 transition-all font-semibold text-sm text-slate-700">
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
                                     <input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span>샤크만</span>
                                 </label>
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-100 transition-all font-semibold text-sm text-slate-700">
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
                                     <input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span>카파</span>
                                 </label>
@@ -385,40 +486,40 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
                             </label>
-                            <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs">
+                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                                 <table class="w-full text-center border-collapse text-xs">
                                     <thead>
-                                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold">
-                                            <th class="py-3 px-3 border-r border-slate-200 w-1/5">구분</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 w-1/5">기동</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500">(상하)</span></th>
-                                            <th class="py-3 px-3 border-r border-slate-200 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500">(앞뒤)</span></th>
+                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">구분</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">기동</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(상하)</span></th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(앞뒤)</span></th>
                                             <th class="py-3 px-3 w-1/5">의자</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 border-r border-slate-200 text-emerald-600">상 (25)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400">상 (25)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                             <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 border-r border-slate-200 text-amber-600">중 (15)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-amber-600 dark:text-amber-400">중 (15)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                             <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 border-r border-slate-200 text-rose-600">하 (5)</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400">하 (5)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                             <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
                                         </tr>
                                     </tbody>
@@ -427,14 +528,15 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항
                             </label>
-                            <textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 resize-none font-normal text-slate-700 placeholder:text-slate-400 placeholder:font-normal"></textarea>
+                            <textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea>
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2">
+                            <!-- 전체 디자인과 어울리는 프리미엄 인디고(Indigo) 그라데이션 색상 적용 -->
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
                                 <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
                             </button>
                         </div>
@@ -444,54 +546,54 @@
 
             <!-- 4. YT 통합 리스트 탭 -->
             <section id="tab-integrated" class="tab-content hidden space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 border-b border-slate-200 flex items-center justify-between flex-wrap gap-4">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                         <div>
-                            <h3 class="font-bold text-slate-800">YT별 통합 평균 리스트</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT별 통합 평균 리스트</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse table-auto min-w-[960px]">
                             <thead>
-                                <tr class="bg-slate-50/75 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="py-4 px-6 w-24 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('ytNum')">
+                                <tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="py-4 px-6 w-24 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('ytNum')">
                                         <div class="flex items-center gap-1.5">
                                             <span>YT</span>
                                             <span id="sort-icon-ytNum" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('type')">
+                                    <th class="py-4 px-6 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('type')">
                                         <div class="flex items-center gap-1.5">
                                             <span>타입</span>
                                             <span id="sort-icon-type" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('avgScore')">
+                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('avgScore')">
                                         <div class="flex items-center gap-1.5">
                                             <span>평균총점</span>
                                             <span id="sort-icon-avgScore" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('latestDate')">
+                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestDate')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 평가일</span>
                                             <span id="sort-icon-latestDate" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('count')">
+                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('count')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>평가횟수</span>
                                             <span id="sort-icon-count" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('latestAuthor')">
+                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestAuthor')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 작성자</span>
                                             <span id="sort-icon-latestAuthor" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-64 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortIntegratedTable('latestMemo')">
+                                    <th class="py-4 px-6 w-64 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 특이사항</span>
                                             <span id="sort-icon-latestMemo" class="inline-block text-slate-400"></span>
@@ -499,11 +601,21 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody id="integrated-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <tbody id="integrated-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
+                                <!-- 스켈레톤 UI -->
+                                <tr class="animate-pulse">
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-12"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-14"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
+                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-40"></div></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div id="integrated-pagination" class="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 text-xs text-slate-600">
+                    <div id="integrated-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
@@ -511,114 +623,114 @@
             <!-- 5. 원본 입력 데이터 탭 -->
             <section id="tab-rawdata" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">전체 평가 건수</p>
-                            <h3 id="stat-total" class="text-2xl font-bold text-slate-800 mt-1">0 건</h3>
+                            <h3 id="stat-total" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0 건</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">건</div>
+                        <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg font-bold">건</div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평균 총점</p>
-                            <h3 id="stat-avg-score" class="text-2xl font-bold text-slate-800 mt-1">0 점</h3>
+                            <h3 id="stat-avg-score" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0 점</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">점</div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg font-bold">점</div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">샤크만 평가 수</p>
-                            <h3 id="stat-sharkman" class="text-2xl font-bold text-slate-800 mt-1">0 건</h3>
+                            <h3 id="stat-sharkman" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0 건</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">샤</div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg font-bold">샤</div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">카파 평가 수</p>
-                            <h3 id="stat-kapa" class="text-2xl font-bold text-slate-800 mt-1">0 건</h3>
+                            <h3 id="stat-kapa" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0 건</h3>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold">카</div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg font-bold">카</div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 border-b border-slate-200 flex items-center justify-between flex-wrap gap-4">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                         <div>
-                            <h3 class="font-bold text-slate-800">원본 입력 데이터 목록</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">사용자에게 입력받은 모든 평가 원본 데이터 입니다.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">원본 입력 데이터 목록</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">사용자에게 입력받은 모든 평가 원본 데이터 입니다.</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[950px]">
                             <thead>
-                                <tr id="raw-table-header" class="bg-slate-50/75 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="py-3.5 px-4 w-36 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="py-3.5 px-4 w-36 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">기동</th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">충격(상하)</th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">의자</th>
-                                    <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
-                            <tbody id="raw-table-body" class="divide-y divide-slate-100 text-xs text-slate-700">
+                            <tbody id="raw-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
                             </tbody>
                         </table>
                     </div>
-                    <div id="raw-pagination" class="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 text-xs text-slate-600">
+                    <div id="raw-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
 
             <!-- 6. 선석 상세 모달 팝업 -->
             <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important;" onclick="closeBerthModal(event)">
-                <div id="modalBox" class="bg-white border border-slate-200 rounded-2xl p-5 max-w-sm w-full shadow-2xl text-slate-800 font-sans" onclick="event.stopPropagation()">
+                <div id="modalBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl text-slate-800 dark:text-slate-100 font-sans" onclick="event.stopPropagation()">
                 </div>
             </div>
 
             <!-- 7. 미니 게시판 탭 -->
             <section id="tab-board" class="tab-content hidden space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-900">미니 게시판</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">자유롭게 의견을 남겨주세요.</p>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">미니 게시판</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">자유롭게 의견을 남겨주세요.</p>
                         </div>
                     </div>
 
                     <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">작성자</label>
-                                <input type="text" id="board-author" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">작성자</label>
+                                <input type="text" id="board-author" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-700 mb-1">분류 태그</label>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">분류 태그</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                     <label class="cursor-pointer">
                                         <input type="radio" name="board-tag" value="자유소통" checked class="peer sr-only">
-                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💬 자유소통</div>
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💬 자유소통</div>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="board-tag" value="차량정보" class="peer sr-only">
-                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🚛 차량정보</div>
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🚛 차량정보</div>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="board-tag" value="건의사항" class="peer sr-only">
-                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💡 건의사항</div>
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💡 건의사항</div>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="board-tag" value="응원한마디" class="peer sr-only">
-                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🙌 응원한마디</div>
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🙌 응원한마디</div>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50"></textarea>
+                            <textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></textarea>
                             <button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0">
                                 <span id="board-submit-text">글 남기기</span>
                             </button>
@@ -626,89 +738,89 @@
                     </form>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-5 border-b border-slate-200 flex items-center justify-between flex-wrap gap-3">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
                         <div class="flex items-center gap-2">
-                            <h4 class="font-bold text-slate-800 text-sm">남긴 글 목록</h4>
-                            <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 text-indigo-600 rounded-md">0건</span>
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</h4>
+                            <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
                         </div>
                         <div class="relative w-full sm:w-64">
-                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                             <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                     </div>
-                    <div id="board-list-container" class="divide-y divide-slate-100">
+                    <div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800">
                     </div>
-                    <div id="board-pagination" class="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 text-xs text-slate-600">
+                    <div id="board-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
 
             <!-- 8. 이용 가이드 탭 -->
             <section id="tab-guide" class="tab-content hidden space-y-6">
-                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-4xl mx-auto space-y-8">
-                    <div class="border-b border-slate-100 pb-4">
-                        <h3 class="text-xl font-bold text-slate-900">YT 승/하차 평가 대시보드 이용 가이드</h3>
-                        <p class="text-xs text-slate-500 mt-1">시스템의 주요 기능과 사용 방법을 안내해 드립니다.</p>
+                <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
+                    <div class="border-b border-slate-100 dark:border-slate-800 pb-4">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">YT 승/하차 평가 대시보드 이용 가이드</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">시스템의 주요 기능과 사용 방법을 안내해 드립니다.</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">1</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">1</span>
                                 <span>YT 이력 조회</span>
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
-                                YT 번호 또는 작성자 조건별로 <strong class="text-indigo-700">일치하는 데이터</strong>를 검색하고 요약 통계를 확인합니다.
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                YT 번호 또는 작성자 조건별로 <strong class="text-indigo-700 dark:text-indigo-400">일치하는 데이터</strong>를 검색하고 요약 통계를 확인합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">2</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">2</span>
                                 <span>YT 평가 등록</span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-0.5">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                 현장 기사님의 실시간 평가 데이터를 입력하여 차량 상태를 투명하게 기록합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">3</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">3</span>
                                 <span>YT 통합 리스트 및 통계</span>
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                                 동일 YT별 주요 평가 지표를 한곳에 집계하여 제공합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">4</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">4</span>
                                 <span>원본 입력 데이터 연동</span>
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                                 사용자로부터 입력받은 원본 데이터를 시점별로 편리하게 확인합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">5</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">5</span>
                                 <span>선석 현황</span>
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                                 24H/48H/72H 기간별 선석(B4~B8) 접안 일정과 선사, 양하/선적/이적 작업 물량을 모니터링합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold">6</span>
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">6</span>
                                 <span>미니 게시판</span>
                             </div>
-                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                                 현장 소통, 차량 정보, 건의사항 등을 자유롭게 남기고 소통합니다.
                             </p>
                         </div>
@@ -730,7 +842,8 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        let currentActiveTab = 'history';
+        // 로컬스토리지에서 마지막 활성 탭 불러오기 (기본값 'history')
+        let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
 
         let historySort = { field: 'date', order: 'desc' };
         let integratedSort = { field: 'ytNum', order: 'asc' };
@@ -753,6 +866,11 @@
         let timelineEnd = new Date();
         let toastTimer = null;
         let resizeTimer = null;
+        let deferredPrompt = null;
+
+        // Pull to refresh 관련 변수
+        let touchStartY = 0;
+        let isPulling = false;
 
         // XSS 및 HTML 깨짐 방지용 이스케이프 유틸리티
         function escapeHtml(str) {
@@ -933,15 +1051,40 @@
                     activeBerthDataset = JSON.parse(localBerth);
                     alignTimelineToDataset();
                 }
+
+                // 저장된 다크모드 설정 로드
+                if (localStorage.getItem('yt_dark_mode') === 'true') {
+                    document.documentElement.classList.add('dark');
+                    updateDarkModeUI(true);
+                }
             } catch (e) {}
             renderActiveTab();
         }
 
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('yt_dark_mode', isDark);
+            updateDarkModeUI(isDark);
+        }
+
+        function updateDarkModeUI(isDark) {
+            const ball = document.getElementById('dark-mode-ball');
+            const toggleBtn = document.getElementById('dark-mode-toggle-btn');
+            if (!ball || !toggleBtn) return;
+            if (isDark) {
+                ball.style.transform = 'translateX(24px)';
+                toggleBtn.classList.remove('bg-slate-700');
+                toggleBtn.classList.add('bg-indigo-600');
+            } else {
+                ball.style.transform = 'translateX(0px)';
+                toggleBtn.classList.remove('bg-indigo-600');
+                toggleBtn.classList.add('bg-slate-700');
+            }
+        }
+
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
-            const mIcon = document.getElementById('mobile-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
-            if (mIcon) mIcon.classList.add('animate-spin');
 
             await Promise.allSettled([
                 fetchGoogleSheetData(false),
@@ -950,7 +1093,6 @@
             ]);
 
             if (dIcon) dIcon.classList.remove('animate-spin');
-            if (mIcon) mIcon.classList.remove('animate-spin');
         }
 
         async function fetchGoogleSheetData(silent = true) {
@@ -1184,6 +1326,10 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
+            try {
+                localStorage.setItem('yt_active_tab', tabId);
+            } catch (e) {}
+
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const targetTab = document.getElementById(`tab-${tabId}`);
             if (targetTab) targetTab.classList.remove('hidden');
@@ -1196,6 +1342,15 @@
             if (activeNav) {
                 activeNav.className = "nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left";
             }
+
+            document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+                const btnTab = btn.getAttribute('data-bottom-tab');
+                if (btnTab === tabId) {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors";
+                } else {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors";
+                }
+            });
 
             const titles = {
                 'berth': '선석 현황',
@@ -1234,7 +1389,7 @@
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (!container || !scrollBtn) return;
 
-            if (container.scrollTop > 300) {
+            if (container.scrollTop > 200 || window.scrollY > 200) {
                 scrollBtn.classList.remove('hidden');
             } else {
                 scrollBtn.classList.add('hidden');
@@ -1243,8 +1398,12 @@
 
         function scrollToTop() {
             const container = document.getElementById('main-scroll-container');
-            if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+            if (container) {
+                container.scrollTo({ top: 0, behavior: 'smooth' });
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
@@ -1484,7 +1643,7 @@
                         
                         const typeEl = document.getElementById('summary-yt-type');
                         typeEl.innerText = latestItem.type;
-                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-amber-50 text-amber-700 border border-amber-100'}`;
+                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 border border-amber-100'}`;
                         typeEl.classList.remove('hidden');
 
                         const ddayBadgeEl = document.getElementById('summary-dday-badge');
@@ -1618,23 +1777,23 @@
                     if (noDataEl) noDataEl.classList.add('hidden');
                     paginatedData.forEach(item => {
                         const tr = document.createElement('tr');
-                        tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
+                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                         
                         let shortDate = item.date;
                         const p = parseDateOnly(item.date);
                         if (p) shortDate = p.formatted;
 
                         tr.innerHTML = `
-                            <td class="py-3.5 px-3 font-mono text-slate-500 whitespace-nowrap">${escapeHtml(shortDate)}</td>
-                            <td class="py-3.5 px-3 font-bold text-slate-800 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
-                            <td class="py-3.5 px-3 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 font-semibold' : 'bg-amber-50 text-amber-700 font-semibold'}">${escapeHtml(item.type)}</span></td>
-                            <td class="py-3.5 px-3 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600' : item.totalScore >= 50 ? 'text-amber-600' : 'text-rose-600'}">${escapeHtml(item.totalScore)}점</span></td>
+                            <td class="py-3.5 px-3 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHtml(shortDate)}</td>
+                            <td class="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
+                            <td class="py-3.5 px-3 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                            <td class="py-3.5 px-3 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
                             <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
                             <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
                             <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
                             <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
-                            <td class="py-3.5 px-3 font-medium text-slate-800 whitespace-nowrap">${escapeHtml(item.author)}</td>
-                            <td class="py-3.5 px-3 text-slate-500 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                            <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
+                            <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                         `;
                         historyBody.appendChild(tr);
                     });
@@ -1652,11 +1811,11 @@
                     총 <b>${totalRows}</b>개 데이터 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> 표시 (페이지 ${currentPage}/${totalPages})
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium"'}>처음</button>
-                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium"'}>이전</button>
-                    <span class="px-2 font-semibold text-slate-700">${currentPage} / ${totalPages}</span>
-                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium"'}>다음</button>
-                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium"'}>맨끝</button>
+                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>처음</button>
+                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>이전</button>
+                    <span class="px-2 font-semibold text-slate-700 dark:text-slate-300">${currentPage} / ${totalPages}</span>
+                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>다음</button>
+                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>맨끝</button>
                 </div>
             `;
         }
@@ -1711,7 +1870,7 @@
                 integratedBody.innerHTML = '';
                 paginatedData.forEach(group => {
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
+                    tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                     
                     let shortDate = group.latestDate;
                     const p = parseDateOnly(group.latestDate);
@@ -1722,13 +1881,13 @@
                     let badgeHtml = `<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] ${info.badgeClass} inline-block">${info.text}</span>`;
 
                     tr.innerHTML = `
-                        <td class="py-4 px-6 font-bold text-slate-800 sticky-col-1 whitespace-nowrap">${escapeHtml(group.ytNum)}</td>
-                        <td class="py-4 px-6 whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 font-semibold' : 'bg-amber-50 text-amber-700 font-semibold'}">${escapeHtml(group.type)}</span></td>
-                        <td class="py-4 px-6 font-bold text-indigo-600 whitespace-nowrap">${escapeHtml(group.avgScore)}점</td>
-                        <td class="py-4 px-6 text-slate-600 text-xs whitespace-nowrap w-44"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
-                        <td class="py-4 px-6 font-medium text-slate-600 whitespace-nowrap">${escapeHtml(group.count)}회</td>
-                        <td class="py-4 px-6 font-medium text-slate-700 whitespace-nowrap">${escapeHtml(group.latestAuthor)}</td>
-                        <td class="py-4 px-6 w-64 text-slate-500 whitespace-nowrap truncate" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
+                        <td class="py-4 px-6 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(group.ytNum)}</td>
+                        <td class="py-4 px-6 whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(group.type)}</span></td>
+                        <td class="py-4 px-6 font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">${escapeHtml(group.avgScore)}점</td>
+                        <td class="py-4 px-6 text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap w-44"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
+                        <td class="py-4 px-6 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">${escapeHtml(group.count)}회</td>
+                        <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">${escapeHtml(group.latestAuthor)}</td>
+                        <td class="py-4 px-6 w-64 text-slate-500 dark:text-slate-400 whitespace-nowrap truncate" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
                     `;
                     integratedBody.appendChild(tr);
                 });
@@ -1802,18 +1961,18 @@
                 rawTableBody.innerHTML = '';
                 paginatedData.forEach((item) => {
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
+                    tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                     tr.innerHTML = `
-                        <td class="py-3.5 px-4 font-mono text-slate-500 whitespace-nowrap">${escapeHtml(item.date)}</td>
-                        <td class="py-3.5 px-4 font-bold text-slate-800 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
-                        <td class="py-3.5 px-4 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 font-semibold' : 'bg-amber-50 text-amber-700 font-semibold'}">${escapeHtml(item.type)}</span></td>
-                        <td class="py-3.5 px-4 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600' : item.totalScore >= 50 ? 'text-amber-600' : 'text-rose-600'}">${escapeHtml(item.totalScore)}점</span></td>
+                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHtml(item.date)}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
+                        <td class="py-3.5 px-4 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                        <td class="py-3.5 px-4 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
-                        <td class="py-3.5 px-4 font-medium text-slate-800 whitespace-nowrap">${escapeHtml(item.author)}</td>
-                        <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
+                        <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
                     rawTableBody.appendChild(tr);
                 });
@@ -1913,27 +2072,27 @@
                     container.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs">등록된 게시글이 없습니다. 첫 번째 글을 남겨보세요!</div>`;
                 } else {
                     const tagColors = {
-                        '자유소통': 'bg-indigo-50 text-indigo-700 border-indigo-100',
-                        '차량정보': 'bg-blue-50 text-blue-700 border-blue-100',
-                        '건의사항': 'bg-amber-50 text-amber-700 border-amber-100',
-                        '응원한마디': 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                        '자유소통': 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900',
+                        '차량정보': 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border-blue-100 dark:border-blue-900',
+                        '건의사항': 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-100 dark:border-amber-900',
+                        '응원한마디': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900'
                     };
                     paginated.forEach(item => {
                         const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
                         const avatarTxt = item.author.trim().slice(0, 1) || '익';
                         const div = document.createElement('div');
-                        div.className = 'p-4 sm:p-5 hover:bg-slate-50/85 transition-colors flex items-start space-x-3.5';
+                        div.className = 'p-4 sm:p-5 hover:bg-slate-50/85 dark:hover:bg-slate-800/50 transition-colors flex items-start space-x-3.5';
                         div.innerHTML = `
-                            <div class="w-9 h-9 rounded-xl bg-indigo-600/10 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">${escapeHtml(avatarTxt)}</div>
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600/10 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">${escapeHtml(avatarTxt)}</div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-2 flex-wrap">
                                     <div class="flex items-center gap-2">
-                                        <span class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(item.author)}</span>
+                                        <span class="font-bold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">${escapeHtml(item.author)}</span>
                                         <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md border ${badgeStyle}">${escapeHtml(item.tag || '자유소통')}</span>
                                     </div>
                                     <span class="text-[11px] font-mono text-slate-400">${escapeHtml(item.date)}</span>
                                 </div>
-                                <p class="text-xs sm:text-sm text-slate-700 mt-1.5 leading-relaxed break-words whitespace-pre-line">${escapeHtml(item.content)}</p>
+                                <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed break-words whitespace-pre-line">${escapeHtml(item.content)}</p>
                             </div>
                         `;
                         container.appendChild(div);
@@ -2092,10 +2251,13 @@
 
             document.getElementById('evaluation-form').reset();
             loadAuthorFromStorage();
+
+            // 입력 완료 시 키보드 자동 내리기 위해 포커스 해제 및 입력창 blur
+            document.activeElement?.blur();
             
             if (submitBtn && submitBtnText) {
                 submitBtn.disabled = false;
-                submitBtn.className = 'w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2';
+                submitBtn.className = 'w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2';
                 submitBtnText.innerText = '평가 제출하기';
             }
 
@@ -2123,9 +2285,9 @@
                 const btn = document.getElementById(`btn-range-${m}`);
                 if (!btn) return;
                 if (m === mode) {
-                    btn.className = "px-2.5 py-1 rounded-lg bg-white text-indigo-700 shadow-xs font-bold";
+                    btn.className = "px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold";
                 } else {
-                    btn.className = "px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900";
+                    btn.className = "px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900";
                 }
             });
 
@@ -2170,8 +2332,8 @@
             if (mode === 'card') {
                 if (matrixContainer) matrixContainer.classList.add('hidden');
                 if (cardContainer) cardContainer.classList.remove('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-indigo-600 shadow-xs transition-all";
+                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
+                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
                 if (badge) badge.innerText = "선석별 리스트";
                 
                 const berthTabSection = document.getElementById('tab-berth');
@@ -2184,8 +2346,8 @@
             } else {
                 if (matrixContainer) matrixContainer.classList.remove('hidden');
                 if (cardContainer) cardContainer.classList.add('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white text-indigo-600 shadow-xs transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
+                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
                 if (badge) badge.innerText = "타임라인";
                 renderBerthGraphicMatrix();
             }
@@ -2210,8 +2372,8 @@
             const day3 = new Date(rangeStartMs + 48 * 3600 * 1000);
 
             let headerHTML = `
-                <div class="flex border-b border-slate-200 h-7 text-xs font-semibold">
-                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700">
+                <div class="flex border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
                         선석
                     </div>
                     <div class="flex-1 flex">
@@ -2219,33 +2381,33 @@
 
             if (activeHours === 72) {
                 headerHTML += `
-                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 bg-indigo-50/70 font-mono-num text-[11px] font-bold text-indigo-800">
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 bg-slate-100/80 font-mono-num text-[11px] font-bold text-slate-700">
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
-                    <div class="w-1/3 flex items-center justify-center bg-slate-50/90 font-mono-num text-[11px] font-bold text-slate-600">
+                    <div class="w-1/3 flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day3)}
                     </div>
                 `;
             } else if (activeHours === 48) {
                 headerHTML += `
-                    <div class="w-1/2 flex items-center justify-center border-r-2 border-slate-300 bg-indigo-50/70 font-mono-num text-[11px] font-bold text-indigo-800">
+                    <div class="w-1/2 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div class="w-1/2 flex items-center justify-center bg-slate-100/80 font-mono-num text-[11px] font-bold text-slate-700">
+                    <div class="w-1/2 flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
                 `;
             } else {
                 headerHTML += `
-                    <div class="w-full flex items-center justify-center bg-indigo-50/70 font-mono-num text-[11px] font-bold text-indigo-800">
+                    <div class="w-full flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
@@ -2254,8 +2416,8 @@
 
             headerHTML += `
                 </div></div>
-                <div class="flex h-5 text-[9px] font-mono-num font-semibold text-slate-500">
-                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 flex items-center justify-center text-[9px] text-slate-400">
+                <div class="flex h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
                         시간(H)
                     </div>
                     <div class="flex-1 flex">
@@ -2268,12 +2430,8 @@
 
                 let tickClass = "hour-tick-border text-slate-400";
                 if (!isLastColumn) {
-                    const isDayEnd = (berthTimeRangeMode === '48h' && hour === 24) ||
-                                     (berthTimeRangeMode === '72h' && (hour === 24 || hour === 48));
-                    const is6h = !isDayEnd && (hour % 6 === 0);
-
-                    if (isDayEnd) tickClass = "day-end-border text-slate-900 font-bold";
-                    else if (is6h) tickClass = "six-hour-border text-indigo-600 font-bold";
+                    const is6h = (hour % 6 === 0);
+                    if (is6h) tickClass = "six-hour-border text-indigo-600 dark:text-indigo-400 font-bold";
                 }
 
                 headerHTML += `
@@ -2290,9 +2448,9 @@
 
             BERTH_LIST.forEach((berthName) => {
                 bodyHTML += `
-                    <div class="flex flex-1 border-b border-slate-200 relative min-h-[60px] sm:min-h-[64px]">
-                        <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 flex flex-col items-center justify-center select-none">
-                            <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800">
+                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative min-h-[60px] sm:min-h-[64px]">
+                        <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center select-none">
+                            <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800 dark:text-slate-200">
                                 ${berthName}
                             </span>
                         </div>
@@ -2308,12 +2466,8 @@
 
                     let cellClass = "hour-tick-border";
                     if (!isLastColumn) {
-                        const isDayEnd = (berthTimeRangeMode === '48h' && hour === 24) ||
-                                         (berthTimeRangeMode === '72h' && (hour === 24 || hour === 48));
-                        const is6h = !isDayEnd && (hour % 6 === 0);
-
-                        if (isDayEnd) cellClass = "day-end-border";
-                        else if (is6h) cellClass = "six-hour-border";
+                        const is6h = (hour % 6 === 0);
+                        if (is6h) cellClass = "six-hour-border";
                     }
 
                     bodyHTML += `<div class="flex-1 h-full ${cellClass}"></div>`;
@@ -2441,15 +2595,15 @@
                 });
 
                 html += `
-                    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
-                        <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs">
+                        <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                                <span class="font-black text-slate-800 text-sm font-mono-num">${berth} 선석</span>
+                                <span class="font-black text-slate-800 dark:text-slate-200 text-sm font-mono-num">${berth} 선석</span>
                             </div>
-                            <span class="text-[11px] font-semibold text-slate-500">배정 선박: ${vesselsWithIdx.length}척</span>
+                            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">배정 선박: ${vesselsWithIdx.length}척</span>
                         </div>
-                        <div class="p-3 divide-y divide-slate-100">
+                        <div class="p-3 divide-y divide-slate-100 dark:divide-slate-800">
                 `;
 
                 if (vesselsWithIdx.length === 0) {
@@ -2459,21 +2613,21 @@
                         const conf = getCarrierConfig(v.carrier);
                         const isStarboard = v.berthDir === "우현";
                         html += `
-                            <div onclick="openBerthDetailByIndex(${idx})" class="py-2.5 first:pt-1 last:pb-1 cursor-pointer active:bg-slate-50 transition-colors">
+                            <div onclick="openBerthDetailByIndex(${idx})" class="py-2.5 first:pt-1 last:pb-1 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
                                 <div class="flex items-center justify-between mb-1.5">
                                     <div class="flex items-center gap-1.5 truncate">
                                         <span class="px-2 py-0.5 rounded text-xs font-black ${conf.badge} font-mono-num shrink-0">${escapeHtml(v.carrier)}</span>
                                         <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isStarboard ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'} shrink-0">${escapeHtml(v.berthDir)}</span>
-                                        <span class="text-xs font-bold text-slate-800 truncate">${escapeHtml(v.vesselName || '')}</span>
+                                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${escapeHtml(v.vesselName || '')}</span>
                                     </div>
-                                    <span class="text-[11px] font-bold text-indigo-600 font-mono-num shrink-0">총 ${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
+                                    <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono-num shrink-0">총 ${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
                                 </div>
-                                <div class="text-[11px] text-slate-500 font-mono-num flex items-center justify-between">
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono-num flex items-center justify-between">
                                     <span>${escapeHtml(v.berthTime.slice(5))} &rarr; ${escapeHtml(v.departTime.slice(5))}</span>
                                     <div class="space-x-1.5 font-semibold text-[10px]">
-                                        <span class="text-blue-600">D:${v.discharge}</span>
-                                        <span class="text-emerald-600">L:${v.load}</span>
-                                        <span class="text-amber-600">S:${v.shift}</span>
+                                        <span class="text-blue-600 dark:text-blue-400">D:${v.discharge}</span>
+                                        <span class="text-emerald-600 dark:text-emerald-400">L:${v.load}</span>
+                                        <span class="text-amber-600 dark:text-amber-400">S:${v.shift}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2513,50 +2667,50 @@
             const conf = getCarrierConfig(v.carrier);
 
             box.innerHTML = `
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                     <div class="flex items-center gap-2">
                         <span class="px-2 py-0.5 rounded text-xs font-black ${conf.badge} font-mono-num">${escapeHtml(v.carrier)}</span>
-                        <span class="font-mono-num font-black text-indigo-600 text-base">${escapeHtml(v.berth)} 선석</span>
+                        <span class="font-mono-num font-black text-indigo-600 dark:text-indigo-400 text-base">${escapeHtml(v.berth)} 선석</span>
                     </div>
-                    <button onclick="closeBerthModalDirect()" class="text-slate-400 hover:text-slate-700 text-lg px-2 py-0.5 rounded-lg bg-slate-100">
+                    <button onclick="closeBerthModalDirect()" class="text-slate-400 hover:text-slate-700 text-lg px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800">
                         &times;
                     </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 my-3 text-xs font-mono-num">
-                    <div class="bg-indigo-50/70 border border-indigo-100 p-2.5 rounded-xl col-span-2">
+                    <div class="bg-indigo-50/70 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 p-2.5 rounded-xl col-span-2">
                         <span class="text-indigo-400 block text-[10px] font-sans">모선명 ${v.voyage ? `(${escapeHtml(v.voyage)})` : ''}</span>
-                        <span class="font-bold text-indigo-900 text-sm tracking-tight">${escapeHtml(v.vesselName || '-')}</span>
+                        <span class="font-bold text-indigo-900 dark:text-indigo-200 text-sm tracking-tight">${escapeHtml(v.vesselName || '-')}</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
                         <span class="text-slate-400 block text-[10px]">운항선사 / 항로</span>
-                        <span class="font-bold text-slate-800 text-xs">${escapeHtml(v.carrier)} ${v.route ? `(${escapeHtml(v.route)})` : ''}</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${escapeHtml(v.carrier)} ${v.route ? `(${escapeHtml(v.route)})` : ''}</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
                         <span class="text-slate-400 block text-[10px]">접안방향</span>
-                        <span class="font-bold text-indigo-600 text-xs">${escapeHtml(v.berthDir)}</span>
+                        <span class="font-bold text-indigo-600 dark:text-indigo-400 text-xs">${escapeHtml(v.berthDir)}</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl col-span-2">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl col-span-2">
                         <span class="text-slate-400 block text-[10px]">접안(예정)일시 &rarr; 출항(예정)일시</span>
-                        <span class="font-bold text-slate-900 text-[11px]">${escapeHtml(v.berthTime)} &rarr; ${escapeHtml(v.departTime)}</span>
+                        <span class="font-bold text-slate-900 dark:text-slate-100 text-[11px]">${escapeHtml(v.berthTime)} &rarr; ${escapeHtml(v.departTime)}</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
                         <span class="text-slate-400 block text-[10px]">양하수량 (D)</span>
-                        <span class="font-bold text-blue-600 text-xs">${v.discharge.toLocaleString()} VAN</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-xs">${v.discharge.toLocaleString()} VAN</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
                         <span class="text-slate-400 block text-[10px]">선적수량 (L)</span>
-                        <span class="font-bold text-emerald-600 text-xs">${v.load.toLocaleString()} VAN</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400 text-xs">${v.load.toLocaleString()} VAN</span>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl col-span-2 flex items-center justify-between">
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl col-span-2 flex items-center justify-between">
                         <span class="text-slate-400 text-[10px]">Shift (이적수량)</span>
-                        <span class="font-bold text-amber-600 text-xs">${v.shift.toLocaleString()} VAN</span>
+                        <span class="font-bold text-amber-600 dark:text-amber-400 text-xs">${v.shift.toLocaleString()} VAN</span>
                     </div>
                 </div>
 
-                <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-3 flex items-center justify-between text-xs font-mono-num">
-                    <span class="text-slate-600 text-[11px]">총 작업량 (D+L+S):</span>
-                    <span class="font-bold text-indigo-700 text-sm">${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
+                <div class="bg-indigo-50/80 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-900 rounded-xl p-3 flex items-center justify-between text-xs font-mono-num">
+                    <span class="text-slate-600 dark:text-slate-300 text-[11px]">총 작업량 (D+L+S):</span>
+                    <span class="font-bold text-indigo-700 dark:text-indigo-300 text-sm">${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
                 </div>
             `;
 
@@ -2574,8 +2728,8 @@
 
         const SVG_ICONS = {
             neutral: `<svg class="w-3.5 h-3.5 text-slate-300 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>`,
-            asc: `<svg class="w-3.5 h-3.5 text-indigo-600 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>`,
-            desc: `<svg class="w-3.5 h-3.5 text-indigo-600 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`
+            asc: `<svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>`,
+            desc: `<svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`
         };
 
         function formatDateLabel(d) {
@@ -2605,7 +2759,7 @@
                 if (hasScroll && !isBerthCardMode) {
                     if (!hint) {
                         hint = document.createElement('div');
-                        hint.className = 'scroll-hint-banner flex items-center justify-center gap-2 py-1.5 px-3 bg-indigo-50/90 border-b border-indigo-100 text-[11px] font-semibold text-indigo-700 select-none';
+                        hint.className = 'scroll-hint-banner flex items-center justify-center gap-2 py-1.5 px-3 bg-indigo-50/90 dark:bg-indigo-950/90 border-b border-indigo-100 dark:border-indigo-900 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300 select-none';
                         hint.innerHTML = `
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows" viewBox="0 0 16 16">
                                 <path d="M1.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L2.707 7.5h10.586l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L13.293 8.5H2.707l1.147 1.146a.5.5 0 0 1-.708.708z"/>
@@ -2621,10 +2775,115 @@
             });
         }
 
+        // Pull-to-refresh 및 모바일 스와이프 인터랙션 설정
+        function setupPullToRefresh() {
+            const mainContainer = document.getElementById('main-scroll-container');
+            const ptrIndicator = document.getElementById('ptr-indicator');
+            if (!mainContainer || !ptrIndicator) return;
+
+            mainContainer.addEventListener('touchstart', (e) => {
+                if (mainContainer.scrollTop === 0) {
+                    touchStartY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                const currentY = e.touches[0].clientY;
+                const diff = currentY - touchStartY;
+                if (diff > 0 && diff < 140) {
+                    ptrIndicator.style.transform = `translateY(${diff}px)`;
+                }
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchend', async (e) => {
+                if (!isPulling) return;
+                isPulling = false;
+                const transformVal = ptrIndicator.style.transform;
+                const match = transformVal.match(/translateY\(([\d.]+)px\)/);
+                if (match && parseFloat(match[1]) > 70) {
+                    ptrIndicator.style.transform = 'translateY(60px)';
+                    showToast('최신 데이터로 새로고침 중...');
+                    await manualRefreshAll();
+                }
+                ptrIndicator.style.transform = 'translateY(0px)';
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (!isStandalone) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                    banner.classList.remove('hidden');
+                }
+            }
+        });
+
+        function dismissPwaBanner() {
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.classList.add('hidden');
+            try { localStorage.setItem('pwa_banner_dismissed', 'true'); } catch (e) {}
+        }
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            dismissPwaBanner();
+            showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
+        });
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((reg) => {
+                            console.log('[PWA] Service Worker registered successfully:', reg.scope);
+                        })
+                        .catch((err) => {
+                            console.warn('[PWA] Service Worker registration failed:', err);
+                        });
+                });
+            }
+        }
+
+        async function triggerPwaInstall() {
+            dismissPwaBanner();
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isStandalone) {
+                showToast('이미 앱으로 실행 중입니다.');
+                return;
+            }
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast('앱 설치를 시작합니다.');
+                }
+                deferredPrompt = null;
+            } else {
+                const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIos) {
+                    showToast('사파리 하단 공유 버튼 [↑] 클릭 후 "홈 화면에 추가"를 눌러주세요.');
+                } else {
+                    showToast('브라우저 메뉴(⋮)에서 "앱 설치" 또는 "홈 화면에 추가"를 선택해주세요.');
+                }
+            }
+        }
+
         window.onload = function() {
             setupScrollIndicators();
+            setupPullToRefresh();
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
+
+            // 저장된 탭으로 초기 화면 전환 적용
+            if (currentActiveTab && currentActiveTab !== 'history') {
+                switchTab(currentActiveTab);
+            }
 
             fetchGoogleSheetData(true);
             fetchMiniBoardSheetData();
@@ -2632,6 +2891,8 @@
 
             updateKSTClock();
             setInterval(updateKSTClock, 1000);
+
+            registerServiceWorker();
 
             window.addEventListener('resize', () => {
                 if (resizeTimer) clearTimeout(resizeTimer);
