@@ -842,7 +842,8 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        let currentActiveTab = 'history';
+        // 로컬스토리지에서 마지막 활성 탭 불러오기 (기본값 'history')
+        let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
 
         let historySort = { field: 'date', order: 'desc' };
         let integratedSort = { field: 'ytNum', order: 'asc' };
@@ -1325,6 +1326,10 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
+            try {
+                localStorage.setItem('yt_active_tab', tabId);
+            } catch (e) {}
+
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const targetTab = document.getElementById(`tab-${tabId}`);
             if (targetTab) targetTab.classList.remove('hidden');
@@ -2874,6 +2879,11 @@
             setupPullToRefresh();
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
+
+            // 저장된 탭으로 초기 화면 전환 적용
+            if (currentActiveTab && currentActiveTab !== 'history') {
+                switchTab(currentActiveTab);
+            }
 
             fetchGoogleSheetData(true);
             fetchMiniBoardSheetData();
