@@ -2,7 +2,7 @@
 <html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- PWA 및 테마 메타태그 설정 -->
     <meta name="theme-color" content="#4f46e5">
@@ -22,7 +22,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .overflow-x-auto::-webkit-scrollbar {
             height: 6px;
         }
@@ -98,7 +98,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 h-full flex flex-col md:flex-row text-slate-800 overflow-hidden">
+<body class="bg-slate-50 h-full flex flex-col md:flex-row text-slate-800 overflow-hidden pb-16 md:pb-0">
 
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm pointer-events-none">
@@ -106,28 +106,69 @@
         <span id="toast-msg">성공적으로 처리되었습니다.</span>
     </div>
 
+    <!-- 모바일 홈 화면 설치 플로팅 배너 (PWA Install Prompt Banner) -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-16 left-3 right-3 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700 backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-xs">YT 대시보드 앱 설치</h4>
+                <p class="text-[11px] text-slate-400">홈 화면에 추가하고 빠르게 실행하세요!</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg">닫기</button>
+            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm">설치</button>
+        </div>
+    </div>
+
     <!-- 상단 이동 플로팅 버튼 -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-700 text-white p-3.5 rounded-full shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95" title="맨 위로 이동">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-35 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95" title="맨 위로 이동">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 상단 바 -->
-    <header class="md:hidden bg-slate-900 text-white flex items-center justify-between px-6 py-4 shadow-md z-30">
-        <div class="flex items-center space-x-3">
-            <div class="bg-indigo-600 p-2 rounded-lg text-white font-bold">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+    <header class="md:hidden bg-slate-900 text-white flex items-center justify-between px-5 py-3.5 shadow-md z-30">
+        <div class="flex items-center space-x-2.5">
+            <div class="bg-indigo-600 p-1.5 rounded-lg text-white font-bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
             </div>
-            <span class="font-bold text-lg tracking-tight">YT Dashboard</span>
+            <span class="font-bold text-base tracking-tight">YT Dashboard</span>
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="manualRefreshAll()" class="text-slate-300 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="데이터 새로고침">
+        <div class="flex items-center space-x-1.5">
+            <button onclick="manualRefreshAll()" class="text-slate-300 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors" title="데이터 새로고침">
                 <svg id="mobile-refresh-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             </button>
-            <button onclick="toggleMobileSidebar()" class="text-slate-300 hover:text-white focus:outline-none text-xl p-1">
+            <button onclick="toggleMobileSidebar()" class="text-slate-300 hover:text-white focus:outline-none p-1.5">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
+
+    <!-- 모바일 하단 고정 네비게이션 바 (Bottom Navigation Bar) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-30 flex items-center justify-around px-2 py-1.5">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">이력조회</span>
+        </button>
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">평가등록</span>
+        </button>
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">선석현황</span>
+        </button>
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">게시판</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-[10px] font-bold tracking-tight">전체메뉴</span>
+        </button>
+    </nav>
 
     <!-- 좌측 사이드바 네비게이션 -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
@@ -1218,6 +1259,16 @@
                 activeNav.className = "nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left";
             }
 
+            // 모바일 하단바 활성화 상태 동기화
+            document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+                const btnTab = btn.getAttribute('data-bottom-tab');
+                if (btnTab === tabId) {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors";
+                } else {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-colors";
+                }
+            });
+
             const titles = {
                 'berth': '선석 현황',
                 'history': 'YT 이력 조회',
@@ -1937,7 +1988,7 @@
                         '자유소통': 'bg-indigo-50 text-indigo-700 border-indigo-100',
                         '차량정보': 'bg-blue-50 text-blue-700 border-blue-100',
                         '건의사항': 'bg-amber-50 text-amber-700 border-amber-100',
-                        '응원한마디': 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                        '응원한마디': 'bg-emerald-50 text-emerald-700 border-indigo-100'
                     };
                     paginated.forEach(item => {
                         const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
@@ -2646,10 +2697,24 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (!isStandalone) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                    banner.classList.remove('hidden');
+                }
+            }
         });
+
+        function dismissPwaBanner() {
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.classList.add('hidden');
+            try { localStorage.setItem('pwa_banner_dismissed', 'true'); } catch (e) {}
+        }
 
         window.addEventListener('appinstalled', () => {
             deferredPrompt = null;
+            dismissPwaBanner();
             showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
         });
 
@@ -2669,6 +2734,7 @@
         }
 
         async function triggerPwaInstall() {
+            dismissPwaBanner();
             // 이미 PWA(독립형 모드)로 실행 중인 경우
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             if (isStandalone) {
