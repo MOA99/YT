@@ -9,16 +9,16 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="YT대시보드">
+    <meta name="apple-mobile-web-app-title" content="YT 대시보드">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="YT대시보드">
+    <meta name="application-name" content="YT 대시보드">
 
     <!-- Web App Manifest 연동 -->
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
 
-    <title>YT대시보드</title>
+    <title>YT 데이터 대시보드</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -165,7 +165,7 @@
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-30 flex items-center justify-around px-2 py-1.5">
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-30 flex items-center justify-around px-2 py-1.5 transform translate-z-0 backface-hidden">
         <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 py-1 text-indigo-400 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <span class="text-[10px] font-bold tracking-tight">이력조회</span>
@@ -1086,6 +1086,12 @@
             const dIcon = document.getElementById('desktop-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
 
+            // 로컬 캐시 초기화 후 최신 실시간 데이터 강제 페치
+            try {
+                localStorage.removeItem('yt_dashboard_data_v48');
+                localStorage.removeItem('yt_berth_data_cache_v9');
+            } catch (e) {}
+
             await Promise.allSettled([
                 fetchGoogleSheetData(false),
                 fetchMiniBoardSheetData(),
@@ -1100,8 +1106,14 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 6000);
                 
-                const response = await fetch(SHEET_CSV_URL + '&t=' + Date.now(), { 
-                    cache: 'no-store',
+                // 캐시 완전 무력화를 위한 고유 타임스탬프 및 헤더 추가
+                const nocacheUrl = `${SHEET_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                const response = await fetch(nocacheUrl, { 
+                    cache: 'reload',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    },
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
@@ -1109,7 +1121,7 @@
                 if (!response.ok) throw new Error('Network error');
                 const csvText = await response.text();
                 parseCSV(csvText);
-                if (!silent) showToast('최신 데이터로 동기화되었습니다.');
+                if (!silent) showToast('최신 실시간 데이터로 동기화되었습니다.');
             } catch (err) {
                 if (!silent) showToast('동기화 중 네트워크 지연이 발생했습니다.', true);
             }
@@ -1117,7 +1129,11 @@
 
         async function fetchMiniBoardSheetData() {
             try {
-                const response = await fetch(GUESTBOOK_CSV_URL + '&t=' + Date.now(), { cache: 'no-store' });
+                const nocacheUrl = `${GUESTBOOK_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                const response = await fetch(nocacheUrl, { 
+                    cache: 'reload',
+                    headers: { 'Cache-Control': 'no-cache, no-store' }
+                });
                 if (!response.ok) throw new Error('Network error');
                 const text = await response.text();
                 const rows = parseCSVTableFast(text);
@@ -1149,7 +1165,11 @@
 
         async function fetchBerthDataFromSheet() {
             try {
-                const response = await fetch(BERTH_CSV_URL + '&t=' + Date.now(), { cache: 'no-store' });
+                const nocacheUrl = `${BERTH_CSV_URL}&_t=${Date.now()}&nocache=1`;
+                const response = await fetch(nocacheUrl, { 
+                    cache: 'reload',
+                    headers: { 'Cache-Control': 'no-cache, no-store' }
+                });
                 if (!response.ok) throw new Error('Sheet network response failed');
                 const csvText = await response.text();
                 const allRows = parseCSVTableFast(csvText);
