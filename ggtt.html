@@ -17,7 +17,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
 
-    <title>YT대시보드</title>
+    <title>YT 데이터 대시보드</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -158,9 +158,9 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 (보라색 계열로 변경하여 제출 버튼 색상과 구분) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-35 bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95" title="맨 위로 이동">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    <!-- 상단 이동 플로팅 버튼 (깔끔한 프리미엄 배지 스타일로 디자인 개편) -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 (Bottom Navigation Bar) -->
@@ -538,8 +538,8 @@
                         </div>
 
                         <div class="pt-2">
-                            <!-- 제출하기 버튼 색상 변경 (에메랄드/청록 계열로 변경하여 상단이동 버튼과 색상 중복 회피) -->
-                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base rounded-xl shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2">
+                            <!-- 전체 디자인과 어울리는 프리미엄 인디고(Indigo) 그라데이션 색상 적용 -->
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
                                 <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
                             </button>
                         </div>
@@ -1387,7 +1387,7 @@
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (!container || !scrollBtn) return;
 
-            if (container.scrollTop > 300) {
+            if (container.scrollTop > 200 || window.scrollY > 200) {
                 scrollBtn.classList.remove('hidden');
             } else {
                 scrollBtn.classList.add('hidden');
@@ -1396,8 +1396,12 @@
 
         function scrollToTop() {
             const container = document.getElementById('main-scroll-container');
-            if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+            if (container) {
+                container.scrollTo({ top: 0, behavior: 'smooth' });
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
@@ -2251,7 +2255,7 @@
             
             if (submitBtn && submitBtnText) {
                 submitBtn.disabled = false;
-                submitBtn.className = 'w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base rounded-xl shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2';
+                submitBtn.className = 'w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2';
                 submitBtnText.innerText = '평가 제출하기';
             }
 
