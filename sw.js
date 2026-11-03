@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yt-dashboard-cache-v3';
+const CACHE_NAME = 'yt-dashboard-cache-v4';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -37,23 +37,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 구글 시트, 앱스크립트 및 모든 외부 데이터 요청은 로컬/서비스워커 캐시를 절대 타지 않고 항상 실시간 네트워크에서 최신 데이터를 강제로 가져오도록 설정
+// 외부 구글 시트 및 API 요청은 서비스 워커가 개입하지 않고 브라우저가 직접 네트워크로 처리하도록 예외 처리
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = request.url;
 
-  if (url.includes('docs.google.com/spreadsheets') || url.includes('script.google.com') || url.includes('pub?')) {
-    event.respondWith(
-      fetch(request, { 
-        cache: 'reload', 
-        headers: { 
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        } 
-      }).catch(() => {
-        return caches.match(request);
-      })
-    );
+  if (url.includes('docs.google.com') || url.includes('script.google.com')) {
     return;
   }
 
