@@ -186,10 +186,10 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
-    <!-- 토스트 알림창 -->
-    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-300 z-[60] bg-slate-900/95 dark:bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-sm pointer-events-none border border-indigo-500/40 dark:border-indigo-500/50 backdrop-blur-xl w-max max-w-[90vw]">
-        <svg id="toast-icon" class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span id="toast-msg" class="font-medium tracking-tight">성공적으로 처리되었습니다.</span>
+    <!-- 토스트 알림창 (Pull-to-Refresh 인디케이터와 동일한 글래스모피즘 디자인 적용) -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+        <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
     </div>
 
     <!-- 홈 화면 설치 플로팅 배너 (데스크탑에서는 좌측 사이드바를 피해서 우측 하단에 깔끔하게 배치) -->
@@ -1338,7 +1338,7 @@
             toastTimer = setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('-translate-y-24', 'opacity-0');
-            }, 3000);
+            }, 1000);
         }
 
         function toggleMobileSidebar() {
