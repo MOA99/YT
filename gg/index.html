@@ -2501,11 +2501,15 @@
             headerHTML += `</div></div>`;
             headerEl.innerHTML = headerHTML;
 
+            // 모바일 화면 세로 높이에 맞추어 B4~B8 타임라인 매트릭스가 한 화면에 다 들어오도록 동적 계산 (최소 높이 280px 보장)
+            const availableHeight = window.innerWidth < 768 ? Math.max(280, window.innerHeight - 250) : 370;
+            bodyEl.style.height = `${availableHeight}px`;
+
             let bodyHTML = "";
 
             BERTH_LIST.forEach((berthName) => {
                 bodyHTML += `
-                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative min-h-[60px] sm:min-h-[64px]">
+                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative">
                         <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center select-none">
                             <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800 dark:text-slate-200">
                                 ${berthName}
