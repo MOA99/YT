@@ -2501,8 +2501,13 @@
             headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
-            // 모바일 및 PC 화면 모두 동일하게 고정 높이(370px) 적용
-            bodyEl.style.height = `370px`;
+            // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 한 화면에 다 들어오도록 높이를 동적으로 축소 적용 (최소 240px, 데스크톱은 370px)
+            if (window.innerWidth < 768) {
+                const calculatedMobileHeight = Math.max(240, window.innerHeight - 280);
+                bodyEl.style.height = `${calculatedMobileHeight}px`;
+            } else {
+                bodyEl.style.height = `370px`;
+            }
 
             let bodyHTML = "";
 
