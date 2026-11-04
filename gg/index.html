@@ -2428,56 +2428,60 @@
             const day2 = new Date(rangeStartMs + 24 * 3600 * 1000);
             const day3 = new Date(rangeStartMs + 48 * 3600 * 1000);
 
-            let headerHTML = `
-                <div class="flex border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold">
-                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
-                        선석
-                    </div>
-                    <div class="flex-1 flex">
-            `;
+            // 동일한 CSS Grid 컬럼 정의 (선석 라벨 폭 + 1시간/2시간 단위 시간 틱 컬럼들)
+            const gridColsCss = `grid-template-columns: ${BERTH_COL_WIDTH}px repeat(${totalColumns}, minmax(0, 1fr));`;
 
+            // 1. 상단 날짜 헤더 그리드 구성 (각 날짜별 span 컬럼 수 계산)
+            let dateCellsHTML = '';
             if (activeHours === 72) {
-                headerHTML += `
-                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                // 72시간: 36컬럼 (하루 12컬럼씩)
+                dateCellsHTML = `
+                    <div style="grid-column: span 12;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    <div style="grid-column: span 12;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
-                    <div class="w-1/3 flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                    <div style="grid-column: span 12;" class="flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day3)}
                     </div>
                 `;
             } else if (activeHours === 48) {
-                headerHTML += `
-                    <div class="w-1/2 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                // 48시간: 48컬럼 (하루 24컬럼씩)
+                dateCellsHTML = `
+                    <div style="grid-column: span 24;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div class="w-1/2 flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    <div style="grid-column: span 24;" class="flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
                 `;
             } else {
-                headerHTML += `
-                    <div class="w-full flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                // 24시간: 24컬럼
+                dateCellsHTML = `
+                    <div style="grid-column: span 24;" class="flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
                 `;
             }
 
-            headerHTML += `
-                </div></div>
-                <div class="flex h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400">
-                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
+            let headerHTML = `
+                <div class="grid border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold select-none" style="${gridColsCss}">
+                    <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
+                        선석
+                    </div>
+                    ${dateCellsHTML}
+                </div>
+                <div class="grid h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400 select-none" style="${gridColsCss}">
+                    <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
                         시간(H)
                     </div>
-                    <div class="flex-1 flex">
             `;
 
             for (let c = 0; c < totalColumns; c++) {
@@ -2492,13 +2496,13 @@
                 }
 
                 headerHTML += `
-                    <div class="flex-1 flex items-center justify-center ${tickClass} leading-none">
+                    <div class="flex items-center justify-center ${tickClass} leading-none">
                         ${String(hour % 24 === 0 ? 24 : hour % 24).padStart(2, '0')}
                     </div>
                 `;
             }
 
-            headerHTML += `</div></div>`;
+            headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
             // 모바일 화면 세로 높이에 맞추어 B4~B8 타임라인 매트릭스가 한 화면에 다 들어오도록 동적 계산 (최소 높이 280px 보장)
@@ -2509,15 +2513,15 @@
 
             BERTH_LIST.forEach((berthName) => {
                 bodyHTML += `
-                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative">
-                        <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center select-none">
+                    <div class="grid flex-1 border-b border-slate-200 dark:border-slate-800 relative select-none" style="${gridColsCss}">
+                        <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
                             <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800 dark:text-slate-200">
                                 ${berthName}
                             </span>
                         </div>
 
-                        <div class="flex-1 relative flex h-full">
-                            <div class="absolute inset-0 flex pointer-events-none">
+                        <div class="col-span-${totalColumns} relative flex h-full" style="grid-column: span ${totalColumns};">
+                            <div class="absolute inset-0 grid pointer-events-none" style="grid-template-columns: repeat(${totalColumns}, minmax(0, 1fr));">
                 `;
 
                 for (let c = 0; c < totalColumns; c++) {
@@ -2531,7 +2535,7 @@
                         if (is6h) cellClass = "six-hour-border";
                     }
 
-                    bodyHTML += `<div class="flex-1 h-full ${cellClass}"></div>`;
+                    bodyHTML += `<div class="h-full ${cellClass}"></div>`;
                 }
 
                 bodyHTML += `</div>`;
