@@ -154,28 +154,42 @@
         /* Pull to Refresh 인디케이터 */
         #ptr-indicator {
             position: absolute;
-            top: -50px;
-            left: 0;
-            right: 0;
-            height: 50px;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: auto;
+            min-width: 150px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease;
+            padding: 0 16px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
             z-index: 45;
-            color: #6366f1;
+            color: #ffffff;
             font-size: 12px;
             font-weight: 600;
+            opacity: 0;
             pointer-events: none;
+        }
+        .dark #ptr-indicator {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
-    <!-- 토스트 알림창 -->
-    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-300 z-[60] bg-slate-900/95 dark:bg-slate-800/95 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-sm pointer-events-none border border-slate-700/50 backdrop-blur-md w-max max-w-[90vw]">
-        <svg id="toast-icon" class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span id="toast-msg" class="font-medium tracking-tight">성공적으로 처리되었습니다.</span>
+    <!-- 토스트 알림창 (Pull-to-Refresh 인디케이터와 동일한 글래스모피즘 디자인 적용) -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+        <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
     </div>
 
     <!-- 홈 화면 설치 플로팅 배너 (데스크탑에서는 좌측 사이드바를 피해서 우측 하단에 깔끔하게 배치) -->
@@ -297,10 +311,10 @@
     <!-- 본문 메인 영역 -->
     <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
         
-        <!-- Pull to Refresh 인디케이터 -->
+        <!-- Pull to Refresh 세련된 인디케이터 -->
         <div id="ptr-indicator">
-            <svg id="ptr-icon" class="w-5 h-5 animate-spin inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span id="ptr-text">최신 데이터 동기화 중...</span>
+            <svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
         </div>
 
         <!-- 데스크톱 헤더 -->
@@ -478,16 +492,6 @@
             <!-- 3. YT 평가 등록 탭 -->
             <section id="tab-register" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
-                    <div class="p-6 sm:p-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
-                        <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 평가 등록</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">승/하차 시 차량 상태를 항목별로 평가하고 기록합니다.</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-base shadow-2xs">
-                            ✏️
-                        </div>
-                    </div>
-                    
                     <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
@@ -529,11 +533,11 @@
                                 <table class="w-full text-center border-collapse text-xs">
                                     <thead>
                                         <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">구분</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">기동</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(상하)</span></th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">(앞뒤)</span></th>
-                                            <th class="py-3 px-3 w-1/5">의자</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle">구분</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle">기동</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle pt-2.5 pb-2 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(상하)</span></th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle pt-2.5 pb-2 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(앞뒤)</span></th>
+                                            <th class="py-3 px-3 w-1/5 align-middle">의자</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
@@ -584,51 +588,51 @@
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                         <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT별 통합 평균 리스트</h3>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 통합 리스트</h3>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse table-auto min-w-[960px]">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
                             <thead>
                                 <tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="py-4 px-6 w-24 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('ytNum')">
+                                    <th class="py-4 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('ytNum')">
                                         <div class="flex items-center gap-1.5">
                                             <span>YT</span>
                                             <span id="sort-icon-ytNum" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('type')">
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('type')">
                                         <div class="flex items-center gap-1.5">
                                             <span>타입</span>
                                             <span id="sort-icon-type" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('avgScore')">
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('avgScore')">
                                         <div class="flex items-center gap-1.5">
                                             <span>평균총점</span>
                                             <span id="sort-icon-avgScore" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestDate')">
+                                    <th class="py-4 px-4 w-40 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestDate')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 평가일</span>
                                             <span id="sort-icon-latestDate" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('count')">
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('count')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>평가횟수</span>
                                             <span id="sort-icon-count" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-44 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestAuthor')">
+                                    <th class="py-4 px-4 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestAuthor')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 작성자</span>
                                             <span id="sort-icon-latestAuthor" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-6 w-64 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
+                                    <th class="py-4 px-4 min-w-[280px] whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 특이사항</span>
                                             <span id="sort-icon-latestMemo" class="inline-block text-slate-400"></span>
@@ -637,16 +641,6 @@
                                 </tr>
                             </thead>
                             <tbody id="integrated-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
-                                <!-- 스켈레톤 UI -->
-                                <tr class="animate-pulse">
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-12"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-14"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
-                                    <td class="py-4 px-6"><div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-40"></div></td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -696,7 +690,7 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[950px]">
+                        <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
                             <thead>
                                 <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
                                     <th class="py-3.5 px-4 w-36 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
@@ -704,11 +698,11 @@
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">기동</th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">충격(상하)</th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(상하)</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">의자</th>
                                     <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 whitespace-nowrap">특이사항</th>
+                                    <th class="py-3.5 px-4 min-w-[240px] whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
                             <tbody id="raw-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
@@ -795,7 +789,7 @@
             <section id="tab-guide" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
                     <div class="border-b border-slate-100 dark:border-slate-800 pb-4">
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">YT 승/하차 평가 대시보드 이용 가이드</h3>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">YT 대시보드 이용 가이드</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">시스템의 주요 기능과 사용 방법을 안내해 드립니다.</p>
                     </div>
 
@@ -1136,9 +1130,9 @@
                 if (!response.ok) throw new Error('Network error');
                 const csvText = await response.text();
                 parseCSV(csvText, forceClean);
-                if (!silent) showToast('최신 실시간 데이터로 동기화되었습니다.');
+                if (!silent) showToast('최신 데이터로 동기화되었습니다.');
             } catch (err) {
-                console.error('구글 시트 데이터 로드 오류:', err);
+                console.error('데이터 로드 오류:', err);
                 if (!silent) showToast('데이터 동기화 중 오류가 발생했습니다.', true);
             }
         }
@@ -1344,7 +1338,7 @@
             toastTimer = setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('-translate-y-24', 'opacity-0');
-            }, 3000);
+            }, 1000);
         }
 
         function toggleMobileSidebar() {
@@ -1911,7 +1905,6 @@
                 }
             });
 
-            // 모바일: 화면 높이에서 상하단바/타이틀 등(약 380px)을 제외한 가용 공간을 행 높이(약 60px)로 나누어 동적 계산
             const currentRowsPerPage = window.innerWidth < 768 
                 ? Math.max(3, Math.min(Math.floor((window.innerHeight - 380) / 60), 10)) 
                 : rowsPerPage;
@@ -1941,13 +1934,13 @@
                     let badgeHtml = `<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] ${info.badgeClass} inline-block">${info.text}</span>`;
 
                     tr.innerHTML = `
-                        <td class="py-4 px-6 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(group.ytNum)}</td>
-                        <td class="py-4 px-6 whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(group.type)}</span></td>
-                        <td class="py-4 px-6 font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">${escapeHtml(group.avgScore)}점</td>
-                        <td class="py-4 px-6 text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap w-44"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
-                        <td class="py-4 px-6 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">${escapeHtml(group.count)}회</td>
-                        <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">${escapeHtml(group.latestAuthor)}</td>
-                        <td class="py-4 px-6 w-64 text-slate-500 dark:text-slate-400 whitespace-nowrap truncate" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
+                        <td class="py-4 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(group.ytNum)}</td>
+                        <td class="py-4 px-4 whitespace-nowrap w-28"><span class="px-2.5 py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(group.type)}</span></td>
+                        <td class="py-4 px-4 font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap w-28">${escapeHtml(group.avgScore)}점</td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap w-40"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
+                        <td class="py-4 px-4 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap w-28">${escapeHtml(group.count)}회</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap w-32">${escapeHtml(group.latestAuthor)}</td>
+                        <td class="py-4 px-4 min-w-[280px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
                     `;
                     integratedBody.appendChild(tr);
                 });
@@ -2007,7 +2000,6 @@
                 }
             });
 
-            // 모바일: 화면 높이에서 상하단바/통계카드 등(약 520px)을 제외한 가용 공간을 행 높이(약 55px)로 나누어 동적 계산
             const currentRowsPerPage = window.innerWidth < 768 
                 ? Math.max(3, Math.min(Math.floor((window.innerHeight - 520) / 55), 10)) 
                 : rowsPerPage;
@@ -2028,16 +2020,16 @@
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                     tr.innerHTML = `
-                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHtml(item.date)}</td>
-                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
-                        <td class="py-3.5 px-4 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
-                        <td class="py-3.5 px-4 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
+                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">${escapeHtml(item.date)}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
+                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                        <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
-                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
-                        <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
+                        <td class="py-3.5 px-4 min-w-[240px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
                     rawTableBody.appendChild(tr);
                 });
@@ -2819,6 +2811,7 @@
                 const hasScroll = container.scrollWidth > container.clientWidth;
                 const isBerthCardMode = container.id === 'berth-matrix-view-container' && mobileBerthViewMode === 'card';
 
+                // 어느 한 페이지라도 스크롤이 발생한다면 테이블을 감싸는 모든 테이블 영역에 스크롤 안내 배너 상시 표시
                 if (hasScroll && !isBerthCardMode) {
                     if (!hint) {
                         hint = document.createElement('div');
@@ -2833,7 +2826,13 @@
                     }
                     hint.style.display = 'flex';
                 } else if (hint) {
-                    hint.style.display = 'none';
+                    // 전체 데이터 중 하나라도 스크롤이 필요하면 모든 페이지에 안내 메시지 표시를 유지하도록 강제 통일
+                    const anyTableHasScroll = Array.from(document.querySelectorAll('.overflow-x-auto')).some(c => c.scrollWidth > c.clientWidth);
+                    if (anyTableHasScroll && container.id !== 'berth-matrix-view-container') {
+                        hint.style.display = 'flex';
+                    } else {
+                        hint.style.display = 'none';
+                    }
                 }
             });
         }
@@ -2841,10 +2840,17 @@
         function setupPullToRefresh() {
             const mainContainer = document.getElementById('main-scroll-container');
             const ptrIndicator = document.getElementById('ptr-indicator');
+            const ptrIcon = document.getElementById('ptr-icon');
+            const ptrText = document.getElementById('ptr-text');
             if (!mainContainer || !ptrIndicator) return;
 
+            let touchStartY = 0;
+            let currentTranslateY = 0;
+            let isPulling = false;
+            const threshold = 95; // 새로고침이 트리거되는 당김 임계값을 높여 덜 예민하게 조정
+
             mainContainer.addEventListener('touchstart', (e) => {
-                if (mainContainer.scrollTop === 0) {
+                if (mainContainer.scrollTop <= 0) {
                     touchStartY = e.touches[0].clientY;
                     isPulling = true;
                 }
@@ -2854,21 +2860,40 @@
                 if (!isPulling) return;
                 const currentY = e.touches[0].clientY;
                 const diff = currentY - touchStartY;
-                if (diff > 0 && diff < 140) {
-                    ptrIndicator.style.transform = `translateY(${diff}px)`;
+                
+                if (diff > 0 && mainContainer.scrollTop <= 0) {
+                    // 감쇠 계수(0.35)를 적용하여 쫀득하고 부드럽게 늘어나도록 설계
+                    currentTranslateY = Math.min(diff * 0.35, 110);
+                    
+                    ptrIndicator.style.opacity = Math.min(currentTranslateY / 50, 1);
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(${currentTranslateY + 15}px)`;
+
+                    if (currentTranslateY >= threshold) {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-180";
+                        ptrText.innerText = "놓으면 새로고침됩니다";
+                    } else {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-0";
+                        ptrText.innerText = "아래로 당겨서 새로고침";
+                    }
                 }
             }, { passive: true });
 
             mainContainer.addEventListener('touchend', async (e) => {
                 if (!isPulling) return;
                 isPulling = false;
-                const transformVal = ptrIndicator.style.transform;
-                const match = transformVal.match(/translateY\(([\d.]+)px\)/);
-                if (match && parseFloat(match[1]) > 70) {
-                    ptrIndicator.style.transform = 'translateY(60px)';
+
+                if (currentTranslateY >= threshold) {
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(75px)`;
+                    ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 animate-spin";
+                    ptrText.innerText = "최신 데이터 동기화 중...";
+
                     await manualRefreshAll();
                 }
-                ptrIndicator.style.transform = 'translateY(0px)';
+
+                // 원위치로 부드럽게 복귀
+                ptrIndicator.style.transform = `translateX(-50%) translateY(0px)`;
+                ptrIndicator.style.opacity = '0';
+                currentTranslateY = 0;
             });
         }
 
