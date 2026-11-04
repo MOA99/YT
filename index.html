@@ -2504,7 +2504,7 @@
             // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 B4~B8 5개 선석 전체가 스크롤 없이 한 화면에 다 들어오도록 동적 높이 계산 (여백 제거)
             if (window.innerWidth < 768) {
                 const availableHeight = window.innerHeight - 200;
-                const calculatedMobileHeight = Math.max(160, Math.min(availableHeight, 300));
+                const calculatedMobileHeight = Math.max(160, Math.min(availableHeight, 310));
                 bodyEl.style.height = `${calculatedMobileHeight}px`;
                 bodyEl.style.overflowY = 'hidden';
             } else {
