@@ -2501,8 +2501,8 @@
             headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
-            // 모바일 화면 세로 높이에 맞추어 B4~B8 타임라인 매트릭스가 하단 네비게이션바를 포함한 한 화면에 다 들어오도록 동적 계산 (최소 높이 240px, 최대 높이 460px 제한 적용)
-            const availableHeight = window.innerWidth < 768 ? Math.max(240, Math.min(window.innerHeight - 245, 460)) : 370;
+            // 모바일 화면 세로 높이에 맞추어 B4~B8 타임라인 매트릭스의 최대 높이 제한을 제거하고 최소값(240px)만 유지하도록 동적 계산
+            const availableHeight = window.innerWidth < 768 ? Math.max(240, window.innerHeight - 245) : 370;
             bodyEl.style.height = `${availableHeight}px`;
 
             let bodyHTML = "";
