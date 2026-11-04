@@ -2501,9 +2501,9 @@
             headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
-            // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 한 화면에 다 들어오도록 높이를 동적으로 축소 적용 (최소 240px, 데스크톱은 370px)
+            // 모바일 접속 시 하단 네비게이션(16h + 여백) 위로 한 화면에 완벽히 다 들어오도록 동적 높이 계산 (최소 210px 보장)
             if (window.innerWidth < 768) {
-                const calculatedMobileHeight = Math.max(240, window.innerHeight - 280);
+                const calculatedMobileHeight = Math.max(210, window.innerHeight - 310);
                 bodyEl.style.height = `${calculatedMobileHeight}px`;
             } else {
                 bodyEl.style.height = `370px`;
