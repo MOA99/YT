@@ -243,8 +243,9 @@
         <div class="p-6 flex items-center justify-between border-b border-slate-800">
             <div class="flex items-center space-x-3">
                 <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
                     </svg>
                 </div>
                 <div>
@@ -340,16 +341,27 @@
             </div>
         </header>
 
+        <!-- 모바일 브레드크럼 헤더 -->
+        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>YT Dashboard</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
+            </div>
+            <button onclick="manualRefreshAll()" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <svg id="mobile-refresh-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
+        </div>
+
         <div class="p-4 sm:p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-6">
 
             <!-- 1. 선석 현황 탭 -->
             <section id="tab-berth" class="tab-content hidden space-y-4 sm:space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
-                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
+                    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="w-full md:w-auto flex items-center justify-between">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">선석 배정 현황</h3>
                                     <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">타임라인</span>
                                 </div>
                                 <p id="berth-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2일간 선석별 접안 일정</p>
@@ -376,7 +388,7 @@
                         </div>
                     </div>
 
-                    <div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-2 sm:p-4">
+                    <div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-4">
                         <div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs bg-white dark:bg-slate-900 flex flex-col">
                             <div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 select-none">
                             </div>
@@ -385,10 +397,10 @@
                         </div>
                     </div>
 
-                    <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
+                    <div id="berth-card-view-container" class="hidden p-4 space-y-4 bg-slate-50/60 dark:bg-slate-950">
                     </div>
 
-                    <div class="px-4 sm:px-5 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end gap-2 text-xs text-slate-600 dark:text-slate-400">
+                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end gap-2 text-xs text-slate-600 dark:text-slate-400">
                         <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
                         <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
                     </div>
@@ -397,7 +409,7 @@
 
             <!-- 2. YT 이력 조회 탭 -->
             <section id="tab-history" class="tab-content space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
                         <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                             <option value="ytNum">YT번호 검색</option>
@@ -411,7 +423,7 @@
                     </div>
                 </div>
 
-                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
                     <div class="flex items-center space-x-4">
                         <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
                         <div>
@@ -443,7 +455,7 @@
                 </div>
 
                 <div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div id="history-scroll-pane" class="overflow-x-auto">
+                    <div id="history-scroll-pane" class="overflow-x-auto p-4 sm:p-6">
                         <table class="w-full text-left border-collapse table-auto min-w-[780px]">
                             <thead>
                                 <tr class="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs tracking-wider font-bold">
@@ -476,7 +488,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="history-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    <div id="history-pagination" class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                     <div id="no-history-data" class="hidden py-16 text-center space-y-4">
                         <div>
@@ -494,7 +506,7 @@
             <!-- 3. YT 평가 등록 탭 -->
             <section id="tab-register" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
-                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-4 sm:p-6 space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
@@ -588,13 +600,7 @@
             <!-- 4. YT 통합 리스트 탭 -->
             <section id="tab-integrated" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 통합 리스트</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto p-4 sm:p-6">
                         <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
                             <thead>
                                 <tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
@@ -646,7 +652,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="integrated-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    <div id="integrated-pagination" class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
@@ -685,13 +691,7 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">원본 입력 데이터 목록</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">사용자에게 입력받은 모든 평가 원본 데이터 입니다.</p>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto p-4 sm:p-6">
                         <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
                             <thead>
                                 <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
@@ -711,7 +711,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="raw-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    <div id="raw-pagination" class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
@@ -724,14 +724,7 @@
 
             <!-- 7. 미니 게시판 탭 -->
             <section id="tab-board" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
-                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">미니 게시판</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">자유롭게 의견을 남겨주세요.</p>
-                        </div>
-                    </div>
-
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
                     <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
@@ -770,7 +763,7 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+                    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
                         <div class="flex items-center gap-2">
                             <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</h4>
                             <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
@@ -780,9 +773,9 @@
                             <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                     </div>
-                    <div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800 p-4 sm:p-6">
                     </div>
-                    <div id="board-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    <div id="board-pagination" class="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                 </div>
             </section>
@@ -976,7 +969,7 @@
             COS: { bg: "bg-sky-700 text-white", border: "border-sky-800", badge: "bg-sky-900 text-sky-100 border border-sky-400/30", subBg: "bg-sky-800/80 text-sky-100 border-sky-500/50" },
             CMA: { bg: "bg-indigo-700 text-white", border: "border-indigo-800", badge: "bg-indigo-900 text-indigo-100 border border-indigo-400/30", subBg: "bg-indigo-800/80 text-indigo-100 border-indigo-500/50" },
             EGR: { bg: "bg-green-700 text-white", border: "border-green-800", badge: "bg-green-900 text-green-100 border border-green-400/30", subBg: "bg-green-800/80 text-green-100 border-green-500/50" },
-            HMM: { bg: "bg-red-700 text-white", border: "border-red-800", badge: "bg-red-900 text-red-100 border border-red-400/30", subBg: "bg-red-800/80 text-red-100 border-red-500/50" },
+            HMM: { bg: "bg-red-700 text-white", border: "border-red-800", badge: "bg-red-900 text-red-100 border border-red-400/30", subBg: "bg-red-800/80 text-red-100 border-red-800/50" },
             YML: { bg: "bg-rose-600 text-white", border: "border-rose-700", badge: "bg-rose-800 text-rose-100 border border-rose-400/30", subBg: "bg-rose-700/80 text-rose-100 border-rose-700/50" },
             SNK: { bg: "bg-teal-700 text-white", border: "border-teal-800", badge: "bg-teal-900 text-teal-100 border border-teal-400/30", subBg: "bg-teal-800/80 text-teal-100 border-teal-500/50" },
             DEFAULT: { bg: "bg-slate-700 text-white", border: "border-slate-800", badge: "bg-slate-900 text-slate-200 border border-slate-500/30", subBg: "bg-slate-800/80 text-slate-200 border-slate-600/50" }
@@ -1114,7 +1107,9 @@
 
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
+            const mIcon = document.getElementById('mobile-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
+            if (mIcon) mIcon.classList.add('animate-spin');
 
             await Promise.allSettled([
                 fetchGoogleSheetData(false, true),
@@ -1123,6 +1118,7 @@
             ]);
 
             if (dIcon) dIcon.classList.remove('animate-spin');
+            if (mIcon) mIcon.classList.remove('animate-spin');
         }
 
         async function fetchGoogleSheetData(silent = true, forceClean = false) {
@@ -1401,8 +1397,11 @@
                 'board': '미니 게시판',
                 'guide': '이용 가이드'
             };
+            const currentTitle = titles[tabId] || '대시보드';
             const pageTitleEl = document.getElementById('page-title');
-            if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
+            const mobileBreadcrumbEl = document.getElementById('mobile-breadcrumb-title');
+            if (pageTitleEl) pageTitleEl.innerText = currentTitle;
+            if (mobileBreadcrumbEl) mobileBreadcrumbEl.innerText = currentTitle;
 
             renderActiveTab();
 
@@ -1858,11 +1857,11 @@
             if (!paginationEl) return;
             paginationEl.innerHTML = `
                 <div>
-                    총 <b>${totalRows}</b>개 데이터 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> 표시 (페이지 ${currentPage}/${totalPages})
+                    총 <b>${totalRows}</b>개 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> (${currentPage}/${totalPages})
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1.5">
                     <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>처음</button>
-                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>이전</button>
+                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-2.5.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>이전</button>
                     <span class="px-2 font-semibold text-slate-700 dark:text-slate-300">${currentPage} / ${totalPages}</span>
                     <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>다음</button>
                     <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>맨끝</button>
@@ -2139,7 +2138,7 @@
                         const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
                         const avatarTxt = item.author.trim().slice(0, 1) || '익';
                         const div = document.createElement('div');
-                        div.className = 'p-4 sm:p-5 hover:bg-slate-50/85 dark:hover:bg-slate-800/50 transition-colors flex items-start space-x-3.5';
+                        div.className = 'p-4 sm:p-5 hover:bg-slate-50/85 dark:hover:bg-slate-800/50 transition-colors flex items-start space-x-3.5 border-b border-slate-100 dark:border-slate-800 last:border-b-0';
                         div.innerHTML = `
                             <div class="w-9 h-9 rounded-xl bg-indigo-600/10 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">${escapeHtml(avatarTxt)}</div>
                             <div class="flex-1 min-w-0">
@@ -2501,10 +2500,10 @@
             headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
-            // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 B4~B8 5개 선석 전체가 스크롤 없이 한 화면에 다 들어오도록 동적 높이 계산 (여백 제거)
+            // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 B4~B8 5개 선석 전체가 스크롤 없이 한 화면에 다 들어오도록 동적 높이 계산 (여백 축소)
             if (window.innerWidth < 768) {
-                const availableHeight = window.innerHeight - 200;
-                const calculatedMobileHeight = Math.max(160, Math.min(availableHeight, 300));
+                const availableHeight = window.innerHeight - 155;
+                const calculatedMobileHeight = Math.max(180, Math.min(availableHeight, 340));
                 bodyEl.style.height = `${calculatedMobileHeight}px`;
                 bodyEl.style.overflowY = 'hidden';
             } else {
