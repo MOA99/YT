@@ -2501,9 +2501,11 @@
             headerHTML += `</div>`;
             headerEl.innerHTML = headerHTML;
 
-            // 모바일 접속 시 하단 네비게이션(16h + 여백) 위로 한 화면에 완벽히 다 들어오도록 동적 높이 계산 (최소 210px 보장)
+            // 모바일 접속 시 하단 네비게이션 및 여백을 고려하여 B4~B8 5개 선석 전체가 한 화면에 다 들어오도록 동적 높이 계산
             if (window.innerWidth < 768) {
-                const calculatedMobileHeight = Math.max(210, window.innerHeight - 310);
+                // 사용 가능한 뷰포트 높이에서 카드 헤더, 패딩, 하단 네비게이션 공간(약 230px)을 제외한 가용 높이를 5개 선석(B4~B8)에 맞춤 분배
+                const availableHeight = window.innerHeight - 230;
+                const calculatedMobileHeight = Math.max(180, Math.min(availableHeight, 320));
                 bodyEl.style.height = `${calculatedMobileHeight}px`;
             } else {
                 bodyEl.style.height = `370px`;
