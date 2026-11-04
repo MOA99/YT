@@ -154,19 +154,33 @@
         /* Pull to Refresh 인디케이터 */
         #ptr-indicator {
             position: absolute;
-            top: -50px;
-            left: 0;
-            right: 0;
-            height: 50px;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: auto;
+            min-width: 150px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease;
+            padding: 0 16px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
             z-index: 45;
-            color: #6366f1;
+            color: #ffffff;
             font-size: 12px;
             font-weight: 600;
+            opacity: 0;
             pointer-events: none;
+        }
+        .dark #ptr-indicator {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
@@ -297,10 +311,10 @@
     <!-- 본문 메인 영역 -->
     <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
         
-        <!-- Pull to Refresh 인디케이터 -->
+        <!-- Pull to Refresh 세련된 인디케이터 -->
         <div id="ptr-indicator">
-            <svg id="ptr-icon" class="w-5 h-5 animate-spin inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span id="ptr-text">최신 데이터 동기화 중...</span>
+            <svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
         </div>
 
         <!-- 데스크톱 헤더 -->
@@ -2826,10 +2840,17 @@
         function setupPullToRefresh() {
             const mainContainer = document.getElementById('main-scroll-container');
             const ptrIndicator = document.getElementById('ptr-indicator');
+            const ptrIcon = document.getElementById('ptr-icon');
+            const ptrText = document.getElementById('ptr-text');
             if (!mainContainer || !ptrIndicator) return;
 
+            let touchStartY = 0;
+            let currentTranslateY = 0;
+            let isPulling = false;
+            const threshold = 95; // 새로고침이 트리거되는 당김 임계값을 높여 덜 예민하게 조정
+
             mainContainer.addEventListener('touchstart', (e) => {
-                if (mainContainer.scrollTop === 0) {
+                if (mainContainer.scrollTop <= 0) {
                     touchStartY = e.touches[0].clientY;
                     isPulling = true;
                 }
@@ -2839,21 +2860,40 @@
                 if (!isPulling) return;
                 const currentY = e.touches[0].clientY;
                 const diff = currentY - touchStartY;
-                if (diff > 0 && diff < 140) {
-                    ptrIndicator.style.transform = `translateY(${diff}px)`;
+                
+                if (diff > 0 && mainContainer.scrollTop <= 0) {
+                    // 감쇠 계수(0.35)를 적용하여 쫀득하고 부드럽게 늘어나도록 설계
+                    currentTranslateY = Math.min(diff * 0.35, 110);
+                    
+                    ptrIndicator.style.opacity = Math.min(currentTranslateY / 50, 1);
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(${currentTranslateY + 15}px)`;
+
+                    if (currentTranslateY >= threshold) {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-180";
+                        ptrText.innerText = "놓으면 새로고침됩니다";
+                    } else {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-0";
+                        ptrText.innerText = "아래로 당겨서 새로고침";
+                    }
                 }
             }, { passive: true });
 
             mainContainer.addEventListener('touchend', async (e) => {
                 if (!isPulling) return;
                 isPulling = false;
-                const transformVal = ptrIndicator.style.transform;
-                const match = transformVal.match(/translateY\(([\d.]+)px\)/);
-                if (match && parseFloat(match[1]) > 70) {
-                    ptrIndicator.style.transform = 'translateY(60px)';
+
+                if (currentTranslateY >= threshold) {
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(75px)`;
+                    ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 animate-spin";
+                    ptrText.innerText = "최신 데이터 동기화 중...";
+
                     await manualRefreshAll();
                 }
-                ptrIndicator.style.transform = 'translateY(0px)';
+
+                // 원위치로 부드럽게 복귀
+                ptrIndicator.style.transform = `translateX(-50%) translateY(0px)`;
+                ptrIndicator.style.opacity = '0';
+                currentTranslateY = 0;
             });
         }
 
