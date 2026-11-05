@@ -115,6 +115,7 @@
         }
         .now-indicator-line {
             background-color: rgba(239, 68, 68, 0.55);
+            z-index: 55;
         }
         .vessel-block {
             cursor: pointer;
@@ -2598,13 +2599,13 @@
             bodyHTML += `
                 <div 
                     id="dynamic-now-line"
-                    class="absolute top-0 bottom-0 w-[1.5px] now-indicator-line z-50 pointer-events-none transition-all duration-300"
+                    class="absolute top-0 bottom-0 w-[1.5px] now-indicator-line z-[60] pointer-events-none transition-all duration-300"
                     style="display: none;"
                 >
-                    <div class="absolute -top-3 -translate-x-1/2 left-1/2 px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none shadow-md z-50">
+                    <div class="absolute -top-3 -translate-x-1/2 left-1/2 px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none shadow-md z-[60]">
                         <span>NOW</span>
                     </div>
-                    <div class="absolute -bottom-1 -translate-x-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-red-500/80"></div>
+                    <div class="absolute -bottom-1 -translate-x-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-red-500/85"></div>
                 </div>
             `;
 
