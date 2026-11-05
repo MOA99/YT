@@ -115,7 +115,6 @@
         }
         .now-indicator-line {
             background-color: rgba(239, 68, 68, 0.55);
-            z-index: 55;
         }
         .vessel-block {
             cursor: pointer;
@@ -187,13 +186,13 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
-    <!-- 토스트 알림창 -->
+    <!-- 토스트 알림창 (Pull-to-Refresh 인디케이터와 동일한 글래스모피즘 디자인 적용) -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
         <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
     </div>
 
-    <!-- 홈 화면 설치 플로팅 배너 -->
+    <!-- 홈 화면 설치 플로팅 배너 (데스크탑에서는 좌측 사이드바를 피해서 우측 하단에 깔끔하게 배치) -->
     <div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md">
         <div class="flex items-center space-x-3 min-w-0">
             <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
@@ -210,7 +209,7 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 -->
+    <!-- 상단 이동 플로팅 버튼 (데스크톱 전용) -->
     <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-8 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
@@ -244,10 +243,7 @@
         <div class="p-6 flex items-center justify-between border-b border-slate-800">
             <div class="flex items-center space-x-3">
                 <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 </div>
                 <div>
                     <h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1>
@@ -321,26 +317,9 @@
             <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
         </div>
 
-        <!-- 모바일 상단 브레드크럼 바 -->
-        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-20 transition-colors">
-            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                <span>YT Dashboard</span>
-                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
-            </div>
-            <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
-                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                <span>동기화</span>
-            </button>
-        </div>
-
         <!-- 데스크톱 헤더 -->
         <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20 transition-colors">
-            <div class="flex items-center space-x-3">
-                <span class="text-xs font-semibold text-slate-400">YT Dashboard</span>
-                <span class="text-slate-300 dark:text-slate-700">/</span>
-                <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
-            </div>
+            <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             <div class="flex items-center space-x-3">
                 <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer" title="구글 시트 데이터 즉시 동기화">
                     <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -359,17 +338,19 @@
             </div>
         </header>
 
-        <div class="p-4 sm:p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-6 pb-24 md:pb-8">
+        <div class="p-4 sm:p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-6">
 
             <!-- 1. 선석 현황 탭 -->
             <section id="tab-berth" class="tab-content hidden space-y-4 sm:space-y-6">
-                <!-- 모바일/데스크톱 통일 브레드크럼 및 컨트롤 바 -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
-                    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="w-full md:w-auto flex items-center justify-between">
-                            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                <span id="berth-subtitle" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">2일간 선석별 접안 일정</span>
-                                <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900 ml-2">타임라인</span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">선석 배정 현황</h3>
+                                    <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">타임라인</span>
+                                </div>
+                                <p id="berth-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2일간 선석별 접안 일정</p>
                             </div>
                             <div class="flex md:hidden items-center bg-slate-200 dark:bg-slate-800 p-0.5 rounded-xl">
                                 <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">
@@ -405,19 +386,16 @@
                     <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
                     </div>
 
-                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                        <span class="text-xs text-slate-500 dark:text-slate-400">실시간 선석 접안 타임라인 모니터링</span>
-                        <div class="flex items-center gap-2">
-                            <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
-                        </div>
+                    <div class="px-4 sm:px-5 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
                     </div>
                 </div>
             </section>
 
             <!-- 2. YT 이력 조회 탭 -->
             <section id="tab-history" class="tab-content space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
                         <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                             <option value="ytNum">YT번호 검색</option>
@@ -431,7 +409,7 @@
                     </div>
                 </div>
 
-                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
                     <div class="flex items-center space-x-4">
                         <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
                         <div>
@@ -608,6 +586,12 @@
             <!-- 4. YT 통합 리스트 탭 -->
             <section id="tab-integrated" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 통합 리스트</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
+                        </div>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
                             <thead>
@@ -699,6 +683,12 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100">원본 입력 데이터 목록</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">사용자에게 입력받은 모든 평가 원본 데이터 입니다.</p>
+                        </div>
+                    </div>
                     <div class="overflow-x-auto">
                         <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
                             <thead>
@@ -732,7 +722,14 @@
 
             <!-- 7. 미니 게시판 탭 -->
             <section id="tab-board" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">미니 게시판</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">자유롭게 의견을 남겨주세요.</p>
+                        </div>
+                    </div>
+
                     <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
@@ -771,9 +768,9 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
                         <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</span>
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</h4>
                             <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
                         </div>
                         <div class="relative w-full sm:w-64">
@@ -791,6 +788,11 @@
             <!-- 8. 이용 가이드 탭 -->
             <section id="tab-guide" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
+                    <div class="border-b border-slate-100 dark:border-slate-800 pb-4">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">YT 대시보드 이용 가이드</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">시스템의 주요 기능과 사용 방법을 안내해 드립니다.</p>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
                             <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
@@ -893,6 +895,9 @@
         let toastTimer = null;
         let resizeTimer = null;
         let deferredPrompt = null;
+
+        let touchStartY = 0;
+        let isPulling = false;
 
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
@@ -1107,9 +1112,7 @@
 
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
-            const mIcon = document.getElementById('mobile-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
-            if (mIcon) mIcon.classList.add('animate-spin');
 
             await Promise.allSettled([
                 fetchGoogleSheetData(false, true),
@@ -1118,7 +1121,6 @@
             ]);
 
             if (dIcon) dIcon.classList.remove('animate-spin');
-            if (mIcon) mIcon.classList.remove('animate-spin');
         }
 
         async function fetchGoogleSheetData(silent = true, forceClean = false) {
@@ -1400,9 +1402,6 @@
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
 
-            const mobileTitleEl = document.getElementById('mobile-breadcrumb-title');
-            if (mobileTitleEl) mobileTitleEl.innerText = titles[tabId] || '대시보드';
-
             renderActiveTab();
 
             if (tabId === 'berth') {
@@ -1428,6 +1427,7 @@
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (!container || !scrollBtn) return;
 
+            // 모바일 화면(768px 미만)에서는 무조건 숨김
             if (window.innerWidth < 768) {
                 scrollBtn.classList.add('hidden');
                 return;
@@ -1802,6 +1802,7 @@
                 }
             });
 
+            // 모바일: 화면 높이에서 상하단바/검색창 등(약 420px)을 제외한 가용 공간을 행 높이(약 55px)로 나누어 동적 계산 (최소 3개, 최대 10개)
             const currentRowsPerPage = window.innerWidth < 768 
                 ? Math.max(3, Math.min(Math.floor((window.innerHeight - 420) / 55), 10)) 
                 : rowsPerPage;
@@ -1859,11 +1860,11 @@
                     총 <b>${totalRows}</b>개 데이터 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> 표시 (페이지 ${currentPage}/${totalPages})
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed text-center"' : 'class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-center"'}>처음</button>
-                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed text-center"' : 'class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-center"'}>이전</button>
-                    <span class="px-2 font-semibold text-slate-700 dark:text-slate-300 min-w-[50px] text-center">${currentPage} / ${totalPages}</span>
-                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed text-center"' : 'class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-center"'}>다음</button>
-                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed text-center"' : 'class="w-12 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-center"'}>맨끝</button>
+                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>처음</button>
+                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>이전</button>
+                    <span class="px-2 font-semibold text-slate-700 dark:text-slate-300">${currentPage} / ${totalPages}</span>
+                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>다음</button>
+                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>맨끝</button>
                 </div>
             `;
         }
@@ -2425,55 +2426,56 @@
             const day2 = new Date(rangeStartMs + 24 * 3600 * 1000);
             const day3 = new Date(rangeStartMs + 48 * 3600 * 1000);
 
-            const gridColsCss = `grid-template-columns: ${BERTH_COL_WIDTH}px repeat(${totalColumns}, minmax(0, 1fr));`;
+            let headerHTML = `
+                <div class="flex border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
+                        선석
+                    </div>
+                    <div class="flex-1 flex">
+            `;
 
-            let dateCellsHTML = '';
             if (activeHours === 72) {
-                dateCellsHTML = `
-                    <div style="grid-column: span 12;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                headerHTML += `
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div style="grid-column: span 12;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
-                    <div style="grid-column: span 12;" class="flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                    <div class="w-1/3 flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day3)}
                     </div>
                 `;
             } else if (activeHours === 48) {
-                dateCellsHTML = `
-                    <div style="grid-column: span 24;" class="flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                headerHTML += `
+                    <div class="w-1/2 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
-                    <div style="grid-column: span 24;" class="flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    <div class="w-1/2 flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
                         ${formatDateLabel(day2)}
                     </div>
                 `;
             } else {
-                dateCellsHTML = `
-                    <div style="grid-column: span 24;" class="flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                headerHTML += `
+                    <div class="w-full flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
                         ${formatDateLabel(day1)}
                     </div>
                 `;
             }
 
-            let headerHTML = `
-                <div class="grid border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold select-none" style="${gridColsCss}">
-                    <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
-                        선석
-                    </div>
-                    ${dateCellsHTML}
-                </div>
-                <div class="grid h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400 select-none" style="${gridColsCss}">
-                    <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
+            headerHTML += `
+                </div></div>
+                <div class="flex h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
                         시간(H)
                     </div>
+                    <div class="flex-1 flex">
             `;
 
             for (let c = 0; c < totalColumns; c++) {
@@ -2488,38 +2490,28 @@
                 }
 
                 headerHTML += `
-                    <div class="flex items-center justify-center ${tickClass} leading-none">
+                    <div class="flex-1 flex items-center justify-center ${tickClass} leading-none">
                         ${String(hour % 24 === 0 ? 24 : hour % 24).padStart(2, '0')}
                     </div>
                 `;
             }
 
-            headerHTML += `</div>`;
+            headerHTML += `</div></div>`;
             headerEl.innerHTML = headerHTML;
-
-            if (window.innerWidth < 768) {
-                const availableHeight = window.innerHeight - 155;
-                const calculatedMobileHeight = Math.max(180, Math.min(availableHeight, 340));
-                bodyEl.style.height = `${calculatedMobileHeight}px`;
-                bodyEl.style.overflowY = 'hidden';
-            } else {
-                bodyEl.style.height = `370px`;
-                bodyEl.style.overflowY = 'visible';
-            }
 
             let bodyHTML = "";
 
             BERTH_LIST.forEach((berthName) => {
                 bodyHTML += `
-                    <div class="grid flex-1 border-b border-slate-200 dark:border-slate-800 relative select-none" style="${gridColsCss}">
-                        <div class="sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
+                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative min-h-[60px] sm:min-h-[64px]">
+                        <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center select-none">
                             <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800 dark:text-slate-200">
                                 ${berthName}
                             </span>
                         </div>
 
-                        <div class="col-span-${totalColumns} relative flex h-full" style="grid-column: span ${totalColumns};">
-                            <div class="absolute inset-0 grid pointer-events-none" style="grid-template-columns: repeat(${totalColumns}, minmax(0, 1fr));">
+                        <div class="flex-1 relative flex h-full">
+                            <div class="absolute inset-0 flex pointer-events-none">
                 `;
 
                 for (let c = 0; c < totalColumns; c++) {
@@ -2533,7 +2525,7 @@
                         if (is6h) cellClass = "six-hour-border";
                     }
 
-                    bodyHTML += `<div class="h-full ${cellClass}"></div>`;
+                    bodyHTML += `<div class="flex-1 h-full ${cellClass}"></div>`;
                 }
 
                 bodyHTML += `</div>`;
@@ -2599,13 +2591,13 @@
             bodyHTML += `
                 <div 
                     id="dynamic-now-line"
-                    class="absolute top-0 bottom-0 w-[1.5px] now-indicator-line z-[60] pointer-events-none transition-all duration-300"
+                    class="absolute top-0 bottom-0 w-[1.5px] now-indicator-line z-30 pointer-events-none transition-all duration-300"
                     style="display: none;"
                 >
-                    <div class="absolute -top-3 -translate-x-1/2 left-1/2 px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none shadow-md z-[60]">
+                    <div class="absolute -top-3 -translate-x-1/2 left-1/2 px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none shadow-md">
                         <span>NOW</span>
                     </div>
-                    <div class="absolute -bottom-1 -translate-x-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-red-500/85"></div>
+                    <div class="absolute -bottom-1 -translate-x-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-red-500/80"></div>
                 </div>
             `;
 
@@ -2819,6 +2811,7 @@
                 const hasScroll = container.scrollWidth > container.clientWidth;
                 const isBerthCardMode = container.id === 'berth-matrix-view-container' && mobileBerthViewMode === 'card';
 
+                // 어느 한 페이지라도 스크롤이 발생한다면 테이블을 감싸는 모든 테이블 영역에 스크롤 안내 배너 상시 표시
                 if (hasScroll && !isBerthCardMode) {
                     if (!hint) {
                         hint = document.createElement('div');
@@ -2833,6 +2826,7 @@
                     }
                     hint.style.display = 'flex';
                 } else if (hint) {
+                    // 전체 데이터 중 하나라도 스크롤이 필요하면 모든 페이지에 안내 메시지 표시를 유지하도록 강제 통일
                     const anyTableHasScroll = Array.from(document.querySelectorAll('.overflow-x-auto')).some(c => c.scrollWidth > c.clientWidth);
                     if (anyTableHasScroll && container.id !== 'berth-matrix-view-container') {
                         hint.style.display = 'flex';
@@ -2853,7 +2847,7 @@
             let touchStartY = 0;
             let currentTranslateY = 0;
             let isPulling = false;
-            const threshold = 95;
+            const threshold = 95; // 새로고침이 트리거되는 당김 임계값을 높여 덜 예민하게 조정
 
             mainContainer.addEventListener('touchstart', (e) => {
                 if (mainContainer.scrollTop <= 0) {
@@ -2868,6 +2862,7 @@
                 const diff = currentY - touchStartY;
                 
                 if (diff > 0 && mainContainer.scrollTop <= 0) {
+                    // 감쇠 계수(0.35)를 적용하여 쫀득하고 부드럽게 늘어나도록 설계
                     currentTranslateY = Math.min(diff * 0.35, 110);
                     
                     ptrIndicator.style.opacity = Math.min(currentTranslateY / 50, 1);
@@ -2895,6 +2890,7 @@
                     await manualRefreshAll();
                 }
 
+                // 원위치로 부드럽게 복귀
                 ptrIndicator.style.transform = `translateX(-50%) translateY(0px)`;
                 ptrIndicator.style.opacity = '0';
                 currentTranslateY = 0;
@@ -2984,7 +2980,7 @@
             registerServiceWorker();
 
             window.addEventListener('resize', () => {
-                handleMainScroll();
+                handleMainScroll(); // 리사이즈 시 버튼 표시 여부 즉시 갱신
                 
                 if (resizeTimer) clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
