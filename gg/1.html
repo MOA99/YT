@@ -44,37 +44,36 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
         html.dark body { background-color: #020617; color: #f1f5f9; }
 
-        /* 전역 스크롤바 스타일링 */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0); }
+        
+        :hover::-webkit-scrollbar-thumb, .is-scrolling::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); }
+        .dark :hover::-webkit-scrollbar-thumb, .dark .is-scrolling::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); }
+        
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
 
         .overflow-x-auto::-webkit-scrollbar {
-            height: 6px;
+            height: 4px;
         }
         .overflow-x-auto::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: transparent;
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: transparent;
         }
         .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: rgba(148, 163, 184, 0);
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: rgba(71, 85, 105, 0);
         }
-        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        
         .sticky-col-1 {
             position: sticky;
             left: 0;
@@ -361,31 +360,23 @@
             <section id="tab-berth" class="tab-content hidden space-y-6">
                 <!-- 모바일/데스크톱 통일 브레드크럼 및 컨트롤 바 -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
-                    <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
-                        <div class="w-full md:w-auto flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-base">선석별 접안 일정 타임라인</span>
-                                <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900 ml-2">타임라인</span>
-                            </div>
-                            <div class="flex md:hidden items-center bg-slate-200 dark:bg-slate-800 p-0.5 rounded-xl">
-                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">
-                                    타임라인
-                                </button>
-                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">
-                                    선석별
-                                </button>
-                            </div>
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                        <div class="flex items-center">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정 타임라인</h3>
                         </div>
 
-                        <div class="w-full md:w-auto flex items-center justify-between sm:justify-end gap-2 flex-wrap">
-                            <button onclick="scrollMatrixToNow()" class="px-3 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/70 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-xs font-bold text-indigo-700 dark:text-indigo-300 shadow-2xs transition-colors flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>현재 시각 이동</span>
-                            </button>
-                            <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">24시간</button>
-                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold">48시간</button>
-                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">72시간</button>
+                        <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
+                            <!-- View Mode Toggle -->
+                            <div class="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 w-full sm:w-auto">
+                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">타임라인</button>
+                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">선석별</button>
+                            </div>
+
+                            <!-- Time Range Toggle -->
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner text-xs font-semibold shrink-0">
+                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">24H</button>
+                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all">48H</button>
+                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">72H</button>
                             </div>
                         </div>
                     </div>
@@ -2338,9 +2329,9 @@
                 const btn = document.getElementById(`btn-range-${m}`);
                 if (!btn) return;
                 if (m === mode) {
-                    btn.className = "px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold";
+                    btn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all";
                 } else {
-                    btn.className = "px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900";
+                    btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 }
             });
 
@@ -2380,14 +2371,12 @@
             const cardContainer = document.getElementById('berth-card-view-container');
             const btnMatrix = document.getElementById('btn-mode-matrix');
             const btnCard = document.getElementById('btn-mode-card');
-            const badge = document.getElementById('mobile-view-badge');
 
             if (mode === 'card') {
                 if (matrixContainer) matrixContainer.classList.add('hidden');
                 if (cardContainer) cardContainer.classList.remove('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
-                if (badge) badge.innerText = "선석별 리스트";
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
                 
                 const berthTabSection = document.getElementById('tab-berth');
                 if (berthTabSection) {
@@ -2399,9 +2388,8 @@
             } else {
                 if (matrixContainer) matrixContainer.classList.remove('hidden');
                 if (cardContainer) cardContainer.classList.add('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
-                if (badge) badge.innerText = "타임라인";
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 renderBerthGraphicMatrix();
             }
         }
@@ -2993,6 +2981,19 @@
                     if (currentActiveTab === 'board') renderBoardList();
                 }, 150);
             });
+
+            // 스크롤 시 스크롤바 일시적으로 보이기 제어
+            let scrollFadeTimer;
+            window.addEventListener('scroll', function (e) {
+                if (e.target && e.target.classList) {
+                    e.target.classList.add('is-scrolling');
+                    clearTimeout(scrollFadeTimer);
+                    scrollFadeTimer = setTimeout(function() {
+                        const scrollingEls = document.querySelectorAll('.is-scrolling');
+                        scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
+                    }, 800);
+                }
+            }, true);
         };
     </script>
 </body>
