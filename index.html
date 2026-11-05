@@ -44,37 +44,36 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
         html.dark body { background-color: #020617; color: #f1f5f9; }
 
-        /* 전역 스크롤바 스타일링 */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0); }
+        
+        :hover::-webkit-scrollbar-thumb, .is-scrolling::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); }
+        .dark :hover::-webkit-scrollbar-thumb, .dark .is-scrolling::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); }
+        
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
 
         .overflow-x-auto::-webkit-scrollbar {
-            height: 6px;
+            height: 4px;
         }
         .overflow-x-auto::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: transparent;
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: transparent;
         }
         .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: rgba(148, 163, 184, 0);
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: rgba(71, 85, 105, 0);
         }
-        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        
         .sticky-col-1 {
             position: sticky;
             left: 0;
@@ -186,13 +185,13 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
-    <!-- 토스트 알림창 (Pull-to-Refresh 인디케이터와 동일한 글래스모피즘 디자인 적용) -->
+    <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
         <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
     </div>
 
-    <!-- 홈 화면 설치 플로팅 배너 (데스크탑에서는 좌측 사이드바를 피해서 우측 하단에 깔끔하게 배치) -->
+    <!-- 홈 화면 설치 플로팅 배너 -->
     <div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md">
         <div class="flex items-center space-x-3 min-w-0">
             <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
@@ -215,26 +214,26 @@
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 z-30 flex items-center justify-around px-2 select-none">
-        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-400 transition-colors">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <span class="text-[10px] font-bold tracking-tight">이력조회</span>
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-2 select-none transition-colors">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">이력조회</span>
         </button>
-        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            <span class="text-[10px] font-bold tracking-tight">평가등록</span>
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">평가등록</span>
         </button>
-        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
-            <span class="text-[10px] font-bold tracking-tight">선석현황</span>
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+            <span class="text-xs font-bold mt-0.5">선석현황</span>
         </button>
-        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-            <span class="text-[10px] font-bold tracking-tight">게시판</span>
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">게시판</span>
         </button>
-        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            <span class="text-[10px] font-bold tracking-tight">전체메뉴</span>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-xs font-bold mt-0.5">전체메뉴</span>
         </button>
     </nav>
 
@@ -317,9 +316,26 @@
             <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
         </div>
 
+        <!-- 모바일 상단 브레드크럼 바 -->
+        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-20 transition-colors">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>YT Dashboard</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
+            </div>
+            <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>동기화</span>
+            </button>
+        </div>
+
         <!-- 데스크톱 헤더 -->
         <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20 transition-colors">
-            <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-semibold text-slate-400">YT Dashboard</span>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
+            </div>
             <div class="flex items-center space-x-3">
                 <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer" title="구글 시트 데이터 즉시 동기화">
                     <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -338,38 +354,29 @@
             </div>
         </header>
 
-        <div class="p-4 sm:p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-6">
+        <div class="px-4 pt-10 pb-24 sm:px-6 sm:pt-12 md:px-8 md:pt-14 flex-1 max-w-7xl w-full mx-auto">
 
             <!-- 1. 선석 현황 탭 -->
-            <section id="tab-berth" class="tab-content hidden space-y-4 sm:space-y-6">
+            <section id="tab-berth" class="tab-content hidden space-y-6">
+                <!-- 모바일/데스크톱 통일 브레드크럼 및 컨트롤 바 -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
-                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50">
-                        <div class="w-full md:w-auto flex items-center justify-between">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">선석 배정 현황</h3>
-                                    <span id="mobile-view-badge" class="md:hidden text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">타임라인</span>
-                                </div>
-                                <p id="berth-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2일간 선석별 접안 일정</p>
-                            </div>
-                            <div class="flex md:hidden items-center bg-slate-200 dark:bg-slate-800 p-0.5 rounded-xl">
-                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">
-                                    타임라인
-                                </button>
-                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">
-                                    선석별
-                                </button>
-                            </div>
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                        <div class="flex items-center">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정 타임라인</h3>
                         </div>
 
-                        <div class="w-full md:w-auto flex items-center justify-between sm:justify-end gap-2 flex-wrap">
-                            <button onclick="scrollMatrixToNow()" class="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs transition-colors">
-                                현재 시각 이동
-                            </button>
-                            <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">24시간</button>
-                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold">48시간</button>
-                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">72시간</button>
+                        <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
+                            <!-- View Mode Toggle -->
+                            <div class="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 w-full sm:w-auto">
+                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">타임라인</button>
+                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">선석별</button>
+                            </div>
+
+                            <!-- Time Range Toggle -->
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner text-xs font-semibold shrink-0">
+                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">24H</button>
+                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all">48H</button>
+                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">72H</button>
                             </div>
                         </div>
                     </div>
@@ -386,16 +393,19 @@
                     <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
                     </div>
 
-                    <div class="px-4 sm:px-5 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end gap-2 text-xs text-slate-600 dark:text-slate-400">
-                        <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
-                        <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
+                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+                        <span class="text-xs text-slate-500 dark:text-slate-400">실시간 선석 접안 타임라인 모니터링</span>
+                        <div class="flex items-center gap-2">
+                            <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- 2. YT 이력 조회 탭 -->
             <section id="tab-history" class="tab-content space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
                         <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                             <option value="ytNum">YT번호 검색</option>
@@ -409,7 +419,7 @@
                     </div>
                 </div>
 
-                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
                     <div class="flex items-center space-x-4">
                         <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
                         <div>
@@ -586,12 +596,6 @@
             <!-- 4. YT 통합 리스트 탭 -->
             <section id="tab-integrated" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">YT 통합 리스트</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">동일 YT별 주요 평가 지표를 한눈에 집계합니다.</p>
-                        </div>
-                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
                             <thead>
@@ -683,12 +687,6 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100">원본 입력 데이터 목록</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">사용자에게 입력받은 모든 평가 원본 데이터 입니다.</p>
-                        </div>
-                    </div>
                     <div class="overflow-x-auto">
                         <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
                             <thead>
@@ -722,14 +720,7 @@
 
             <!-- 7. 미니 게시판 탭 -->
             <section id="tab-board" class="tab-content hidden space-y-6">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
-                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">미니 게시판</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">자유롭게 의견을 남겨주세요.</p>
-                        </div>
-                    </div>
-
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
                     <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
@@ -768,9 +759,9 @@
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
                         <div class="flex items-center gap-2">
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</h4>
+                            <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</span>
                             <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
                         </div>
                         <div class="relative w-full sm:w-64">
@@ -788,11 +779,6 @@
             <!-- 8. 이용 가이드 탭 -->
             <section id="tab-guide" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
-                    <div class="border-b border-slate-100 dark:border-slate-800 pb-4">
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">YT 대시보드 이용 가이드</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">시스템의 주요 기능과 사용 방법을 안내해 드립니다.</p>
-                    </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
                             <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
@@ -1384,9 +1370,9 @@
             document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
                 const btnTab = btn.getAttribute('data-bottom-tab');
                 if (btnTab === tabId) {
-                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-400 transition-colors";
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors";
                 } else {
-                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 hover:text-slate-200 transition-colors";
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors";
                 }
             });
 
@@ -1401,6 +1387,9 @@
             };
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
+
+            const mobileTitleEl = document.getElementById('mobile-breadcrumb-title');
+            if (mobileTitleEl) mobileTitleEl.innerText = titles[tabId] || '대시보드';
 
             renderActiveTab();
 
@@ -2340,9 +2329,9 @@
                 const btn = document.getElementById(`btn-range-${m}`);
                 if (!btn) return;
                 if (m === mode) {
-                    btn.className = "px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold";
+                    btn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all";
                 } else {
-                    btn.className = "px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900";
+                    btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 }
             });
 
@@ -2382,14 +2371,12 @@
             const cardContainer = document.getElementById('berth-card-view-container');
             const btnMatrix = document.getElementById('btn-mode-matrix');
             const btnCard = document.getElementById('btn-mode-card');
-            const badge = document.getElementById('mobile-view-badge');
 
             if (mode === 'card') {
                 if (matrixContainer) matrixContainer.classList.add('hidden');
                 if (cardContainer) cardContainer.classList.remove('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
-                if (badge) badge.innerText = "선석별 리스트";
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
                 
                 const berthTabSection = document.getElementById('tab-berth');
                 if (berthTabSection) {
@@ -2401,9 +2388,8 @@
             } else {
                 if (matrixContainer) matrixContainer.classList.remove('hidden');
                 if (cardContainer) cardContainer.classList.add('hidden');
-                if (btnMatrix) btnMatrix.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
-                if (btnCard) btnCard.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all";
-                if (badge) badge.innerText = "타임라인";
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 renderBerthGraphicMatrix();
             }
         }
@@ -2811,7 +2797,6 @@
                 const hasScroll = container.scrollWidth > container.clientWidth;
                 const isBerthCardMode = container.id === 'berth-matrix-view-container' && mobileBerthViewMode === 'card';
 
-                // 어느 한 페이지라도 스크롤이 발생한다면 테이블을 감싸는 모든 테이블 영역에 스크롤 안내 배너 상시 표시
                 if (hasScroll && !isBerthCardMode) {
                     if (!hint) {
                         hint = document.createElement('div');
@@ -2826,7 +2811,6 @@
                     }
                     hint.style.display = 'flex';
                 } else if (hint) {
-                    // 전체 데이터 중 하나라도 스크롤이 필요하면 모든 페이지에 안내 메시지 표시를 유지하도록 강제 통일
                     const anyTableHasScroll = Array.from(document.querySelectorAll('.overflow-x-auto')).some(c => c.scrollWidth > c.clientWidth);
                     if (anyTableHasScroll && container.id !== 'berth-matrix-view-container') {
                         hint.style.display = 'flex';
@@ -2966,8 +2950,10 @@
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
 
-            if (currentActiveTab && currentActiveTab !== 'history') {
+            if (currentActiveTab) {
                 switchTab(currentActiveTab);
+            } else {
+                switchTab('history');
             }
 
             fetchGoogleSheetData(true, false);
@@ -2995,6 +2981,19 @@
                     if (currentActiveTab === 'board') renderBoardList();
                 }, 150);
             });
+
+            // 스크롤 시 스크롤바 일시적으로 보이기 제어
+            let scrollFadeTimer;
+            window.addEventListener('scroll', function (e) {
+                if (e.target && e.target.classList) {
+                    e.target.classList.add('is-scrolling');
+                    clearTimeout(scrollFadeTimer);
+                    scrollFadeTimer = setTimeout(function() {
+                        const scrollingEls = document.querySelectorAll('.is-scrolling');
+                        scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
+                    }, 800);
+                }
+            }, true);
         };
     </script>
 </body>
