@@ -208,8 +208,8 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 (데스크톱 전용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-8 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+    <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
@@ -393,8 +393,7 @@
                     <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
                     </div>
 
-                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                        <span class="text-xs text-slate-500 dark:text-slate-400">실시간 선석 접안 타임라인 모니터링</span>
+                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end text-xs text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-2">
                             <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
                             <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
@@ -483,8 +482,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div id="history-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
                     </div>
                     <div id="no-history-data" class="hidden py-16 text-center space-y-4">
                         <div>
@@ -1416,12 +1413,6 @@
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (!container || !scrollBtn) return;
 
-            // 모바일 화면(768px 미만)에서는 무조건 숨김
-            if (window.innerWidth < 768) {
-                scrollBtn.classList.add('hidden');
-                return;
-            }
-
             if (container.scrollTop > 200 || window.scrollY > 200) {
                 scrollBtn.classList.remove('hidden');
             } else {
@@ -1791,19 +1782,8 @@
                 }
             });
 
-            // 모바일: 화면 높이에서 상하단바/검색창 등(약 420px)을 제외한 가용 공간을 행 높이(약 55px)로 나누어 동적 계산 (최소 3개, 최대 10개)
-            const currentRowsPerPage = window.innerWidth < 768 
-                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 420) / 55), 10)) 
-                : rowsPerPage;
-
-            const totalRows = filtered.length;
-            const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
-            if (historyCurrentPage > totalPages) historyCurrentPage = totalPages;
-            if (historyCurrentPage < 1) historyCurrentPage = 1;
-
-            const startIndex = (historyCurrentPage - 1) * currentRowsPerPage;
-            const endIndex = startIndex + currentRowsPerPage;
-            const paginatedData = filtered.slice(startIndex, endIndex);
+            // 페이지네이션 제거 및 최신 데이터 최대 10개만 슬라이스
+            const displayData = filtered.slice(0, 10);
 
             const historyBody = document.getElementById('history-table-body');
             const noDataEl = document.getElementById('no-history-data');
@@ -1813,7 +1793,7 @@
                     if (noDataEl) noDataEl.classList.remove('hidden');
                 } else {
                     if (noDataEl) noDataEl.classList.add('hidden');
-                    paginatedData.forEach(item => {
+                    displayData.forEach(item => {
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                         
@@ -1837,8 +1817,6 @@
                     });
                 }
             }
-
-            renderPaginationControls('history-pagination', totalRows, startIndex, endIndex, historyCurrentPage, totalPages, 'changeHistoryPage');
         }
 
         function renderPaginationControls(elementId, totalRows, startIndex, endIndex, currentPage, totalPages, fnName) {
@@ -1894,8 +1872,9 @@
                 }
             });
 
+            // 화면 높이 기반 동적 행 개수 계산 (모바일 환경에서만 +1개 추가)
             const currentRowsPerPage = window.innerWidth < 768 
-                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 380) / 60), 10)) 
+                ? Math.max(3, Math.floor((window.innerHeight - 380) / 60) + 1)
                 : rowsPerPage;
 
             const totalRows = integratedData.length;
