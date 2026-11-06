@@ -1872,9 +1872,12 @@
                 }
             });
 
-            const currentRowsPerPage = window.innerWidth < 768 
-                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 380) / 60), 10)) 
-                : rowsPerPage;
+            // 화면 높이에 맞추어 하단 여백이 과도하게 남지 않도록 동적 행 개수 계산 최적화
+            const isMobile = window.innerWidth < 768;
+            const overheadHeight = isMobile ? 270 : 250; // 상단 헤더, 안내 배너, 페이지네이션 여백 합산
+            const estimatedRowHeight = 52; // 실제 테이블 행 평균 높이 (px)
+            const calculatedRows = Math.floor((window.innerHeight - overheadHeight) / estimatedRowHeight);
+            const currentRowsPerPage = Math.max(5, Math.min(calculatedRows, isMobile ? 18 : 25));
 
             const totalRows = integratedData.length;
             const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
