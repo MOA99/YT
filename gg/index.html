@@ -181,6 +181,17 @@
             background: rgba(30, 41, 59, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
+        /* 최상단 스크롤 버튼 모바일 터치 포커스/호버 잔류 방지 */
+        #scrollTopBtn {
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (hover: hover) {
+            #scrollTopBtn:hover {
+                background-color: #4f46e5 !important;
+                color: #ffffff !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
@@ -209,7 +220,7 @@
     </div>
 
     <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none active:scale-95 active:bg-indigo-600 cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
@@ -1420,7 +1431,10 @@
             }
         }
 
-        function scrollToTop() {
+        function scrollToTop(btn) {
+            if (btn && typeof btn.blur === 'function') {
+                btn.blur();
+            }
             const container = document.getElementById('main-scroll-container');
             if (container) {
                 container.scrollTo({ top: 0, behavior: 'smooth' });
