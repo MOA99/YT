@@ -208,8 +208,8 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 (데스크톱 전용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-8 right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-11 h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
+    <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 hover:bg-indigo-600 dark:hover:bg-indigo-600 text-slate-100 hover:text-white w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none hover:scale-105 active:scale-95 cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
@@ -1412,12 +1412,6 @@
             const container = document.getElementById('main-scroll-container');
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (!container || !scrollBtn) return;
-
-            // 모바일 화면(768px 미만)에서는 무조건 숨김
-            if (window.innerWidth < 768) {
-                scrollBtn.classList.add('hidden');
-                return;
-            }
 
             if (container.scrollTop > 200 || window.scrollY > 200) {
                 scrollBtn.classList.remove('hidden');
