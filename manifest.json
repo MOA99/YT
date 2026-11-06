@@ -5,35 +5,20 @@
 "id": "/",
 "start_url": "/",
 "scope": "/",
-"display": "minimal-ui",
+"display": "browser",
 "orientation": "portrait-primary",
 "theme_color": "#4f46e5",
 "lang": "ko-KR",
-"categories": ["productivity", "utilities", "business"],
 "icons": [
 {
 "src": "/favicon.png",
 "sizes": "192x192",
-"type": "image/png",
-"purpose": "any"
-},
-{
-"src": "/favicon.png",
-"sizes": "192x192",
-"type": "image/png",
-"purpose": "maskable"
+"type": "image/png"
 },
 {
 "src": "/favicon.png",
 "sizes": "512x512",
-"type": "image/png",
-"purpose": "any"
-},
-{
-"src": "/favicon.png",
-"sizes": "512x512",
-"type": "image/png",
-"purpose": "maskable"
+"type": "image/png"
 }
 ]
 }
