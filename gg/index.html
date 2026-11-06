@@ -26,8 +26,8 @@
     <!-- Open Graph / 오픈 그래프 (카카오톡, 슬랙, 페이스북 링크 프리뷰) -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="YT Dashboard">
-    <meta property="og:title" content="YT 대시보드 | 실시간 차량 평가 & 선석 접안 현황">
-    <meta property="og:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 모니터링 정보">
+    <meta property="og:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta property="og:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
     <meta property="og:image" content="/favicon.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -37,8 +37,8 @@
 
     <!-- Twitter Card / 트위터 와이드 프리뷰 (summary_large_image) -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="YT 대시보드 | 실시간 차량 평가 & 선석 접안 현황">
-    <meta name="twitter:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 모니터링 정보">
+    <meta name="twitter:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta name="twitter:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
     <meta name="twitter:image" content="/favicon.png">
     <meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고">
 
@@ -62,6 +62,44 @@
         html.dark { background-color: #020617; color-scheme: dark; }
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
         html.dark body { background-color: #020617; color: #f1f5f9; }
+
+        /* 인앱 스플래시 화면 스타일 및 완벽한 페이드아웃 보장 */
+        #app-splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            background-color: #090d16;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+            pointer-events: auto;
+        }
+        #app-splash-screen.splash-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        @keyframes splash-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.92; }
+        }
+        .splash-logo-anim {
+            animation: splash-pulse 1.8s ease-in-out infinite;
+        }
+        @keyframes splash-progress {
+            0% { width: 0%; }
+            60% { width: 80%; }
+            100% { width: 100%; }
+        }
+        .splash-bar-anim {
+            animation: splash-progress 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
 
         /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -214,6 +252,22 @@
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
+
+    <!-- PWA 및 앱 실행용 스플래시 인트로 화면 (클릭 시 강제 해제 기능 포함) -->
+    <div id="app-splash-screen" style="display: none;" onclick="forceDismissSplashScreen()">
+        <div class="flex flex-col items-center max-w-xs text-center px-6 pointer-events-none">
+            <div class="w-20 h-20 rounded-3xl bg-indigo-600 shadow-2xl shadow-indigo-500/40 flex items-center justify-center p-3 mb-6 splash-logo-anim border border-white/10">
+                <img src="/favicon.png" alt="YT 대시보드 로고" class="w-full h-full object-contain drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/128x128/4f46e5/ffffff?text=YT';">
+            </div>
+            <h1 class="text-xl font-black text-white tracking-wide">YT Dashboard</h1>
+            <p class="text-xs font-medium text-slate-400 mt-1">스마트 터미널 관제 & 차량 평가</p>
+            
+            <div class="w-48 h-1.5 bg-slate-800 rounded-full mt-8 overflow-hidden">
+                <div class="h-full bg-indigo-500 rounded-full splash-bar-anim"></div>
+            </div>
+            <span class="text-[11px] font-medium text-slate-500 mt-3 font-mono tracking-tight">시스템 데이터 초기화 중...</span>
+        </div>
+    </div>
 
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
@@ -911,6 +965,48 @@
 
         let touchStartY = 0;
         let isPulling = false;
+
+        // PWA 또는 앱 모드 진입 시 스플래시 화면 제어 (확실한 해제 보장)
+        function forceDismissSplashScreen() {
+            const splashEl = document.getElementById('app-splash-screen');
+            if (!splashEl) return;
+            splashEl.classList.add('splash-hidden');
+            setTimeout(() => {
+                splashEl.style.display = 'none';
+            }, 400);
+        }
+
+        function checkAndShowSplashScreen() {
+            const splashEl = document.getElementById('app-splash-screen');
+            if (!splashEl) return;
+
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                                 window.navigator.standalone === true ||
+                                 document.referrer.includes('android-app://');
+            
+            const hasSeenSplash = sessionStorage.getItem('yt_splash_shown');
+            
+            // 앱(PWA) 모드로 실행되었고 세션 중 첫 실행일 때만 스플래시 노출
+            if (isStandalone && !hasSeenSplash) {
+                sessionStorage.setItem('yt_splash_shown', 'true');
+                splashEl.style.display = 'flex';
+                splashEl.classList.remove('splash-hidden');
+
+                // 1.1초 후 자연스럽게 사라지도록 타이머 설정
+                setTimeout(() => {
+                    forceDismissSplashScreen();
+                }, 1100);
+
+                // 안전망: 어떤 예외가 생기더라도 최대 2.5초 후에는 100% 해제
+                setTimeout(() => {
+                    if (splashEl.style.display !== 'none') {
+                        forceDismissSplashScreen();
+                    }
+                }, 2500);
+            } else {
+                splashEl.style.display = 'none';
+            }
+        }
 
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
@@ -2843,7 +2939,7 @@
             let touchStartY = 0;
             let currentTranslateY = 0;
             let isPulling = false;
-            const threshold = 95; // 새로고침이 트리거되는 당김 임계값을 높여 덜 예민하게 조정
+            const threshold = 95;
 
             mainContainer.addEventListener('touchstart', (e) => {
                 if (mainContainer.scrollTop <= 0) {
@@ -2858,7 +2954,6 @@
                 const diff = currentY - touchStartY;
                 
                 if (diff > 0 && mainContainer.scrollTop <= 0) {
-                    // 감쇠 계수(0.35)를 적용하여 쫀득하고 부드럽게 늘어나도록 설계
                     currentTranslateY = Math.min(diff * 0.35, 110);
                     
                     ptrIndicator.style.opacity = Math.min(currentTranslateY / 50, 1);
@@ -2886,7 +2981,6 @@
                     await manualRefreshAll();
                 }
 
-                // 원위치로 부드럽게 복귀
                 ptrIndicator.style.transform = `translateX(-50%) translateY(0px)`;
                 ptrIndicator.style.opacity = '0';
                 currentTranslateY = 0;
@@ -2957,6 +3051,7 @@
         }
 
         window.onload = function() {
+            checkAndShowSplashScreen();
             setupScrollIndicators();
             setupPullToRefresh();
             loadInitialCacheAndRender();
@@ -2978,7 +3073,7 @@
             registerServiceWorker();
 
             window.addEventListener('resize', () => {
-                handleMainScroll(); // 리사이즈 시 버튼 표시 여부 즉시 갱신
+                handleMainScroll();
                 
                 if (resizeTimer) clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
