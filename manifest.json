@@ -5,7 +5,7 @@
 "id": "/",
 "start_url": "/",
 "scope": "/",
-"display": "standalone",
+"display": "mini",
 "orientation": "portrait-primary",
 "background_color": "#090d16",
 "theme_color": "#4f46e5",
@@ -13,28 +13,28 @@
 "categories": ["productivity", "utilities", "business"],
 "icons": [
 {
-"src": "/favicon.png",
+"src": "/favicon_app.png",
 "sizes": "512x512",
 "type": "image/png",
 "purpose": "maskable"
 },
 {
-"src": "/favicon.png",
+"src": "/favicon_app.png",
 "sizes": "512x512",
 "type": "image/png",
 "purpose": "any"
 },
 {
-"src": "/favicon.png",
-"sizes": "192x192",
-"type": "image/png",
-"purpose": "any"
-},
-{
-"src": "/favicon.png",
+"src": "/favicon_app.png",
 "sizes": "192x192",
 "type": "image/png",
 "purpose": "maskable"
+},
+{
+"src": "/favicon_app.png",
+"sizes": "192x192",
+"type": "image/png",
+"purpose": "any"
 }
 
 ]
