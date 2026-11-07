@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko" class="h-full dark">
+<html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드 활성화) -->
+    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 -->
     <script>
         (function() {
             try {
-                // 사용자가 명시적으로 'false'(라이트 모드)로 저장하지 않은 이상 무조건 다크 모드 적용
-                if (localStorage.getItem('yt_dark_mode') !== 'false') {
+                if (localStorage.getItem('yt_dark_mode') === 'true') {
                     document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
                 }
             } catch (e) {}
         })();
     </script>
 
     <!-- PWA 및 테마 메타태그 설정 -->
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="YT대시보드">
@@ -61,10 +58,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Tailwind CDN 파싱 전 초기 렌더링 시 다크모드 배경 깜빡임 원천 차단 */
-        html { background-color: #020617; color-scheme: dark; }
-        html:not(.dark) { background-color: #f8fafc; color-scheme: light; }
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #020617; color: #f1f5f9; }
-        html:not(.dark) body { background-color: #f8fafc; color: #1e293b; }
+        html { background-color: #f8fafc; }
+        html.dark { background-color: #020617; color-scheme: dark; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
+        html.dark body { background-color: #020617; color: #f1f5f9; }
 
         /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -337,8 +334,8 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 다크 모드
             </span>
-            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-indigo-600 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
-                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-6 transition-transform duration-300"></div>
+            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-slate-700 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
+                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"></div>
             </button>
         </div>
     </aside>
@@ -1100,12 +1097,9 @@
                     alignTimelineToDataset();
                 }
 
-                // 사용자가 명시적으로 'false'를 저장하지 않았다면 기본적으로 다크모드로 동작
-                const isDark = localStorage.getItem('yt_dark_mode') !== 'false';
+                const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('yt_dark_mode') === 'true';
                 if (isDark) {
                     document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
                 }
                 updateDarkModeUI(isDark);
             } catch (e) {}
