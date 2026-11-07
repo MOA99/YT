@@ -2,13 +2,14 @@
 <html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 -->
+    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드) -->
     <script>
         (function() {
             try {
-                if (localStorage.getItem('yt_dark_mode') === 'true') {
+                // 사용자가 명시적으로 'false'(라이트 모드)로 설정하지 않은 이상 무조건 다크 모드 적용
+                if (localStorage.getItem('yt_dark_mode') !== 'false') {
                     document.documentElement.classList.add('dark');
                 }
             } catch (e) {}
@@ -16,7 +17,7 @@
     </script>
 
     <!-- PWA 및 테마 메타태그 설정 -->
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="YT대시보드">
@@ -63,7 +64,7 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
         html.dark body { background-color: #020617; color: #f1f5f9; }
 
-        /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
+        /* 전역 스크롤바 스타일링 */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
@@ -82,15 +83,9 @@
             background: transparent;
             border-radius: 4px;
         }
-        .dark .overflow-x-auto::-webkit-scrollbar-track {
-            background: transparent;
-        }
         .overflow-x-auto::-webkit-scrollbar-thumb {
             background: rgba(148, 163, 184, 0);
             border-radius: 4px;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: rgba(71, 85, 105, 0);
         }
         
         .sticky-col-1 {
@@ -146,7 +141,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
         }
 
-        /* 모바일 및 데스크톱 좌측 선석 라벨 고정 (Sticky Column) */
+        /* 좌측 선석 라벨 고정 (Sticky Column) */
         .sticky-berth-col {
             position: sticky;
             left: 0;
@@ -201,15 +196,28 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* 최상단 스크롤 버튼 모바일 터치 및 데스크톱 호버 스타일 완벽 분리 */
+        /* 동기화 스핀 전용 CSS 키프레임 보장 */
+        @keyframes spin-pwa {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pwa-spinning {
+            animation: spin-pwa 0.8s linear infinite !important;
+            transform-origin: center center !important;
+        }
+
+        /* 최상단 스크롤 버튼 PWA 터치 전용 스타일 */
         #scrollTopBtn {
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
         }
-        #scrollTopBtn.btn-pressed {
+        /* PWA iOS 등에서 터치 시 강제 색상 변화 */
+        #scrollTopBtn:active {
             background-color: #4f46e5 !important;
             color: #ffffff !important;
-            transform: scale(0.92);
+            transform: scale(0.90) !important;
         }
         @media (hover: hover) and (pointer: fine) {
             #scrollTopBtn:hover {
@@ -222,9 +230,9 @@
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
     <!-- 토스트 알림창 -->
-    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-3xl shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
+        <span id="toast-msg" class="tracking-tight text-slate-100 flex-1 whitespace-pre-wrap leading-relaxed">성공적으로 처리되었습니다.</span>
     </div>
 
     <!-- 홈 화면 설치 플로팅 배너 -->
@@ -244,9 +252,9 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-200 flex items-center justify-center focus:outline-none cursor-pointer group" title="맨 위로 이동">
-        <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    <!-- 상단 이동 플로팅 버튼 -->
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" ontouchstart="" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
@@ -346,7 +354,7 @@
     <!-- 본문 메인 영역 -->
     <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
         
-        <!-- Pull to Refresh 세련된 인디케이터 -->
+        <!-- Pull to Refresh 인디케이터 -->
         <div id="ptr-indicator">
             <svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
@@ -359,8 +367,8 @@
                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
             </div>
-            <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95">
-                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <button id="mobile-sync-btn" onclick="manualRefreshAll()" ontouchstart="" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
+                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 <span>동기화</span>
             </button>
         </div>
@@ -374,7 +382,7 @@
             </div>
             <div class="flex items-center space-x-3">
                 <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="구글 시트 데이터 즉시 동기화">
-                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
                 <div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2">
@@ -394,7 +402,6 @@
 
             <!-- 1. 선석 현황 탭 -->
             <section id="tab-berth" class="tab-content hidden space-y-6">
-                <!-- 모바일/데스크톱 통일 브레드크럼 및 컨트롤 바 -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
                     <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="flex items-center">
@@ -503,7 +510,6 @@
                                 </tr>
                             </thead>
                             <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
-                                <!-- 스켈레톤 UI 초기 렌더링 -->
                                 <tr class="animate-pulse">
                                     <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
                                     <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
@@ -915,9 +921,6 @@
         let resizeTimer = null;
         let deferredPrompt = null;
 
-        let touchStartY = 0;
-        let isPulling = false;
-
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1097,9 +1100,14 @@
                     alignTimelineToDataset();
                 }
 
-                const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('yt_dark_mode') === 'true';
+                // localStorage에 'false'가 아니면 모두 다크모드로 인식 (초기 진입 시 기본 다크모드)
+                const savedMode = localStorage.getItem('yt_dark_mode');
+                const isDark = savedMode !== 'false';
+                
                 if (isDark) {
                     document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
                 updateDarkModeUI(isDark);
             } catch (e) {}
@@ -1129,20 +1137,30 @@
             }
         }
 
+        // PWA 엔진 렌더링 블록을 우회하여 스핀 애니메이션과 데이터를 처리하는 핵심 함수
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
             const mIcon = document.getElementById('mobile-refresh-icon');
-            if (dIcon) dIcon.classList.add('animate-spin');
-            if (mIcon) mIcon.classList.add('animate-spin');
+            
+            if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
+            if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
 
-            await Promise.allSettled([
-                fetchGoogleSheetData(false, true),
-                fetchMiniBoardSheetData(true),
-                fetchBerthDataFromSheet()
-            ]);
-
-            if (dIcon) dIcon.classList.remove('animate-spin');
-            if (mIcon) mIcon.classList.remove('animate-spin');
+            // [PWA 핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
+            // setTimeout을 통해 브라우저가 화면을 갱신(Paint)할 수 있도록 짧은 휴식을 줍니다.
+            setTimeout(async () => {
+                try {
+                    await Promise.allSettled([
+                        fetchGoogleSheetData(false, true),
+                        fetchMiniBoardSheetData(true),
+                        fetchBerthDataFromSheet()
+                    ]);
+                } finally {
+                    setTimeout(() => {
+                        if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
+                        if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
+                    }, 500);
+                }
+            }, 50);
         }
 
         async function fetchGoogleSheetData(silent = true, forceClean = false) {
@@ -1450,30 +1468,33 @@
         function handleMainScroll() {
             const container = document.getElementById('main-scroll-container');
             const scrollBtn = document.getElementById('scrollTopBtn');
-            if (!container || !scrollBtn) return;
+            if (!scrollBtn) return;
 
-            if (container.scrollTop > 200 || window.scrollY > 200) {
+            const currentScroll = (container ? container.scrollTop : 0) || window.scrollY || document.documentElement.scrollTop || 0;
+            if (currentScroll > 150) {
                 scrollBtn.classList.remove('hidden');
             } else {
                 scrollBtn.classList.add('hidden');
             }
         }
 
+        // PWA 엔진이 scroll 동작을 무시하는 버그 방지용 최적화 스크롤 함수
         function scrollToTop(btn) {
-            if (btn) {
-                btn.classList.add('btn-pressed');
-                setTimeout(() => {
-                    btn.classList.remove('btn-pressed');
-                    if (typeof btn.blur === 'function') btn.blur();
-                }, 220);
-            }
+            if (btn && typeof btn.blur === 'function') btn.blur();
+            
             const container = document.getElementById('main-scroll-container');
             if (container) {
-                container.scrollTo({ top: 0, behavior: 'smooth' });
+                try { 
+                    container.scrollTo({ top: 0, behavior: 'smooth' }); 
+                } catch(e) { 
+                    container.scrollTop = 0; 
+                }
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
+            try { 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            } catch(e) { 
+                window.scrollTo(0,0); 
+            }
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
@@ -1828,7 +1849,6 @@
                 }
             });
 
-            // 페이지네이션 제거 및 최신 데이터 최대 10개만 슬라이스
             const displayData = filtered.slice(0, 10);
 
             const historyBody = document.getElementById('history-table-body');
@@ -1882,13 +1902,6 @@
             `;
         }
 
-        function changeHistoryPage(page) {
-            historyCurrentPage = page;
-            renderHistoryTable();
-            const pane = document.getElementById('history-scroll-pane');
-            if (pane) pane.scrollLeft = 0;
-        }
-
         function renderIntegratedTable() {
             setTimeout(setupScrollIndicators, 50);
             let integratedData = getIntegratedGroupedData();
@@ -1918,7 +1931,6 @@
                 }
             });
 
-            // 화면 높이 기반 동적 행 개수 계산 (모바일 환경에서만 +1개 추가)
             const currentRowsPerPage = window.innerWidth < 768 
                 ? Math.max(3, Math.floor((window.innerHeight - 380) / 60) + 1)
                 : rowsPerPage;
@@ -2359,13 +2371,6 @@
                     btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 }
             });
-
-            const subtitleEl = document.getElementById('berth-subtitle');
-            if (subtitleEl) {
-                if (mode === '24h') subtitleEl.innerText = '1일간 선석별 접안 일정';
-                else if (mode === '72h') subtitleEl.innerText = '3일간 선석별 접안 일정';
-                else subtitleEl.innerText = '2일간 선석별 접안 일정';
-            }
 
             alignTimelineToDataset();
             renderBerthGraphicMatrix();
@@ -2950,6 +2955,23 @@
                 return;
             }
 
+            // 인앱 브라우저 감지 (카카오톡, 네이버, 라인, 인스타그램, 페이스북 등)
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isKakao = /KAKAOTALK/i.test(ua);
+            const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+
+            if (isInAppBrowser) {
+                if (isKakao) {
+                    // 카카오톡 전용 외부 브라우저(크롬/삼성인터넷 등) 강제 호출 스킴
+                    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+                    showToast('외부 기본 브라우저(크롬/삼성인터넷 등)로 안전하게 연결합니다.');
+                } else {
+                    // 네이버 등 기타 인앱 브라우저는 수동 안내
+                    showToast('현재 앱에서는 직접 설치가 불가능합니다.\n우측 하단(또는 상단) 메뉴에서 "다른 브라우저로 열기(크롬 등)"를 선택해주세요.', true);
+                }
+                return;
+            }
+
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
@@ -2988,19 +3010,12 @@
 
             registerServiceWorker();
 
-            // 상단 이동 플로팅 버튼 터치 인터랙션 바인딩
-            const scrollBtn = document.getElementById('scrollTopBtn');
-            if (scrollBtn) {
-                scrollBtn.addEventListener('touchstart', function() {
-                    this.classList.add('btn-pressed');
-                }, { passive: true });
-                scrollBtn.addEventListener('touchend', function() {
-                    setTimeout(() => this.classList.remove('btn-pressed'), 180);
-                }, { passive: true });
-                scrollBtn.addEventListener('touchcancel', function() {
-                    this.classList.remove('btn-pressed');
-                }, { passive: true });
+            // PWA 내부 스크롤 이벤트 감지
+            const mainContainer = document.getElementById('main-scroll-container');
+            if (mainContainer) {
+                mainContainer.addEventListener('scroll', handleMainScroll, { passive: true });
             }
+            window.addEventListener('scroll', handleMainScroll, { passive: true });
 
             window.addEventListener('resize', () => {
                 handleMainScroll();
@@ -3019,7 +3034,7 @@
                 }, 150);
             });
 
-            // 스크롤 시 스크롤바 일시적으로 보이기 제어
+            // 스크롤 시 스크롤바 일시적 노출 제어
             let scrollFadeTimer;
             window.addEventListener('scroll', function (e) {
                 if (e.target && e.target.classList) {
