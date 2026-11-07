@@ -1,15 +1,16 @@
 {
 "name": "YT대시보드",
 "short_name": "YT대시보드",
-"description": "YT 차량 승하차 평가 및 선석 배정 현황 통합 모니터링 시스템",
+"description": "스마트 터미널 YT 모니터링 & 선석 배정 현황 시스템",
 "id": "/",
 "start_url": "/",
 "scope": "/",
 "display": "standalone",
 "orientation": "portrait-primary",
-"background_color": "#090d16",
+"background_color": "#0f172a",
 "theme_color": "#4f46e5",
 "lang": "ko-KR",
+"categories": ["productivity", "utilities", "business"],
 "icons": [
 {
 "src": "/favicon.png",
@@ -22,12 +23,6 @@
 "sizes": "512x512",
 "type": "image/png",
 "purpose": "any"
-},
-{
-"src": "/favicon.png",
-"sizes": "512x512",
-"type": "image/png",
-"purpose": "maskable"
 }
 ]
 }
