@@ -204,6 +204,16 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        /* 동기화 스핀 전용 CSS 키프레임 보장 (모바일 렌더링 블록 우회) */
+        @keyframes spin-pwa {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pwa-spinning {
+            animation: spin-pwa 0.8s linear infinite !important;
+            transform-origin: center center !important;
+        }
+
         /* 최상단 스크롤 버튼 모바일 터치 및 데스크톱 호버 스타일 완벽 분리 */
         #scrollTopBtn {
             -webkit-tap-highlight-color: transparent;
@@ -1135,20 +1145,32 @@
             }
         }
 
+        // PWA 엔진 렌더링 블록을 우회하여 스핀 애니메이션과 데이터를 처리하는 핵심 함수
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
             const mIcon = document.getElementById('mobile-refresh-icon');
-            if (dIcon) dIcon.classList.add('animate-spin');
-            if (mIcon) mIcon.classList.add('animate-spin');
+            
+            // 일반 spin과 강력한 pwa-spinning 동시 적용
+            if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
+            if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
 
-            await Promise.allSettled([
-                fetchGoogleSheetData(false, true),
-                fetchMiniBoardSheetData(true),
-                fetchBerthDataFromSheet()
-            ]);
-
-            if (dIcon) dIcon.classList.remove('animate-spin');
-            if (mIcon) mIcon.classList.remove('animate-spin');
+            // [핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
+            // 브라우저가 화면을 갱신(Paint)할 수 있도록 50ms 휴식을 줍니다.
+            setTimeout(async () => {
+                try {
+                    await Promise.allSettled([
+                        fetchGoogleSheetData(false, true),
+                        fetchMiniBoardSheetData(true),
+                        fetchBerthDataFromSheet()
+                    ]);
+                } finally {
+                    // 데이터 로드 완료 후 애니메이션이 자연스럽게 멈추도록 최소 지연을 줍니다.
+                    setTimeout(() => {
+                        if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
+                        if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
+                    }, 500);
+                }
+            }, 50);
         }
 
         async function fetchGoogleSheetData(silent = true, forceClean = false) {
