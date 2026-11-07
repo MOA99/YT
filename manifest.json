@@ -5,7 +5,7 @@
 "id": "/",
 "start_url": "/",
 "scope": "/",
-"display": "mini",
+"display": "standalone",
 "orientation": "portrait-primary",
 "background_color": "#090d16",
 "theme_color": "#4f46e5",
@@ -36,6 +36,5 @@
 "type": "image/png",
 "purpose": "any"
 }
-
 ]
 }
