@@ -201,11 +201,17 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* 최상단 스크롤 버튼 모바일 터치 포커스/호버 잔류 방지 */
+        /* 최상단 스크롤 버튼 모바일 터치 및 데스크톱 호버 스타일 완벽 분리 */
         #scrollTopBtn {
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
-        @media (hover: hover) {
+        #scrollTopBtn.btn-pressed {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            transform: scale(0.92);
+        }
+        @media (hover: hover) and (pointer: fine) {
             #scrollTopBtn:hover {
                 background-color: #4f46e5 !important;
                 color: #ffffff !important;
@@ -239,7 +245,7 @@
     </div>
 
     <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-300 flex items-center justify-center focus:outline-none active:scale-95 active:bg-indigo-600 cursor-pointer group" title="맨 위로 이동">
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-200 flex items-center justify-center focus:outline-none cursor-pointer group" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
@@ -353,8 +359,8 @@
                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
             </div>
-            <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
-                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95">
+                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 <span>동기화</span>
             </button>
         </div>
@@ -367,7 +373,7 @@
                 <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer" title="구글 시트 데이터 즉시 동기화">
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="구글 시트 데이터 즉시 동기화">
                     <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
@@ -612,7 +618,7 @@
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2">
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
                                 <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
                             </button>
                         </div>
@@ -778,7 +784,7 @@
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3">
                             <textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></textarea>
-                            <button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0">
+                            <button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95">
                                 <span id="board-submit-text">글 남기기</span>
                             </button>
                         </div>
@@ -1125,7 +1131,9 @@
 
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
+            const mIcon = document.getElementById('mobile-refresh-icon');
             if (dIcon) dIcon.classList.add('animate-spin');
+            if (mIcon) mIcon.classList.add('animate-spin');
 
             await Promise.allSettled([
                 fetchGoogleSheetData(false, true),
@@ -1134,6 +1142,7 @@
             ]);
 
             if (dIcon) dIcon.classList.remove('animate-spin');
+            if (mIcon) mIcon.classList.remove('animate-spin');
         }
 
         async function fetchGoogleSheetData(silent = true, forceClean = false) {
@@ -1451,8 +1460,12 @@
         }
 
         function scrollToTop(btn) {
-            if (btn && typeof btn.blur === 'function') {
-                btn.blur();
+            if (btn) {
+                btn.classList.add('btn-pressed');
+                setTimeout(() => {
+                    btn.classList.remove('btn-pressed');
+                    if (typeof btn.blur === 'function') btn.blur();
+                }, 220);
             }
             const container = document.getElementById('main-scroll-container');
             if (container) {
@@ -1860,11 +1873,11 @@
                     총 <b>${totalRows}</b>개 데이터 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> 표시 (페이지 ${currentPage}/${totalPages})
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>처음</button>
-                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>이전</button>
+                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>처음</button>
+                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>이전</button>
                     <span class="px-2 font-semibold text-slate-700 dark:text-slate-300">${currentPage} / ${totalPages}</span>
-                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>다음</button>
-                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium"'}>맨끝</button>
+                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>다음</button>
+                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>맨끝</button>
                 </div>
             `;
         }
@@ -2218,7 +2231,7 @@
             document.getElementById('board-content').value = '';
             if (submitBtn && submitText) {
                 submitBtn.disabled = false;
-                submitBtn.className = 'sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0';
+                submitBtn.className = 'sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95';
                 submitText.innerText = '글 남기기';
             }
         }
@@ -2314,7 +2327,7 @@
             
             if (submitBtn && submitBtnText) {
                 submitBtn.disabled = false;
-                submitBtn.className = 'w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2';
+                submitBtn.className = 'w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer';
                 submitBtnText.innerText = '평가 제출하기';
             }
 
@@ -2725,7 +2738,7 @@
                         <span class="px-2 py-0.5 rounded text-xs font-black ${conf.badge} font-mono-num">${escapeHtml(v.carrier)}</span>
                         <span class="font-mono-num font-black text-indigo-600 dark:text-indigo-400 text-base">${escapeHtml(v.berth)} 선석</span>
                     </div>
-                    <button onclick="closeBerthModalDirect()" class="text-slate-400 hover:text-slate-700 text-lg px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800">
+                    <button onclick="closeBerthModalDirect()" class="text-slate-400 hover:text-slate-700 text-lg px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 cursor-pointer">
                         &times;
                     </button>
                 </div>
@@ -2975,6 +2988,20 @@
 
             registerServiceWorker();
 
+            // 상단 이동 플로팅 버튼 터치 인터랙션 바인딩
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (scrollBtn) {
+                scrollBtn.addEventListener('touchstart', function() {
+                    this.classList.add('btn-pressed');
+                }, { passive: true });
+                scrollBtn.addEventListener('touchend', function() {
+                    setTimeout(() => this.classList.remove('btn-pressed'), 180);
+                }, { passive: true });
+                scrollBtn.addEventListener('touchcancel', function() {
+                    this.classList.remove('btn-pressed');
+                }, { passive: true });
+            }
+
             window.addEventListener('resize', () => {
                 handleMainScroll();
                 
@@ -2995,16 +3022,16 @@
             // 스크롤 시 스크롤바 일시적으로 보이기 제어
             let scrollFadeTimer;
             window.addEventListener('scroll', function (e) {
-            if (e.target && e.target.classList) {
-                e.target.classList.add('is-scrolling');
-                clearTimeout(scrollFadeTimer);
-                scrollFadeTimer = setTimeout(function() {
-                    const scrollingEls = document.querySelectorAll('.is-scrolling');
-                    scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
-                }, 800);
-            }
-        }, true);
-    };
-</script>
+                if (e.target && e.target.classList) {
+                    e.target.classList.add('is-scrolling');
+                    clearTimeout(scrollFadeTimer);
+                    scrollFadeTimer = setTimeout(function() {
+                        const scrollingEls = document.querySelectorAll('.is-scrolling');
+                        scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
+                    }, 800);
+                }
+            }, true);
+        };
+    </script>
 </body>
 </html>
