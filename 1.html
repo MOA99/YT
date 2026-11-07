@@ -211,9 +211,95 @@
                 color: #ffffff !important;
             }
         }
+
+        /* 세련된 프리미엄 인앱 스플래시 화면 스타일 */
+        #app-splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background-color: #090d16;
+            background-image: radial-gradient(circle at 50% 35%, rgba(79, 70, 229, 0.18) 0%, rgba(9, 13, 22, 0) 70%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #app-splash-screen.splash-hidden {
+            opacity: 0;
+            transform: scale(1.04);
+            pointer-events: none;
+        }
+
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 10px 25px rgba(79, 70, 229, 0.35)); }
+            50% { transform: scale(1.03); filter: drop-shadow(0 16px 35px rgba(99, 102, 241, 0.5)); }
+        }
+
+        .splash-icon-pulse {
+            animation: splashPulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes splashBarGlow {
+            0% { width: 0%; opacity: 0.6; }
+            40% { width: 45%; opacity: 0.9; }
+            80% { width: 85%; opacity: 1; }
+            100% { width: 100%; opacity: 1; }
+        }
+
+        .splash-progress-bar {
+            animation: splashBarGlow 1.1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
+
+    <!-- 프리미엄 인앱 스플래시 인트로 오버레이 -->
+    <div id="app-splash-screen" onclick="forceDismissSplashScreen()" class="hidden">
+        <div class="flex flex-col items-center justify-center px-6 text-center max-w-xs w-full">
+            <!-- 꽉 찬 이미지 박스 + 앰비언트 글로우 -->
+            <div class="relative mb-6">
+                <div class="absolute -inset-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl blur-lg opacity-40 animate-pulse"></div>
+                <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-slate-900 border border-white/15 overflow-hidden shadow-2xl splash-icon-pulse flex items-center justify-center">
+                    <img src="/favicon.png" alt="YT 대시보드 로고" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/192x192/1e1b4b/ffffff?text=YT'">
+                </div>
+            </div>
+
+            <!-- 앱 타이틀 및 배지 -->
+            <div class="space-y-1.5 mb-8">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 text-[10px] font-bold tracking-widest uppercase mb-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
+                    Smart Terminal System
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight drop-shadow-sm">
+                    YT Dashboard
+                </h1>
+                <p class="text-xs text-slate-400 font-medium tracking-tight">
+                    실시간 차량 평가 및 선석 관제 모니터링
+                </p>
+            </div>
+
+            <!-- 미니멀 프로그레스 바 & 상태 문구 -->
+            <div class="w-full max-w-[200px] flex flex-col items-center gap-2.5">
+                <div class="w-full h-1 bg-slate-800/90 rounded-full overflow-hidden p-0.5 border border-white/5">
+                    <div class="h-full bg-gradient-to-r from-indigo-500 via-indigo-400 to-violet-500 rounded-full splash-progress-bar shadow-[0_0_12px_rgba(99,102,241,0.8)]"></div>
+                </div>
+                <span class="text-[11px] font-mono font-medium text-slate-400 tracking-wider">
+                    SYSTEM INITIALIZING...
+                </span>
+            </div>
+        </div>
+
+        <!-- 하단 버전 카피라이트 -->
+        <div class="absolute bottom-6 text-[10px] text-slate-400 tracking-wider font-mono">
+            v2.4 &bull; KST TERMINAL OPERATIONS
+        </div>
+    </div>
 
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
@@ -2995,16 +3081,63 @@
             // 스크롤 시 스크롤바 일시적으로 보이기 제어
             let scrollFadeTimer;
             window.addEventListener('scroll', function (e) {
-                if (e.target && e.target.classList) {
-                    e.target.classList.add('is-scrolling');
-                    clearTimeout(scrollFadeTimer);
-                    scrollFadeTimer = setTimeout(function() {
-                        const scrollingEls = document.querySelectorAll('.is-scrolling');
-                        scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
-                    }, 800);
-                }
-            }, true);
-        };
-    </script>
+            if (e.target && e.target.classList) {
+                e.target.classList.add('is-scrolling');
+                clearTimeout(scrollFadeTimer);
+                scrollFadeTimer = setTimeout(function() {
+                    const scrollingEls = document.querySelectorAll('.is-scrolling');
+                    scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
+                }, 800);
+            }
+        }, true);
+    };
+
+    // 스플래시 화면 생명주기 및 전환 제어
+    let splashDismissTimer = null;
+    let splashRemoveTimer = null;
+
+    function initSplashScreen() {
+        const splash = document.getElementById('app-splash-screen');
+        if (!splash) return;
+
+        // 세션당 최초 1회 또는 PWA/모바일 환경에서 실행
+        const alreadyShown = sessionStorage.getItem('yt_splash_shown_session');
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        // 모바일 접속 또는 PWA 모드일 때 표시
+        if (!alreadyShown || isStandalone) {
+            splash.classList.remove('hidden');
+            sessionStorage.setItem('yt_splash_shown_session', 'true');
+
+            // 1.15초 동안 애니메이션 후 부드럽게 페이드아웃
+            splashDismissTimer = setTimeout(() => {
+                forceDismissSplashScreen();
+            }, 1150);
+
+            // 2.5초 안전 타임아웃
+            setTimeout(() => {
+                forceDismissSplashScreen();
+            }, 2500);
+        } else {
+            splash.style.display = 'none';
+        }
+    }
+
+    function forceDismissSplashScreen() {
+        const splash = document.getElementById('app-splash-screen');
+        if (!splash || splash.style.display === 'none') return;
+
+        if (splashDismissTimer) clearTimeout(splashDismissTimer);
+        splash.classList.add('splash-hidden');
+
+        if (splashRemoveTimer) clearTimeout(splashRemoveTimer);
+        splashRemoveTimer = setTimeout(() => {
+            splash.style.display = 'none';
+        }, 450);
+    }
+
+    // DOM 로드 즉시 스플래시 체크
+    document.addEventListener('DOMContentLoaded', initSplashScreen);
+</script>
 </body>
 </html>
