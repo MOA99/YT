@@ -883,7 +883,7 @@
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 안드로이드 기기
                             </h4>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                우측 하단(또는 상단)의 메뉴 버튼을 누른 후, <strong>'다른 브라우저로 열기'</strong>(크롬 또는 삼성인터넷)를 선택하세요.
+                                자동 전환되지 않는 경우, 우측 하단(또는 상단)의 메뉴 버튼을 누른 후 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -3012,23 +3012,24 @@
             const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
 
             if (isInAppBrowser) {
+                // 앱 설치 안내 페이지로 즉시 이동
+                switchTab('install-guide');
+
                 if (isKakao) {
                     if (/Android/i.test(ua)) {
-                        // 카카오톡 (안드로이드) -> 크롬 브라우저 강제 호출 (우선순위)
                         location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
                         showToast('크롬 브라우저로 안전하게 연결합니다.');
                     } else {
-                        // 카카오톡 (iOS) -> 전용 외부 브라우저 강제 호출 스킴
                         location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
                         showToast('외부 기본 브라우저로 안전하게 연결합니다.');
                     }
-                } else if (/Android/i.test(ua) && /Line|Instagram|FBAV|FBAN/i.test(ua)) {
-                    // 안드로이드 기타 인앱 브라우저 크롬 강제 이동
+                } else if (/Android/i.test(ua)) {
+                    // 네이버 등 안드로이드 기타 인앱 브라우저 크롬 인텐트로 강제 호출 시도
                     location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
                     showToast('크롬 브라우저로 연결합니다.');
                 } else {
-                    // 네이버 등 자동 이탈이 어려운 기타 인앱 브라우저는 안내 페이지 탭으로 화면 전환
-                    switchTab('install-guide');
+                    // iOS 기타 인앱 브라우저는 자동 이탈이 막혀있으므로 복사 유도 메시지
+                    copyCurrentUrl();
                 }
                 return;
             }
@@ -3072,9 +3073,9 @@
             if (isInAppBrowser && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
                 if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
-                    const titleEl = document.getElementById('pwa-banner-title');
-                    const descEl = document.getElementById('pwa-banner-desc');
-                    const btnEl = document.getElementById('pwa-banner-btn');
+                    const titleEl = banner.querySelector('h4');
+                    const descEl = banner.querySelector('p');
+                    const btnEl = banner.querySelector('button:last-child');
                     if (titleEl) titleEl.innerText = '외부 브라우저 연결 필요';
                     if (descEl) descEl.innerText = '앱 설치를 위해 외부 브라우저로 엽니다.';
                     if (btnEl) btnEl.innerText = '앱 열기';
@@ -3082,7 +3083,7 @@
                 }
             }
 
-            // 페이지 접속 시 무조건 히스토리(이력조회) 탭으로 시작 (이전 탭 기억 삭제)
+            // 페이지 접속 시 무조건 히스토리(이력조회) 탭으로 시작 (이전 탭 기억 캐시 버그 방지)
             switchTab('history');
 
             fetchGoogleSheetData(true, false);
