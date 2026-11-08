@@ -1,23 +1,32 @@
-const CACHE_NAME = 'yt-dashboard-v13'; // 캐시 버전 업데이트
+const CACHE_NAME = 'yt-dashboard-v14'; // 캐시 버전 강제 업데이트
 
-// 어떤 경로(서브폴더)에 호스팅되더라도 상대경로로 안전하게 캐싱
-const LOCAL_ASSETS = [
-    './',
-    './index.html',
-    './manifest.json',
-    './favicon.png',
+// 캐싱할 에셋 (엄격한 상대경로 대신 안전한 파일명 직접 지정)
+const ASSETS_TO_CACHE = [
+    'index.html',
+    'manifest.json',
+    'favicon.png',
     'https://cdn.tailwindcss.com'
 ];
 
-// 1. 서비스 워커 설치 (무조건 대기열 무시하고 즉시 설치)
+// 1. 서비스 워커 설치 (오류가 나도 멈추지 않는 불사신 캐싱)
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
+    self.skipWaiting(); // 즉시 활성화
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            console.log('[PWA] 안정화된 초기 캐싱 시작 (v13)...');
-            return Promise.allSettled(
-                LOCAL_ASSETS.map(asset => cache.add(asset).catch(err => console.warn('캐시 실패:', asset, err)))
-            );
+        caches.open(CACHE_NAME).then(async (cache) => {
+            console.log('[PWA] 안정화된 초기 캐싱 시작 (v14)...');
+            // cache.add() 대신 안전하게 하나씩 수동 fetch 후 저장
+            for (let asset of ASSETS_TO_CACHE) {
+                try {
+                    // 리다이렉트나 CORS 제약을 무시하고 억지로라도 담기 위한 no-cors 모드
+                    const req = new Request(asset, { mode: 'no-cors' });
+                    const res = await fetch(req);
+                    if (res) {
+                        await cache.put(req, res);
+                    }
+                } catch (e) {
+                    console.warn('[PWA] 에셋 캐시 실패 (무시됨):', asset, e);
+                }
+            }
         })
     );
 });
@@ -52,7 +61,7 @@ self.addEventListener('fetch', (event) => {
             if (cachedRes) {
                 // 백그라운드에서 네트워크로 최신화 (Stale-While-Revalidate)
                 event.waitUntil(fetch(req).then(netRes => {
-                    if (netRes && netRes.ok) cache.put(req, netRes.clone());
+                    if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) cache.put(req, netRes.clone());
                 }).catch(() => {}));
                 return cachedRes;
             }
@@ -69,8 +78,11 @@ self.addEventListener('fetch', (event) => {
             const isHtml = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
             
             if (isHtml) {
-                // 저장해둔 메인 화면 HTML을 강제로 꺼내기 시도
-                const fallback = await caches.match('./index.html', { ignoreSearch: true }) || await caches.match('./', { ignoreSearch: true });
+                // 저장해둔 메인 화면 HTML을 강제로 꺼내기 시도 (루트 접속시에도 index.html 반환)
+                const cache = await caches.open(CACHE_NAME);
+                const fallback = await cache.match('index.html', { ignoreSearch: true }) || 
+                                 await cache.match('/index.html', { ignoreSearch: true });
+                
                 if (fallback) return fallback;
 
                 // 캐시마저 완전히 비워져 있는 '최악의 오프라인 상태' 비상용 뼈대 화면
