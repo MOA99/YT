@@ -257,13 +257,13 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 (모바일 및 데스크톱 공통 적용) -->
-    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md transition-all duration-200 flex items-center justify-center focus:outline-none cursor-pointer group" title="맨 위로 이동">
+    <!-- 상단 이동 플로팅 버튼 (모바일 & 데스크탑 통일) -->
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-2 select-none transition-colors">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2 select-none transition-colors">
         <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <span class="text-xs font-bold mt-0.5">이력조회</span>
@@ -889,6 +889,51 @@
                 </div>
             </section>
 
+            <!-- 9. 앱 설치 안내 페이지 (숨김 탭) -->
+            <section id="tab-install-guide" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto text-center space-y-6 transition-colors">
+                    <div class="w-16 h-16 mx-auto bg-indigo-100 dark:bg-indigo-900/50 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
+                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 사용을 위해 기본 브라우저로 이동해주세요.
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-4 text-left mt-6">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-2">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 안드로이드 기기
+                            </h4>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-2">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 아이폰 (iOS)
+                            </h4>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                <strong>'현재 주소 복사하기'</strong>를 누른 후 사파리(Safari) 앱 주소창에 붙여넣기로 접속하여 '홈 화면에 추가'를 진행하세요.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button onclick="openInChrome()" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 w-full sm:w-auto active:scale-95">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            크롬 브라우저 실행
+                        </button>
+                        <button onclick="copyCurrentUrl()" class="px-5 py-3 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 w-full sm:w-auto active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            현재 주소 복사하기
+                        </button>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -903,7 +948,8 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
+        // 항상 기본값 'history' 탭으로 시작하도록 수정 (캐시 버그 방지)
+        let currentActiveTab = 'history';
 
         let historySort = { field: 'date', order: 'desc' };
         let integratedSort = { field: 'ytNum', order: 'asc' };
@@ -1414,9 +1460,6 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            try {
-                localStorage.setItem('yt_active_tab', tabId);
-            } catch (e) {}
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const targetTab = document.getElementById(`tab-${tabId}`);
@@ -1447,7 +1490,8 @@
                 'integrated': 'YT 통합 리스트',
                 'rawdata': '원본 입력 데이터',
                 'board': '미니 게시판',
-                'guide': '이용 가이드'
+                'guide': '이용 가이드',
+                'install-guide': '앱 설치 안내 페이지'
             };
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
@@ -1467,7 +1511,7 @@
 
             const mainContentContainer = document.getElementById('main-scroll-container');
             if (mainContentContainer) mainContentContainer.scrollTop = 0;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
 
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -1478,9 +1522,10 @@
         function handleMainScroll() {
             const container = document.getElementById('main-scroll-container');
             const scrollBtn = document.getElementById('scrollTopBtn');
-            if (!container || !scrollBtn) return;
+            if (!scrollBtn) return;
 
-            if (container.scrollTop > 200 || window.scrollY > 200) {
+            const currentScroll = (container ? container.scrollTop : 0) || window.scrollY || document.documentElement.scrollTop || 0;
+            if (currentScroll > 150) {
                 scrollBtn.classList.remove('hidden');
             } else {
                 scrollBtn.classList.add('hidden');
@@ -1497,11 +1542,17 @@
             }
             const container = document.getElementById('main-scroll-container');
             if (container) {
-                container.scrollTo({ top: 0, behavior: 'smooth' });
+                try { 
+                    container.scrollTo({ top: 0, behavior: 'smooth' }); 
+                } catch(e) { 
+                    container.scrollTop = 0; 
+                }
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
+            try { 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            } catch(e) { 
+                window.scrollTo(0,0); 
+            }
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
@@ -1946,7 +1997,6 @@
                 }
             });
 
-            // 화면 높이 기반 동적 행 개수 계산 (모바일 환경에서만 +1개 추가)
             const currentRowsPerPage = window.innerWidth < 768 
                 ? Math.max(3, Math.floor((window.innerHeight - 380) / 60) + 1)
                 : rowsPerPage;
@@ -2953,8 +3003,41 @@
         window.addEventListener('appinstalled', () => {
             deferredPrompt = null;
             dismissPwaBanner();
+            try { localStorage.setItem('is_app_installed', 'true'); } catch (e) {}
+            const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+            if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
         });
+
+        function openInChrome() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isIos = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
+            const isKakao = /KAKAOTALK/i.test(ua);
+
+            if (isIos) {
+                showToast('아이폰은 "현재 주소 복사하기"를 누른 후 Safari 앱에서 열어주세요.', true);
+                return;
+            }
+
+            if (isKakao) {
+                // 카카오톡 전용 외부 브라우저 호출 API
+                location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+            } else {
+                // 안드로이드 기본 Chrome Intent 호출
+                location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+            }
+            showToast('크롬 브라우저를 실행합니다.');
+        }
+
+        function copyCurrentUrl() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('주소가 복사되었습니다. 사파리/크롬에 붙여넣기 해주세요.');
+        }
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
@@ -2975,6 +3058,17 @@
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             if (isStandalone) {
                 showToast('이미 앱으로 실행 중입니다.');
+                return;
+            }
+
+            // 인앱 브라우저 감지 (카카오톡, 네이버, 라인, 인스타그램, 페이스북 등)
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isKakao = /KAKAOTALK/i.test(ua);
+            const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+
+            if (isInAppBrowser) {
+                // 인앱 브라우저일 경우 강제 이탈하지 않고 앱 설치 안내 페이지 탭으로만 유도
+                switchTab('install-guide');
                 return;
             }
 
@@ -3001,11 +3095,34 @@
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
 
-            if (currentActiveTab) {
-                switchTab(currentActiveTab);
-            } else {
-                switchTab('history');
+            // PWA 앱 설치 버튼 숨김 처리 (단독 실행 모드이거나 설치 완료 기록이 있을 때)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const isInstalled = localStorage.getItem('is_app_installed') === 'true';
+            if (isStandalone || isInstalled) {
+                const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+                if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
+
+            // 인앱 브라우저 감지 및 외부 브라우저 유도 플로팅 배너 자동 표시
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isKakao = /KAKAOTALK/i.test(ua);
+            const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+
+            if (isInAppBrowser && !isStandalone && !isInstalled) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                    const titleEl = document.getElementById('pwa-banner-title');
+                    const descEl = document.getElementById('pwa-banner-desc');
+                    const btnEl = document.getElementById('pwa-banner-btn');
+                    if (titleEl) titleEl.innerText = '외부 브라우저 연결 필요';
+                    if (descEl) descEl.innerText = '앱 설치를 위해 외부 브라우저로 엽니다.';
+                    if (btnEl) btnEl.innerText = '앱 열기';
+                    banner.classList.remove('hidden');
+                }
+            }
+
+            // 페이지 접속 시 무조건 히스토리(이력조회) 탭으로 시작 (이전 탭 기억 캐시 버그 방지)
+            switchTab('history');
 
             fetchGoogleSheetData(true, false);
             fetchMiniBoardSheetData(false);
@@ -3030,6 +3147,13 @@
                 }, { passive: true });
             }
 
+            // PWA 내부 스크롤 이벤트 감지
+            const mainContainer = document.getElementById('main-scroll-container');
+            if (mainContainer) {
+                mainContainer.addEventListener('scroll', handleMainScroll, { passive: true });
+            }
+            window.addEventListener('scroll', handleMainScroll, { passive: true });
+
             window.addEventListener('resize', () => {
                 handleMainScroll();
                 
@@ -3047,7 +3171,7 @@
                 }, 150);
             });
 
-            // 스크롤 시 스크롤바 일시적으로 보이기 제어
+            // 스크롤 시 스크롤바 일시적 노출 제어
             let scrollFadeTimer;
             window.addEventListener('scroll', function (e) {
                 if (e.target && e.target.classList) {
