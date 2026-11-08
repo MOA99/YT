@@ -213,6 +213,23 @@
             animation: spin-pwa 0.8s linear infinite !important;
             transform-origin: center center !important;
         }
+
+        /* 최상단 스크롤 버튼 모바일 터치 및 데스크톱 호버 스타일 완벽 분리 */
+        #scrollTopBtn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #scrollTopBtn.btn-pressed {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            transform: scale(0.92);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            #scrollTopBtn:hover {
+                background-color: #4f46e5 !important;
+                color: #ffffff !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
@@ -241,12 +258,12 @@
     </div>
 
     <!-- 상단 이동 플로팅 버튼 (모바일 & 데스크탑 통일) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" ontouchstart="" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 hover:text-white hover:bg-indigo-600 dark:hover:bg-indigo-500 active:bg-indigo-700 dark:active:bg-indigo-600 active:scale-90 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;" title="맨 위로 이동">
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-2 select-none transition-colors">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2 select-none transition-colors">
         <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <span class="text-xs font-bold mt-0.5">이력조회</span>
@@ -881,7 +898,7 @@
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 자체 보안 정책으로 인해 <strong>앱설치가 제한</strong>됩니다.<br>정상적인 사용을 위해 기본 브라우저로 이동해주세요.
+                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 자체 보안 정책으로 인해 <strong>앱설치가 제한</strong>됩니다.<strong>정상적인 사용을 위해 기본 브라우저로 이동해주세요. </strong>
                         </p>
                     </div>
                     
@@ -1515,10 +1532,14 @@
             }
         }
 
-        function scrollToTop() {
-            const btn = document.getElementById('scrollTopBtn');
-            if (btn && typeof btn.blur === 'function') btn.blur();
-            
+        function scrollToTop(btn) {
+            if (btn) {
+                btn.classList.add('btn-pressed');
+                setTimeout(() => {
+                    btn.classList.remove('btn-pressed');
+                    if (typeof btn.blur === 'function') btn.blur();
+                }, 220);
+            }
             const container = document.getElementById('main-scroll-container');
             if (container) {
                 try { 
@@ -3111,6 +3132,20 @@
             setInterval(updateKSTClock, 1000);
 
             registerServiceWorker();
+
+            // 상단 이동 플로팅 버튼 터치 인터랙션 바인딩
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (scrollBtn) {
+                scrollBtn.addEventListener('touchstart', function() {
+                    this.classList.add('btn-pressed');
+                }, { passive: true });
+                scrollBtn.addEventListener('touchend', function() {
+                    setTimeout(() => this.classList.remove('btn-pressed'), 180);
+                }, { passive: true });
+                scrollBtn.addEventListener('touchcancel', function() {
+                    this.classList.remove('btn-pressed');
+                }, { passive: true });
+            }
 
             // PWA 내부 스크롤 이벤트 감지
             const mainContainer = document.getElementById('main-scroll-container');
