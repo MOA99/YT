@@ -205,26 +205,6 @@
             animation: spin-pwa 0.8s linear infinite !important;
             transform-origin: center center !important;
         }
-
-        /* 최상단 스크롤 버튼 PWA 터치 전용 스타일 */
-        #scrollTopBtn {
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
-        }
-        /* PWA iOS 등에서 터치 시 강제 색상 변화 */
-        #scrollTopBtn:active {
-            background-color: #4f46e5 !important;
-            color: #ffffff !important;
-            transform: scale(0.90) !important;
-        }
-        @media (hover: hover) and (pointer: fine) {
-            #scrollTopBtn:hover {
-                background-color: #4f46e5 !important;
-                color: #ffffff !important;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
@@ -252,9 +232,9 @@
         </div>
     </div>
 
-    <!-- 상단 이동 플로팅 버튼 -->
-    <button id="scrollTopBtn" onclick="scrollToTop(this)" ontouchstart="" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer" title="맨 위로 이동">
-        <svg class="w-5 h-5 pointer-events-none transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    <!-- 상단 이동 플로팅 버튼 (모바일 & 데스크탑 통일) -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 hover:text-white hover:bg-indigo-600 dark:hover:bg-indigo-500 active:bg-indigo-700 dark:active:bg-indigo-600 active:scale-90 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- 모바일 하단 고정 네비게이션 바 -->
@@ -367,7 +347,7 @@
                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
             </div>
-            <button id="mobile-sync-btn" onclick="manualRefreshAll()" ontouchstart="" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
+            <button id="mobile-sync-btn" onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
                 <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 <span>동기화</span>
             </button>
@@ -402,6 +382,7 @@
 
             <!-- 1. 선석 현황 탭 -->
             <section id="tab-berth" class="tab-content hidden space-y-6">
+                <!-- 모바일/데스크톱 통일 브레드크럼 및 컨트롤 바 -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
                     <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="flex items-center">
@@ -510,6 +491,7 @@
                                 </tr>
                             </thead>
                             <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                                <!-- 스켈레톤 UI 초기 렌더링 -->
                                 <tr class="animate-pulse">
                                     <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
                                     <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
@@ -937,7 +919,7 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
+        let currentActiveTab = 'history';
 
         let historySort = { field: 'date', order: 'desc' };
         let integratedSort = { field: 'ytNum', order: 'asc' };
@@ -961,6 +943,9 @@
         let toastTimer = null;
         let resizeTimer = null;
         let deferredPrompt = null;
+
+        let touchStartY = 0;
+        let isPulling = false;
 
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
@@ -1141,10 +1126,8 @@
                     alignTimelineToDataset();
                 }
 
-                // localStorage에 'false'가 아니면 모두 다크모드로 인식 (초기 진입 시 기본 다크모드)
-                const savedMode = localStorage.getItem('yt_dark_mode');
-                const isDark = savedMode !== 'false';
-                
+                // 사용자가 명시적으로 'false'를 저장하지 않았다면 기본적으로 다크모드로 동작
+                const isDark = localStorage.getItem('yt_dark_mode') !== 'false';
                 if (isDark) {
                     document.documentElement.classList.add('dark');
                 } else {
@@ -1183,11 +1166,12 @@
             const dIcon = document.getElementById('desktop-refresh-icon');
             const mIcon = document.getElementById('mobile-refresh-icon');
             
+            // 일반 spin과 강력한 pwa-spinning 동시 적용
             if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
             if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
 
-            // [PWA 핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
-            // setTimeout을 통해 브라우저가 화면을 갱신(Paint)할 수 있도록 짧은 휴식을 줍니다.
+            // [핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
+            // 브라우저가 화면을 갱신(Paint)할 수 있도록 50ms 휴식을 줍니다.
             setTimeout(async () => {
                 try {
                     await Promise.allSettled([
@@ -1196,6 +1180,7 @@
                         fetchBerthDataFromSheet()
                     ]);
                 } finally {
+                    // 데이터 로드 완료 후 애니메이션이 자연스럽게 멈추도록 최소 지연을 줍니다.
                     setTimeout(() => {
                         if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
                         if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
@@ -1445,9 +1430,6 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            try {
-                localStorage.setItem('yt_active_tab', tabId);
-            } catch (e) {}
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const targetTab = document.getElementById(`tab-${tabId}`);
@@ -1499,7 +1481,7 @@
 
             const mainContentContainer = document.getElementById('main-scroll-container');
             if (mainContentContainer) mainContentContainer.scrollTop = 0;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
 
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -1520,8 +1502,8 @@
             }
         }
 
-        // PWA 엔진이 scroll 동작을 무시하는 버그 방지용 최적화 스크롤 함수
-        function scrollToTop(btn) {
+        function scrollToTop() {
+            const btn = document.getElementById('scrollTopBtn');
             if (btn && typeof btn.blur === 'function') btn.blur();
             
             const container = document.getElementById('main-scroll-container');
@@ -1942,6 +1924,13 @@
                     <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>맨끝</button>
                 </div>
             `;
+        }
+
+        function changeHistoryPage(page) {
+            historyCurrentPage = page;
+            renderHistoryTable();
+            const pane = document.getElementById('history-scroll-pane');
+            if (pane) pane.scrollLeft = 0;
         }
 
         function renderIntegratedTable() {
@@ -2413,6 +2402,13 @@
                     btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
                 }
             });
+
+            const subtitleEl = document.getElementById('berth-subtitle');
+            if (subtitleEl) {
+                if (mode === '24h') subtitleEl.innerText = '1일간 선석별 접안 일정';
+                else if (mode === '72h') subtitleEl.innerText = '3일간 선석별 접안 일정';
+                else subtitleEl.innerText = '2일간 선석별 접안 일정';
+            }
 
             alignTimelineToDataset();
             renderBerthGraphicMatrix();
@@ -3068,11 +3064,26 @@
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
 
-            if (currentActiveTab) {
-                switchTab(currentActiveTab);
-            } else {
-                switchTab('history');
+            // 인앱 브라우저 감지 및 외부 브라우저 유도 플로팅 배너 자동 표시
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isKakao = /KAKAOTALK/i.test(ua);
+            const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+
+            if (isInAppBrowser && !isStandalone && !isInstalled) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                    const titleEl = document.getElementById('pwa-banner-title');
+                    const descEl = document.getElementById('pwa-banner-desc');
+                    const btnEl = document.getElementById('pwa-banner-btn');
+                    if (titleEl) titleEl.innerText = '외부 브라우저 연결 필요';
+                    if (descEl) descEl.innerText = '앱 설치를 위해 외부 브라우저로 엽니다.';
+                    if (btnEl) btnEl.innerText = '앱 열기';
+                    banner.classList.remove('hidden');
+                }
             }
+
+            // 페이지 접속 시 무조건 히스토리(이력조회) 탭으로 시작 (이전 탭 기억 삭제)
+            switchTab('history');
 
             fetchGoogleSheetData(true, false);
             fetchMiniBoardSheetData(false);
