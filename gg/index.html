@@ -46,9 +46,9 @@
     <meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고">
 
     <!-- Web App Manifest 연동 -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="./favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="./favicon.png">
 
     <title>YT대시보드</title>
     <!-- Tailwind CSS CDN -->
@@ -554,7 +554,7 @@
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                     <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
                                 </label>
-                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
 
                             <div>
@@ -898,7 +898,7 @@
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 사용을 위해 기본 브라우저로 이동해주세요.
+                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는<strong>앱설치가 제한</strong>됩니다.<br>정상적인 사용을 위해 기본 브라우저로 이동해주세요.
                         </p>
                     </div>
                     
@@ -908,7 +908,7 @@
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 안드로이드 기기
                             </h4>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴(⋮) 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
+                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -1491,7 +1491,7 @@
                 'rawdata': '원본 입력 데이터',
                 'board': '미니 게시판',
                 'guide': '이용 가이드',
-                'install-guide': '앱 설치 안내'
+                'install-guide': '앱 설치 안내 페이지'
             };
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
@@ -3042,7 +3042,7 @@
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
+                    navigator.serviceWorker.register('./sw.js')
                         .then((reg) => {
                             console.log('[PWA] Service Worker registered successfully:', reg.scope);
                         })
