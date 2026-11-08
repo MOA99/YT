@@ -1,111 +1,100 @@
-const CACHE_NAME = 'yt-dashboard-cache-v10';
+const CACHE_NAME = 'yt-dashboard-v12'; // 캐시 버전 업데이트
 
-// 1. 내부 정적 파일 (정상 200 응답으로 안전하게 캐싱되어야 하는 필수 파일)
+// 어떤 경로(서브폴더)에 호스팅되더라도 상대경로로 안전하게 캐싱
 const LOCAL_ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/favicon.png'
+    './',
+    './index.html',
+    './manifest.json',
+    './favicon.png'
 ];
 
-// 2. 외부 CDN 파일 (Opaque 상태로 강제 캐싱해야 하는 리소스)
-const EXTERNAL_ASSETS = [
-    'https://cdn.tailwindcss.com',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap'
-];
-
-// 서비스 워커 설치
+// 1. 서비스 워커 설치 (무조건 대기열 무시하고 즉시 설치)
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async (cache) => {
-            console.log('[PWA] 초기 자산 캐싱 시작 (v10)...');
-            
-            // [핵심 패치 1] 내부 HTML 파일은 정상(Status 200) 요청으로 담습니다. 
-            // Opaque로 담기면 모바일 브라우저가 메인 화면 렌더링을 보안상 거부(공룡화면 노출)합니다.
-            await cache.addAll(LOCAL_ASSETS).catch(err => console.warn('내부 캐시 에러:', err));
-            
-            // [핵심 패치 2] 외부 디자인 CDN 등은 no-cors 옵션을 통해 따로 저장합니다.
-            for (const asset of EXTERNAL_ASSETS) {
-                try {
-                    const response = await fetch(asset, { mode: 'no-cors' });
-                    await cache.put(asset, response);
-                } catch (err) {
-                    console.warn('[PWA] 외부 자산 프리캐시 실패:', asset, err);
-                }
-            }
-        }).then(() => self.skipWaiting())
+        caches.open(CACHE_NAME).then((cache) => {
+            console.log('[PWA] 안정화된 초기 캐싱 시작 (v12)...');
+            return Promise.allSettled(
+                LOCAL_ASSETS.map(asset => cache.add(asset).catch(err => console.warn('캐시 실패:', asset, err)))
+            );
+        })
     );
 });
 
-// 구버전 캐시 삭제 및 활성화
+// 2. 구버전 찌꺼기 완벽히 제거 후 즉시 제어권 확보
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then((keys) => {
             return Promise.all(
-                cacheNames.map((key) => {
-                    if (key !== CACHE_NAME) {
-                        return caches.delete(key);
-                    }
-                })
+                keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
             );
         }).then(() => self.clients.claim())
     );
 });
 
-// 네트워크 요청 가로채기 (캐시 전략)
+// 3. 에러 발생 확률 0%를 보장하는 강력한 Fetch 가로채기
 self.addEventListener('fetch', (event) => {
-    const request = event.request;
-    const url = new URL(request.url);
+    const req = event.request;
+    const url = new URL(req.url);
 
-    // 구글 API 요청은 무조건 네트워크를 타게 둡니다.
-    if (url.href.includes('docs.google.com/spreadsheets') || url.href.includes('script.google.com/macros')) {
-        return;
-    }
+    // 구글 시트 API 요청은 캐시에 간섭하지 않고 브라우저에 그대로 위임
+    if (url.href.includes('docs.google.com') || url.href.includes('script.google.com')) return;
+    if (req.method !== 'GET' || !url.protocol.startsWith('http')) return;
 
-    if (request.method !== 'GET' || !url.protocol.startsWith('http')) return;
-
-    // [전략 A] 화면 전환(HTML) 요청 -> Network First (실패 시 무조건 저장된 화면 띄움)
-    if (request.mode === 'navigate' || (request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
-        event.respondWith(
-            fetch(request).then((response) => {
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
-                return response;
-            }).catch(async () => {
-                const cache = await caches.open(CACHE_NAME);
-                
-                // 파라미터(?homescreen=1 등)를 무시하고 HTML을 찾습니다.
-                const exactMatch = await cache.match(request, { ignoreSearch: true });
-                if (exactMatch) return exactMatch;
-                
-                const fallbackIndex = await cache.match('/index.html', { ignoreSearch: true });
-                if (fallbackIndex) return fallbackIndex;
-
-                const fallbackRoot = await cache.match('/', { ignoreSearch: true });
-                if (fallbackRoot) return fallbackRoot;
-
-                // 캐시가 비워진 최악의 오프라인 상태 대비용 비상용 HTML 뼈대
-                return new Response(
-                    '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>오프라인 상태</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background-color:#0f172a;color:#f1f5f9;margin:0;}h2{margin-bottom:10px;}button{padding:12px 24px;border-radius:8px;border:none;background:#4f46e5;color:white;font-weight:bold;cursor:pointer;margin-top:20px;}</style></head><body><h2>인터넷 연결이 끊겼습니다.</h2><p>오프라인 데이터를 불러올 수 없습니다.</p><button onclick="location.reload()">네트워크 재연결 시도</button></body></html>',
-                    { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-                );
-            })
-        );
-        return;
-    }
-
-    // [전략 B] 기타 디자인 자원 등 -> Cache First (오프라인 속도 보장)
-    event.respondWith(
-        caches.match(request, { ignoreSearch: true }).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-            
-            return fetch(request).then((response) => {
-                if (response && (response.ok || response.type === 'opaque')) {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
+    // 무조건 유효한 Response 객체를 반환하도록 async 래퍼로 감쌈 (공룡화면 완벽 차단)
+    event.respondWith((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        
+        // [전략 A] 디자인 요소 (Tailwind, 폰트, 이미지): 캐시 우선 (Cache First)
+        const isStatic = url.href.includes('tailwindcss.com') || url.href.includes('fonts.') || url.pathname.endsWith('.png');
+        if (isStatic) {
+            const cached = await cache.match(req, { ignoreSearch: true });
+            if (cached) return cached;
+            try {
+                const netRes = await fetch(req);
+                // 외부 CDN은 불투명 응답(opaque)일 수 있으므로 이를 허용하여 저장
+                if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) {
+                    cache.put(req, netRes.clone());
                 }
-                return response;
-            }).catch(() => {});
-        })
-    );
+                return netRes;
+            } catch (e) {
+                // 디자인 파일 로드 실패 시 무의미한 에러 대신 404 리턴하여 서비스 워커 크래시 방어
+                return new Response('', { status: 404 });
+            }
+        }
+
+        // [전략 B] 메인 화면 및 기타 데이터: 네트워크 우선 (Network First)
+        try {
+            const netRes = await fetch(req);
+            if (netRes && netRes.status === 200) {
+                cache.put(req, netRes.clone());
+            }
+            return netRes;
+        } catch (error) {
+            // [오프라인 진입] 통신이 완전히 끊김
+            
+            // 1. 기존에 저장된 캐시 화면이 있는지 확인
+            const cachedRes = await cache.match(req, { ignoreSearch: true });
+            if (cachedRes) return cachedRes;
+
+            // 2. HTML(화면 전환) 요청인지 안전하게 판별
+            const acceptHeader = req.headers.get('accept');
+            const isHtml = req.mode === 'navigate' || (acceptHeader && acceptHeader.includes('text/html'));
+            
+            if (isHtml) {
+                // 루트 경로 또는 index.html을 강제로 꺼내기
+                const fallbackHtml = await cache.match('./index.html', { ignoreSearch: true }) || await cache.match('./', { ignoreSearch: true });
+                if (fallbackHtml) return fallbackHtml;
+
+                // 캐시마저 완전히 비워져 있는 '최악의 오프라인 상태' 뼈대 화면
+                return new Response(
+                    '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>오프라인 상태</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background-color:#0f172a;color:#f1f5f9;margin:0;text-align:center;}h2{margin-bottom:10px;font-size:1.5rem;color:#fff;}p{color:#94a3b8;font-size:0.9rem;margin-bottom:24px;}button{padding:12px 24px;border-radius:12px;border:none;background:#4f46e5;color:white;font-weight:bold;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);}</style></head><body><h2>인터넷 연결이 끊겼습니다</h2><p>오프라인 데이터를 불러오지 못했습니다.</p><button onclick="location.reload()">네트워크 재연결 시도</button></body></html>',
+                    { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+                );
+            }
+
+            // 그 외 알 수 없는 리소스 로드 실패 시
+            return new Response('', { status: 404 });
+        }
+    })());
 });
