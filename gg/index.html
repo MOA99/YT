@@ -883,7 +883,7 @@
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 안드로이드 기기
                             </h4>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                자동 전환되지 않는 경우, 우측 하단(또는 상단)의 메뉴 버튼을 누른 후 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
+                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -891,13 +891,17 @@
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 아이폰 (iOS)
                             </h4>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                화면 우측 하단의 <strong>나침반 모양 아이콘</strong>을 눌러 사파리 앱으로 여신 뒤, 하단의 공유 버튼을 통해 '홈 화면에 추가'를 진행하세요.
+                                <strong>'현재 주소 복사하기'</strong>를 누른 후 사파리(Safari) 앱 주소창에 붙여넣기로 접속하여 '홈 화면에 추가'를 진행하세요.
                             </p>
                         </div>
                     </div>
                     
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2">
-                        <button onclick="copyCurrentUrl()" class="px-5 py-3 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mx-auto active:scale-95">
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button onclick="openInChrome()" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 w-full sm:w-auto active:scale-95">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            크롬 브라우저 실행
+                        </button>
+                        <button onclick="copyCurrentUrl()" class="px-5 py-3 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 w-full sm:w-auto active:scale-95">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                             현재 주소 복사하기
                         </button>
@@ -2974,6 +2978,26 @@
             showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
         });
 
+        function openInChrome() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isIos = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
+            const isKakao = /KAKAOTALK/i.test(ua);
+
+            if (isIos) {
+                showToast('아이폰은 "현재 주소 복사하기"를 누른 후 Safari 앱에서 열어주세요.', true);
+                return;
+            }
+
+            if (isKakao) {
+                // 카카오톡 전용 외부 브라우저 호출 API
+                location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+            } else {
+                // 안드로이드 기본 Chrome Intent 호출
+                location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+            }
+            showToast('크롬 브라우저를 실행합니다.');
+        }
+
         function copyCurrentUrl() {
             const dummy = document.createElement('input');
             document.body.appendChild(dummy);
@@ -3012,25 +3036,8 @@
             const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
 
             if (isInAppBrowser) {
-                // 앱 설치 안내 페이지로 즉시 이동
+                // 인앱 브라우저일 경우 강제 이탈하지 않고 앱 설치 안내 페이지 탭으로만 유도
                 switchTab('install-guide');
-
-                if (isKakao) {
-                    if (/Android/i.test(ua)) {
-                        location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-                        showToast('크롬 브라우저로 안전하게 연결합니다.');
-                    } else {
-                        location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
-                        showToast('외부 기본 브라우저로 안전하게 연결합니다.');
-                    }
-                } else if (/Android/i.test(ua)) {
-                    // 네이버 등 안드로이드 기타 인앱 브라우저 크롬 인텐트로 강제 호출 시도
-                    location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-                    showToast('크롬 브라우저로 연결합니다.');
-                } else {
-                    // iOS 기타 인앱 브라우저는 자동 이탈이 막혀있으므로 복사 유도 메시지
-                    copyCurrentUrl();
-                }
                 return;
             }
 
