@@ -8,7 +8,7 @@
 "display": "standalone",
 "orientation": "portrait-primary",
 "background_color": "#090d16",
-"theme_color": "#4f46e5",
+"theme_color": "#090d16",
 "lang": "ko-KR",
 "categories": ["productivity", "utilities", "business"],
 "icons": [
