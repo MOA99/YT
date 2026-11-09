@@ -386,7 +386,7 @@
                 <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="구글 시트 데이터 즉시 동기화">
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="데이터 동기화">
                     <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
@@ -411,7 +411,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
                     <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="flex items-center">
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정 타임라인</h3>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정</h3>
                         </div>
 
                         <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
@@ -1792,7 +1792,7 @@
                         
                         const typeEl = document.getElementById('summary-yt-type');
                         typeEl.innerText = latestItem.type;
-                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 border border-amber-100'}`;
+                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-100 dark:border-amber-900'}`;
                         typeEl.classList.remove('hidden');
 
                         const ddayBadgeEl = document.getElementById('summary-dday-badge');
