@@ -898,7 +898,7 @@
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 사용을 위해 기본 브라우저로 이동해주세요.
+                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 설치를 위해 기본 브라우저로 이동 후 다시 시도해 주세요.
                         </p>
                     </div>
                     
@@ -3036,10 +3036,13 @@
         window.addEventListener('appinstalled', () => {
             deferredPrompt = null;
             dismissPwaBanner();
-            try { localStorage.setItem('is_app_installed', 'true'); } catch (e) {}
+            try { 
+                localStorage.setItem('is_app_installed', 'true'); 
+                // 실제 앱이 켜질 때 토스트를 띄우기 위해 쿠폰(플래그)을 저장해 둡니다.
+                localStorage.setItem('show_install_toast', 'true');
+            } catch (e) {}
             const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
             if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
-            showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
         });
 
         function openInChrome() {
@@ -3134,6 +3137,13 @@
                 // 앱 내부로 실행 중일 때는 무조건 숨김 및 설치 완료 기록 동기화
                 const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
+                
+                // 실제 앱(Standalone)으로 최초 실행 시 설치 완료 토스트 출력 (iOS, Android 완벽 호환)
+                if (!isInstalled || localStorage.getItem('show_install_toast') === 'true') {
+                    setTimeout(() => showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!'), 500);
+                    try { localStorage.removeItem('show_install_toast'); } catch(e) {}
+                }
+
                 try { localStorage.setItem('is_app_installed', 'true'); } catch(e) {}
             } else if (isInstalled) {
                 // 브라우저 접속인데 설치 기록이 있는 경우 일단 숨김
