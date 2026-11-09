@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="ko" class="h-full">
+<html lang="ko" class="h-full dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드) -->
+    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드 활성화) -->
     <script>
         (function() {
             try {
-                // 사용자가 명시적으로 'false'(라이트 모드)로 설정하지 않은 이상 무조건 다크 모드 적용
+                // 사용자가 명시적으로 'false'(라이트 모드)로 저장하지 않은 이상 무조건 다크 모드 적용
                 if (localStorage.getItem('yt_dark_mode') !== 'false') {
                     document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
             } catch (e) {}
         })();
@@ -44,9 +46,9 @@
     <meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고">
 
     <!-- Web App Manifest 연동 -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="./favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="./favicon.png">
 
     <title>YT대시보드</title>
     <!-- Tailwind CSS CDN -->
@@ -59,12 +61,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Tailwind CDN 파싱 전 초기 렌더링 시 다크모드 배경 깜빡임 원천 차단 */
-        html { background-color: #f8fafc; }
-        html.dark { background-color: #020617; color-scheme: dark; }
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
-        html.dark body { background-color: #020617; color: #f1f5f9; }
+        html { background-color: #020617; color-scheme: dark; }
+        html:not(.dark) { background-color: #f8fafc; color-scheme: light; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #020617; color: #f1f5f9; }
+        html:not(.dark) body { background-color: #f8fafc; color: #1e293b; }
 
-        /* 전역 스크롤바 스타일링 */
+        /* 전역 스크롤바 스타일링 (얇게 & 스크롤/호버 시에만 표시) */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
@@ -83,9 +85,15 @@
             background: transparent;
             border-radius: 4px;
         }
+        .dark .overflow-x-auto::-webkit-scrollbar-track {
+            background: transparent;
+        }
         .overflow-x-auto::-webkit-scrollbar-thumb {
             background: rgba(148, 163, 184, 0);
             border-radius: 4px;
+        }
+        .dark .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0);
         }
         
         .sticky-col-1 {
@@ -141,7 +149,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
         }
 
-        /* 좌측 선석 라벨 고정 (Sticky Column) */
+        /* 모바일 및 데스크톱 좌측 선석 라벨 고정 (Sticky Column) */
         .sticky-berth-col {
             position: sticky;
             left: 0;
@@ -196,7 +204,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* 동기화 스핀 전용 CSS 키프레임 보장 */
+        /* 동기화 스핀 전용 CSS 키프레임 보장 (모바일 렌더링 블록 우회) */
         @keyframes spin-pwa {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -205,14 +213,31 @@
             animation: spin-pwa 0.8s linear infinite !important;
             transform-origin: center center !important;
         }
+
+        /* 최상단 스크롤 버튼 모바일 터치 및 데스크톱 호버 스타일 완벽 분리 */
+        #scrollTopBtn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #scrollTopBtn.btn-pressed {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            transform: scale(0.92);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            #scrollTopBtn:hover {
+                background-color: #4f46e5 !important;
+                color: #ffffff !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
     <!-- 토스트 알림창 -->
-    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[70] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-3xl shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-        <span id="toast-msg" class="tracking-tight text-slate-100 flex-1 whitespace-pre-wrap leading-relaxed">성공적으로 처리되었습니다.</span>
+        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
     </div>
 
     <!-- 홈 화면 설치 플로팅 배너 -->
@@ -233,7 +258,7 @@
     </div>
 
     <!-- 상단 이동 플로팅 버튼 (모바일 & 데스크탑 통일) -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 hover:text-white hover:bg-indigo-600 dark:hover:bg-indigo-500 active:bg-indigo-700 dark:active:bg-indigo-600 active:scale-90 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;" title="맨 위로 이동">
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" title="맨 위로 이동">
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
@@ -262,7 +287,7 @@
     </nav>
 
     <!-- 좌측 사이드바 네비게이션 -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-[60] w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
         <div class="p-6 flex items-center justify-between border-b border-slate-800">
             <div class="flex items-center space-x-3">
                 <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
@@ -322,14 +347,14 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 다크 모드
             </span>
-            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-slate-700 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
-                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"></div>
+            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-indigo-600 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
+                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-6 transition-transform duration-300"></div>
             </button>
         </div>
     </aside>
 
     <!-- 모바일 사이드바 배경 오버레이 -->
-    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-50 hidden md:hidden"></div>
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
     <!-- 본문 메인 영역 -->
     <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
@@ -341,28 +366,28 @@
         </div>
 
         <!-- 모바일 상단 브레드크럼 바 -->
-        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-40 transition-colors">
+        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-30 transition-colors">
             <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
                 <span>YT Dashboard</span>
                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
             </div>
-            <button id="mobile-sync-btn" onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
+            <button id="mobile-sync-btn" onclick="manualRefreshAll()" ontouchstart="" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
                 <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 <span>동기화</span>
             </button>
         </div>
 
         <!-- 데스크톱 헤더 -->
-        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-40 transition-colors">
+        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-30 transition-colors">
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-semibold text-slate-400">YT Dashboard</span>
                 <span class="text-slate-300 dark:text-slate-700">/</span>
                 <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="구글 시트 데이터 즉시 동기화">
-                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="데이터 동기화">
+                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>동기화</span>
                 </button>
                 <div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2">
@@ -386,7 +411,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
                     <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
                         <div class="flex items-center">
-                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정 타임라인</h3>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정</h3>
                         </div>
 
                         <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
@@ -487,7 +512,7 @@
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
                                     <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 whitespace-nowrap">특이사항</th>
+                                    <th class="py-3.5 px-3 w-full whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
                             <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
@@ -529,7 +554,7 @@
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                     <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
                                 </label>
-                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
                             </div>
 
                             <div>
@@ -657,7 +682,7 @@
                                             <span id="sort-icon-latestAuthor" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-4 min-w-[280px] whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
+                                    <th class="py-4 px-4 w-full whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 특이사항</span>
                                             <span id="sort-icon-latestMemo" class="inline-block text-slate-400"></span>
@@ -709,19 +734,19 @@
 
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <div class="overflow-x-auto">
-                        <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
+                        <table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[1020px]">
                             <thead>
                                 <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="py-3.5 px-4 w-36 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-38 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">기동</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(상하)</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">의자</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">의자</th>
                                     <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 min-w-[240px] whitespace-nowrap">특이사항</th>
+                                    <th class="py-3.5 px-4 w-full whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
                             <tbody id="raw-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
@@ -873,7 +898,7 @@
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 자체 보안 정책으로 인해 <strong>앱설치가 제한</strong>됩니다.<br>정상적인 사용을 위해 기본 브라우저로 이동해주세요.
+                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 사용을 위해 기본 브라우저로 이동해주세요.
                         </p>
                     </div>
                     
@@ -883,7 +908,7 @@
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 안드로이드 기기
                             </h4>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
+                                아래 <strong>'크롬 브라우저 실행'</strong> 버튼을 누르거나, 자동 전환되지 않을 경우 우측 메뉴(⋮) 버튼을 눌러 <strong>'다른 브라우저로 열기'</strong>를 선택하세요.
                             </p>
                         </div>
                         <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -923,6 +948,7 @@
 
         let cachedData = [];
         let cachedBoardData = [];
+        // 항상 기본값 'history' 탭으로 시작하도록 수정 (캐시 버그 방지)
         let currentActiveTab = 'history';
 
         let historySort = { field: 'date', order: 'desc' };
@@ -1465,7 +1491,7 @@
                 'rawdata': '원본 입력 데이터',
                 'board': '미니 게시판',
                 'guide': '이용 가이드',
-                'install-guide': '앱 설치 안내 페이지'
+                'install-guide': '앱 설치 안내'
             };
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
@@ -1506,10 +1532,14 @@
             }
         }
 
-        function scrollToTop() {
-            const btn = document.getElementById('scrollTopBtn');
-            if (btn && typeof btn.blur === 'function') btn.blur();
-            
+        function scrollToTop(btn) {
+            if (btn) {
+                btn.classList.add('btn-pressed');
+                setTimeout(() => {
+                    btn.classList.remove('btn-pressed');
+                    if (typeof btn.blur === 'function') btn.blur();
+                }, 220);
+            }
             const container = document.getElementById('main-scroll-container');
             if (container) {
                 try { 
@@ -1762,7 +1792,7 @@
                         
                         const typeEl = document.getElementById('summary-yt-type');
                         typeEl.innerText = latestItem.type;
-                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 border border-amber-100'}`;
+                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-100 dark:border-amber-900'}`;
                         typeEl.classList.remove('hidden');
 
                         const ddayBadgeEl = document.getElementById('summary-dday-badge');
@@ -1877,6 +1907,7 @@
                 }
             });
 
+            // 페이지네이션 제거 및 최신 데이터 최대 10개만 슬라이스
             const displayData = filtered.slice(0, 10);
 
             const historyBody = document.getElementById('history-table-body');
@@ -2090,7 +2121,7 @@
                         <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
-                        <td class="py-3.5 px-4 min-w-[240px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                        <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
                     rawTableBody.appendChild(tr);
                 });
@@ -3040,26 +3071,18 @@
             }
 
             if (deferredPrompt) {
-                // ★ 안드로이드 크롬 '설치 및 홈 화면에 추가' 네이티브 팝업 직접 호출
-                try {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        showToast('앱 설치가 진행됩니다.');
-                    } else {
-                        showToast('설치가 취소되었습니다. 메뉴에서 직접 설치할 수 있습니다.', true);
-                    }
-                    deferredPrompt = null; // 한 번 호출된 프롬프트는 폐기 (크롬 정책)
-                } catch (error) {
-                    console.error('설치 프롬프트 오류:', error);
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast('앱 설치를 시작합니다.');
                 }
+                deferredPrompt = null;
             } else {
                 const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
                 if (isIos) {
                     showToast('사파리 하단 공유 버튼 [↑] 클릭 후 "홈 화면에 추가"를 눌러주세요.');
                 } else {
-                    // 프롬프트가 거부된 안드로이드 기기를 위한 수동 설치 안내
-                    showToast('우측 상단 메뉴(⋮)에서 "앱 설치" 또는 "홈 화면에 추가"를 직접 눌러주세요.');
+                    showToast('브라우저 메뉴(⋮)에서 "앱 설치" 또는 "홈 화면에 추가"를 선택해주세요.');
                 }
             }
         }
@@ -3086,9 +3109,9 @@
             if (isInAppBrowser && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
                 if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
-                    const titleEl = banner.querySelector('h4');
-                    const descEl = banner.querySelector('p');
-                    const btnEl = banner.querySelector('button:last-child');
+                    const titleEl = document.getElementById('pwa-banner-title');
+                    const descEl = document.getElementById('pwa-banner-desc');
+                    const btnEl = document.getElementById('pwa-banner-btn');
                     if (titleEl) titleEl.innerText = '외부 브라우저 연결 필요';
                     if (descEl) descEl.innerText = '앱 설치를 위해 외부 브라우저로 엽니다.';
                     if (btnEl) btnEl.innerText = '앱 열기';
@@ -3107,6 +3130,20 @@
             setInterval(updateKSTClock, 1000);
 
             registerServiceWorker();
+
+            // 상단 이동 플로팅 버튼 터치 인터랙션 바인딩
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (scrollBtn) {
+                scrollBtn.addEventListener('touchstart', function() {
+                    this.classList.add('btn-pressed');
+                }, { passive: true });
+                scrollBtn.addEventListener('touchend', function() {
+                    setTimeout(() => this.classList.remove('btn-pressed'), 180);
+                }, { passive: true });
+                scrollBtn.addEventListener('touchcancel', function() {
+                    this.classList.remove('btn-pressed');
+                }, { passive: true });
+            }
 
             // PWA 내부 스크롤 이벤트 감지
             const mainContainer = document.getElementById('main-scroll-container');
