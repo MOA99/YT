@@ -17,7 +17,15 @@
             } catch (e) {}
         })();
     </script>
-
+	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "c5035369-3bf0-40b3-be00-d5ad5d16de5e",
+    });
+  });
+</script>
     <!-- PWA 및 테마 메타태그 설정 -->
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
