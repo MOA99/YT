@@ -2995,16 +2995,42 @@
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             if (!isStandalone) {
                 const banner = document.getElementById('pwa-install-banner');
-                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                if (banner && shouldShowPwaBanner()) {
                     banner.classList.remove('hidden');
                 }
             }
         });
 
+        // 💡 배너 노출 여부를 기간(7일) 단위로 계산하는 함수 추가
+        function shouldShowPwaBanner() {
+            try {
+                const dismissedAt = localStorage.getItem('pwa_banner_dismissed');
+                if (!dismissedAt) return true; // 한 번도 안 닫은 경우 노출
+                
+                // 과거에 영구 숨김('true') 처리된 유저들의 캐시 호환성 대응
+                if (dismissedAt === 'true') {
+                    localStorage.setItem('pwa_banner_dismissed', Date.now().toString());
+                    return false;
+                }
+
+                // 7일(7일 * 24시간 * 60분 * 60초 * 1000밀리초) 이후에 다시 노출
+                const hideDuration = 7 * 24 * 60 * 60 * 1000; 
+                
+                if (Date.now() - parseInt(dismissedAt, 10) > hideDuration) {
+                    localStorage.removeItem('pwa_banner_dismissed'); // 기간 만료 시 초기화
+                    return true;
+                }
+                return false; // 아직 기간이 안 지남
+            } catch (e) {
+                return true;
+            }
+        }
+
         function dismissPwaBanner() {
             const banner = document.getElementById('pwa-install-banner');
             if (banner) banner.classList.add('hidden');
-            try { localStorage.setItem('pwa_banner_dismissed', 'true'); } catch (e) {}
+            // 'true' 대신 '현재 시간(숫자)'을 저장
+            try { localStorage.setItem('pwa_banner_dismissed', Date.now().toString()); } catch (e) {}
         }
 
         window.addEventListener('appinstalled', () => {
@@ -3123,7 +3149,8 @@
 
             if (isInAppBrowser && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
-                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                // 영구 숨김 체크 대신 기간 만료 체크 함수 사용
+                if (banner && shouldShowPwaBanner()) {
                     const titleEl = document.getElementById('pwa-banner-title');
                     const descEl = document.getElementById('pwa-banner-desc');
                     const btnEl = document.getElementById('pwa-banner-btn');

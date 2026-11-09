@@ -1,0 +1,3029 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('yt_dark_mode') === 'true') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- PWA 및 테마 메타태그 설정 -->
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="YT대시보드">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="YT 대시보드">
+
+    <!-- Open Graph / 오픈 그래프 (카카오톡, 슬랙, 페이스북 링크 프리뷰) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="YT Dashboard">
+    <meta property="og:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta property="og:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
+    <meta property="og:image" content="/favicon.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="YT Dashboard 프리뷰 로고">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- Twitter Card / 트위터 와이드 프리뷰 (summary_large_image) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta name="twitter:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
+    <meta name="twitter:image" content="/favicon.png">
+    <meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고">
+
+    <!-- Web App Manifest 연동 -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png">
+
+    <title>YT대시보드</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tailwind CDN 파싱 전 초기 렌더링 시 다크모드 배경 깜빡임 원천 차단 */
+        html { background-color: #f8fafc; }
+        html.dark { background-color: #020617; color-scheme: dark; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
+        html.dark body { background-color: #020617; color: #f1f5f9; }
+
+        /* 전역 스크롤바 스타일링 */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0); }
+        
+        :hover::-webkit-scrollbar-thumb, .is-scrolling::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); }
+        .dark :hover::-webkit-scrollbar-thumb, .dark .is-scrolling::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); }
+        
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
+
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 4px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 4px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0);
+            border-radius: 4px;
+        }
+        
+        .sticky-col-1 {
+            position: sticky;
+            left: 0;
+            background-color: #ffffff;
+            z-index: 10;
+        }
+        .dark .sticky-col-1 {
+            background-color: #0f172a;
+        }
+        tr:hover .sticky-col-1 {
+            background-color: #f8fafc;
+        }
+        .dark tr:hover .sticky-col-1 {
+            background-color: #1e293b;
+        }
+        thead .sticky-col-1 {
+            background-color: #f8fafc;
+            z-index: 20;
+        }
+        .dark thead .sticky-col-1 {
+            background-color: #1e293b;
+            z-index: 20;
+        }
+
+        /* 선석 현황 그래픽 매트릭스 스타일 */
+        .font-mono-num {
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .hour-tick-border {
+            border-right: 1px solid rgba(148, 163, 184, 0.22);
+        }
+        .dark .hour-tick-border {
+            border-right: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .six-hour-border {
+            border-right: 2px solid rgba(79, 70, 229, 0.4);
+            background-color: rgba(99, 102, 241, 0.03);
+        }
+        .now-indicator-line {
+            background-color: rgba(239, 68, 68, 0.55);
+        }
+        .vessel-block {
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            user-select: none;
+            -webkit-user-select: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .vessel-block:hover {
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        /* 좌측 선석 라벨 고정 (Sticky Column) */
+        .sticky-berth-col {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+            background-color: #f8fafc;
+            box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.06);
+        }
+        .dark .sticky-berth-col {
+            background-color: #0f172a;
+            box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        .matrix-scroll-wrapper::-webkit-scrollbar {
+            height: 7px;
+        }
+        .matrix-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .matrix-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        /* Pull to Refresh 인디케이터 */
+        #ptr-indicator {
+            position: absolute;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: auto;
+            min-width: 150px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+            z-index: 45;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .dark #ptr-indicator {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* 동기화 스핀 전용 CSS 키프레임 보장 */
+        @keyframes spin-pwa {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pwa-spinning {
+            animation: spin-pwa 0.8s linear infinite !important;
+            transform-origin: center center !important;
+        }
+
+        /* 최상단 스크롤 버튼 PWA 터치 전용 스타일 */
+        #scrollTopBtn {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+        }
+        /* PWA iOS 등에서 터치 시 강제 색상 변화 */
+        #scrollTopBtn:active {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            transform: scale(0.90) !important;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            #scrollTopBtn:hover {
+                background-color: #4f46e5 !important;
+                color: #ffffff !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
+
+    <!-- 토스트 알림창 -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+        <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
+    </div>
+
+    <!-- 홈 화면 설치 플로팅 배너 -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md">
+        <div class="flex items-center space-x-3 min-w-0">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <div class="truncate">
+                <h4 class="font-bold text-xs">YT 대시보드 앱 설치</h4>
+                <p class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-1.5 shrink-0 ml-2">
+            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg transition-colors">닫기</button>
+            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button>
+        </div>
+    </div>
+
+    <!-- 상단 이동 플로팅 버튼 (PWA 및 모바일 완벽 대응을 위해 ontouchstart="" 명시) -->
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" ontouchstart="" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- 모바일 하단 고정 네비게이션 바 -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-2 select-none transition-colors">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">이력조회</span>
+        </button>
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">평가등록</span>
+        </button>
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+            <span class="text-xs font-bold mt-0.5">선석현황</span>
+        </button>
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">게시판</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-xs font-bold mt-0.5">전체메뉴</span>
+        </button>
+    </nav>
+
+    <!-- 좌측 사이드바 네비게이션 -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
+        <div class="p-6 flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1>
+                    <p class="text-xs text-slate-400">YT 차량 평가 시스템</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+            <button onclick="switchTab('history')" data-tab="history" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span>YT 이력 조회</span>
+            </button>
+            <button onclick="switchTab('register')" data-tab="register" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <span>YT 평가 등록</span>
+            </button>
+            <button onclick="switchTab('integrated')" data-tab="integrated" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2h0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <span>YT 통합 리스트</span>
+            </button>
+            <button onclick="switchTab('rawdata')" data-tab="rawdata" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                <span>원본 입력 데이터</span>
+            </button>
+            <button onclick="switchTab('berth')" data-tab="berth" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path>
+                </svg>
+                <span>선석 현황</span>
+            </button>
+            <button onclick="switchTab('board')" data-tab="board" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                <span>미니 게시판</span>
+            </button>
+            <button onclick="switchTab('guide')" data-tab="guide" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>이용 가이드</span>
+            </button>
+
+            <!-- 앱 설치하기 버튼 -->
+            <button id="sidebar-install-btn" onclick="triggerPwaInstall()" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors text-indigo-300 hover:bg-indigo-950/60 hover:text-white text-left border border-dashed border-indigo-700/50 mt-2">
+                <svg class="w-5 h-5 flex-shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                <span>앱 설치하기</span>
+            </button>
+        </nav>
+
+        <!-- 다크 모드 토글 스위치 -->
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                다크 모드
+            </span>
+            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-slate-700 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
+                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"></div>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 모바일 사이드바 배경 오버레이 -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+    <!-- 본문 메인 영역 -->
+    <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
+        
+        <!-- Pull to Refresh 인디케이터 -->
+        <div id="ptr-indicator">
+            <svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
+        </div>
+
+        <!-- 모바일 상단 브레드크럼 바 (ontouchstart 속성 추가) -->
+        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-20 transition-colors">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>YT Dashboard</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
+            </div>
+            <button id="mobile-sync-btn" onclick="manualRefreshAll()" ontouchstart="" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
+                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>동기화</span>
+            </button>
+        </div>
+
+        <!-- 데스크톱 헤더 -->
+        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-20 transition-colors">
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-semibold text-slate-400">YT Dashboard</span>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="구글 시트 데이터 즉시 동기화">
+                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>동기화</span>
+                </button>
+                <div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
+                    </span>
+                    <span class="font-semibold tracking-tight">실시간 연동중</span>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                    YT
+                </div>
+            </div>
+        </header>
+
+        <div class="px-4 pt-10 pb-24 sm:px-6 sm:pt-12 md:px-8 md:pt-14 flex-1 max-w-7xl w-full mx-auto">
+
+            <!-- 1. 선석 현황 탭 -->
+            <section id="tab-berth" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                        <div class="flex items-center">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정 타임라인</h3>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
+                            <!-- View Mode Toggle -->
+                            <div class="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 w-full sm:w-auto">
+                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">타임라인</button>
+                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">선석별</button>
+                            </div>
+
+                            <!-- Time Range Toggle -->
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner text-xs font-semibold shrink-0">
+                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">24H</button>
+                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all">48H</button>
+                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">72H</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-2 sm:p-4">
+                        <div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs bg-white dark:bg-slate-900 flex flex-col">
+                            <div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 select-none">
+                            </div>
+                            <div id="matrixBody" class="flex flex-col relative h-[340px] sm:h-[370px] bg-slate-50/20 dark:bg-slate-900/40 select-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950">
+                    </div>
+
+                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end text-xs text-slate-600 dark:text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. YT 이력 조회 탭 -->
+            <section id="tab-history" class="tab-content space-y-6">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
+                        <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+                            <option value="ytNum">YT번호 검색</option>
+                            <option value="author">작성자 검색</option>
+                            <option value="all">전체 검색</option>
+                        </select>
+                        <div class="relative w-full md:w-96">
+                            <svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="search" autocomplete="off" inputmode="numeric" enterkeyhint="search" id="search-input" maxlength="3" oninput="onSearchInput(this)" onkeydown="onSearchKeyDown(event)" placeholder="YT번호 입력 (예: 227)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
+                    <div class="flex items-center space-x-4">
+                        <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 id="summary-yt-title" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">YT 000</h3>
+                                <span id="summary-yt-type" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900">샤크만</span>
+                                <span id="summary-dday-badge" class="hidden px-2 py-0.5 rounded-md text-xs font-bold"></span>
+                                <span id="summary-warning-badge" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">주의</span>
+                            </div>
+                            <p id="summary-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">해당 차량의 누적 평가 집계 결과입니다.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 lg:gap-8 border-t lg:border-t-0 border-slate-100 dark:border-slate-800 pt-4 lg:pt-0 w-full lg:w-auto">
+                        <div class="text-center px-2">
+                            <p id="summary-lbl-1" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평균 총점</p>
+                            <h4 id="summary-val-1" class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">0점</h4>
+                        </div>
+                        <div class="text-center px-2 border-x border-slate-100 dark:border-slate-800">
+                            <p id="summary-lbl-2" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평가 횟수</p>
+                            <h4 id="summary-val-2" class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5">0회</h4>
+                        </div>
+                        <div class="text-center px-2 flex flex-col items-center justify-center">
+                            <p id="summary-lbl-3" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">최근 평가일</p>
+                            <div class="flex items-center gap-1 mt-1">
+                                <h4 id="summary-val-3" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">-</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div id="history-scroll-pane" class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse table-auto min-w-[780px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs tracking-wider font-bold">
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-hist-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(상하)</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 whitespace-nowrap">특이사항</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                                <tr class="animate-pulse">
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-10"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-14"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-12"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3 text-center"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-6 mx-auto"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-16"></div></td>
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-32"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-history-data" class="hidden py-16 text-center space-y-4">
+                        <div>
+                            <p class="text-slate-500 font-medium">조회된 데이터가 없습니다.</p>
+                            <p class="text-xs text-slate-400 mt-1">새로운 평가를 등록해 보세요.</p>
+                        </div>
+                        <button onclick="switchTab('register')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition-all inline-flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span>YT 평가 등록</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. YT 평가 등록 탭 -->
+            <section id="tab-register" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
+                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
+                                </label>
+                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함을 입력해주세요" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호
+                                </label>
+                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" autocomplete="off" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span>샤크만</span>
+                                </label>
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span>카파</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                            </label>
+                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                <table class="w-full text-center border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle">구분</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle">기동</th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle pt-2.5 pb-2 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(상하)</span></th>
+                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/5 align-middle pt-2.5 pb-2 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(앞뒤)</span></th>
+                                            <th class="py-3 px-3 w-1/5 align-middle">의자</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400">상 (25)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-amber-600 dark:text-amber-400">중 (15)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400">하 (5)</td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항
+                            </label>
+                            <textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                                <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 4. YT 통합 리스트 탭 -->
+            <section id="tab-integrated" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
+                            <thead>
+                                <tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="py-4 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('ytNum')">
+                                        <div class="flex items-center gap-1.5">
+                                            <span>YT</span>
+                                            <span id="sort-icon-ytNum" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('type')">
+                                        <div class="flex items-center gap-1.5">
+                                            <span>타입</span>
+                                            <span id="sort-icon-type" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('avgScore')">
+                                        <div class="flex items-center gap-1.5">
+                                            <span>평균총점</span>
+                                            <span id="sort-icon-avgScore" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 w-40 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestDate')">
+                                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                            <span>최근 평가일</span>
+                                            <span id="sort-icon-latestDate" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('count')">
+                                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                            <span>평가횟수</span>
+                                            <span id="sort-icon-count" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestAuthor')">
+                                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                            <span>최근 작성자</span>
+                                            <span id="sort-icon-latestAuthor" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 min-w-[280px] whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
+                                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                            <span>최근 특이사항</span>
+                                            <span id="sort-icon-latestMemo" class="inline-block text-slate-400"></span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="integrated-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="integrated-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 원본 입력 데이터 탭 -->
+            <section id="tab-rawdata" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">전체 평가</p>
+                            <h3 id="stat-total" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 건</h3>
+                        </div>
+                        <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm sm:text-lg font-bold">건</div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">평균 총점</p>
+                            <h3 id="stat-avg-score" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 점</h3>
+                        </div>
+                        <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm sm:text-lg font-bold">점</div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">샤크만</p>
+                            <h3 id="stat-sharkman" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 건</h3>
+                        </div>
+                        <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm sm:text-lg font-bold">샤</div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">카파</p>
+                            <h3 id="stat-kapa" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 건</h3>
+                        </div>
+                        <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm sm:text-lg font-bold">카</div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="overflow-x-auto">
+                        <table id="raw-table" class="w-full text-left border-collapse table-fixed min-w-[1020px]">
+                            <thead>
+                                <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="py-3.5 px-4 w-36 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(상하)</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap text-center">의자</th>
+                                    <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 min-w-[240px] whitespace-nowrap">특이사항</th>
+                                </tr>
+                            </thead>
+                            <tbody id="raw-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="raw-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. 선석 상세 모달 팝업 -->
+            <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important;" onclick="closeBerthModal(event)">
+                <div id="modalBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl text-slate-800 dark:text-slate-100 font-sans" onclick="event.stopPropagation()">
+                </div>
+            </div>
+
+            <!-- 7. 미니 게시판 탭 -->
+            <section id="tab-board" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
+                    <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">작성자</label>
+                                <input type="text" id="board-author" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">분류 태그</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="board-tag" value="자유소통" checked class="peer sr-only">
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💬 자유소통</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="board-tag" value="차량정보" class="peer sr-only">
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🚛 차량정보</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="board-tag" value="건의사항" class="peer sr-only">
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">💡 건의사항</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="board-tag" value="응원한마디" class="peer sr-only">
+                                        <div class="text-center py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 transition-all">🙌 응원한마디</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></textarea>
+                            <button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95">
+                                <span id="board-submit-text">글 남기기</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</span>
+                            <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                            <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    </div>
+                    <div id="board-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. 이용 가이드 탭 -->
+            <section id="tab-guide" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">1</span>
+                                <span>YT 이력 조회</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                YT 번호 또는 작성자 조건별로 <strong class="text-indigo-700 dark:text-indigo-400">일치하는 데이터</strong>를 검색하고 요약 통계를 확인합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">2</span>
+                                <span>YT 평가 등록</span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                현장 기사님의 실시간 평가 데이터를 입력하여 차량 상태를 투명하게 기록합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">3</span>
+                                <span>YT 통합 리스트 및 통계</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                동일 YT별 주요 평가 지표를 한곳에 집계하여 제공합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">4</span>
+                                <span>원본 입력 데이터 연동</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                사용자로부터 입력받은 원본 데이터를 시점별로 편리하게 확인합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">5</span>
+                                <span>선석 현황</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                24H/48H/72H 기간별 선석(B4~B8) 접안 일정과 선사, 양하/선적/이적 작업 물량을 모니터링합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">6</span>
+                                <span>미니 게시판</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                현장 소통, 차량 정보, 건의사항 등을 자유롭게 남기고 소통합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=0&single=true&output=csv";
+        const SHEET_POST_URL = "https://script.google.com/macros/s/AKfycbyYo5SFrajHtHo0tt4zSgRBgBKpZGN88KLKeyPb_-9O7aIwm9-twcKk_PRgkimhZ65p/exec";
+        const GUESTBOOK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=1545178136&single=true&output=csv";
+        const BERTH_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmKJA-MJAW_b9gL8j549JkdE-ma6qah0T0Q-wRy5c7Pp5u8yQ4F9R01dfgOvm-bf3D1V5YxKwD4NQm/pub?gid=103045736&single=true&output=csv";
+
+        const fallbackData = [];
+        const fallbackBoardData = [];
+
+        let cachedData = [];
+        let cachedBoardData = [];
+        let currentActiveTab = localStorage.getItem('yt_active_tab') || 'history';
+
+        let historySort = { field: 'date', order: 'desc' };
+        let integratedSort = { field: 'ytNum', order: 'asc' };
+        let rawSort = { field: 'date', order: 'desc' };
+        
+        let historyCurrentPage = 1;
+        let integratedCurrentPage = 1;
+        let rawCurrentPage = 1;
+        let boardCurrentPage = 1;
+        const rowsPerPage = 10;
+
+        let activeBerthDataset = [];
+        const BERTH_LIST = ["B4", "B5", "B6", "B7", "B8"];
+        const BERTH_COL_WIDTH = 56;
+
+        let berthTimeRangeMode = '48h';
+        let mobileBerthViewMode = 'matrix';
+
+        let timelineStart = new Date();
+        let timelineEnd = new Date();
+        let toastTimer = null;
+        let resizeTimer = null;
+        let deferredPrompt = null;
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getKSTDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+            return new Date(utc + (9 * 60 * 60 * 1000));
+        }
+
+        function parseBerthDateTime(str) {
+            if (!str) return NaN;
+            if (str instanceof Date) return str.getTime();
+            
+            let cleaned = String(str).replace(/[\r\n]+/g, ' ').trim();
+            const isPM = cleaned.includes('오후') || cleaned.toLowerCase().includes('pm');
+            const isAM = cleaned.includes('오전') || cleaned.toLowerCase().includes('am');
+            cleaned = cleaned.replace(/오전|오후|am|pm|AM|PM/g, '').trim();
+            
+            const matchFull = cleaned.match(/(\d{2,4})[-./](\d{1,2})[-./](\d{1,2})\s+(\d{1,2}):(\d{1,2})/);
+            if (matchFull) {
+                let y = parseInt(matchFull[1], 10);
+                if (y < 100) y += 2000;
+                const m = parseInt(matchFull[2], 10) - 1;
+                const d = parseInt(matchFull[3], 10);
+                let h = parseInt(matchFull[4], 10);
+                const min = parseInt(matchFull[5], 10) || 0;
+                if (isPM && h < 12) h += 12;
+                if (isAM && h === 12) h = 0;
+                return new Date(y, m, d, h, min, 0).getTime();
+            }
+
+            const matchShort = cleaned.match(/(\d{1,2})[-./](\d{1,2})\s+(\d{1,2}):(\d{1,2})/);
+            if (matchShort) {
+                const kst = getKSTDate();
+                const y = kst.getFullYear();
+                const m = parseInt(matchShort[1], 10) - 1;
+                const d = parseInt(matchShort[2], 10);
+                let h = parseInt(matchShort[3], 10);
+                const min = parseInt(matchShort[4], 10) || 0;
+                if (isPM && h < 12) h += 12;
+                if (isAM && h === 12) h = 0;
+                return new Date(y, m, d, h, min, 0).getTime();
+            }
+
+            const ts = Date.parse(cleaned.replace(/[./]/g, '-').replace(' ', 'T'));
+            return isNaN(ts) ? NaN : ts;
+        }
+
+        function alignTimelineToDataset() {
+            const kst = getKSTDate();
+            const todayMidnightMs = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate(), 0, 0, 0).getTime();
+            const activeHours = berthTimeRangeMode === '24h' ? 24 : (berthTimeRangeMode === '72h' ? 72 : 48);
+
+            timelineStart = new Date(todayMidnightMs);
+            timelineEnd = new Date(todayMidnightMs + activeHours * 3600 * 1000);
+        }
+
+        const CARRIER_CONFIG = {
+            MAE: { bg: "bg-blue-600 text-white", border: "border-blue-700", badge: "bg-blue-800 text-blue-100 border border-blue-400/30", subBg: "bg-blue-700/80 text-blue-100 border-blue-500/50" },
+            MSC: { bg: "bg-amber-500 text-slate-900", border: "border-amber-600", badge: "bg-amber-700 text-amber-50 border border-amber-300/40", subBg: "bg-amber-600/90 text-amber-50 border-amber-400/40" },
+            HLC: { bg: "bg-emerald-600 text-white", border: "border-emerald-700", badge: "bg-emerald-800 text-emerald-100 border border-emerald-400/30", subBg: "bg-emerald-700/80 text-emerald-100 border-emerald-500/50" },
+            MCC: { bg: "bg-cyan-600 text-white", border: "border-cyan-700", badge: "bg-cyan-800 text-cyan-100 border border-cyan-400/30", subBg: "bg-cyan-700/80 text-cyan-100 border-cyan-500/50" },
+            ONE: { bg: "bg-fuchsia-600 text-white", border: "border-fuchsia-700", badge: "bg-fuchsia-800 text-fuchsia-100 border border-fuchsia-400/30", subBg: "bg-fuchsia-700/80 text-fuchsia-100 border-fuchsia-600/50" },
+            XPR: { bg: "bg-violet-600 text-white", border: "border-violet-700", badge: "bg-violet-800 text-violet-100 border border-violet-400/30", subBg: "bg-violet-700/80 text-violet-100 border-violet-600/50" },
+            KMD: { bg: "bg-orange-600 text-white", border: "border-orange-700", badge: "bg-orange-800 text-orange-100 border border-orange-400/30", subBg: "bg-orange-700/80 text-orange-100 border-orange-500/50" },
+            COS: { bg: "bg-sky-700 text-white", border: "border-sky-800", badge: "bg-sky-900 text-sky-100 border border-sky-400/30", subBg: "bg-sky-800/80 text-sky-100 border-sky-500/50" },
+            CMA: { bg: "bg-indigo-700 text-white", border: "border-indigo-800", badge: "bg-indigo-900 text-indigo-100 border border-indigo-400/30", subBg: "bg-indigo-800/80 text-indigo-100 border-indigo-500/50" },
+            EGR: { bg: "bg-green-700 text-white", border: "border-green-800", badge: "bg-green-900 text-green-100 border border-green-400/30", subBg: "bg-green-800/80 text-green-100 border-green-500/50" },
+            HMM: { bg: "bg-red-700 text-white", border: "border-red-800", badge: "bg-red-900 text-red-100 border border-red-400/30", subBg: "bg-red-800/80 text-red-100 border-red-500/50" },
+            YML: { bg: "bg-rose-600 text-white", border: "border-rose-700", badge: "bg-rose-800 text-rose-100 border border-rose-400/30", subBg: "bg-rose-700/80 text-rose-100 border-rose-700/50" },
+            SNK: { bg: "bg-teal-700 text-white", border: "border-teal-800", badge: "bg-teal-900 text-teal-100 border border-teal-400/30", subBg: "bg-teal-800/80 text-teal-100 border-teal-500/50" },
+            DEFAULT: { bg: "bg-slate-700 text-white", border: "border-slate-800", badge: "bg-slate-900 text-slate-200 border border-slate-500/30", subBg: "bg-slate-800/80 text-slate-200 border-slate-600/50" }
+        };
+
+        function parseCSVTableFast(csvText) {
+            const rows = [];
+            let currentRow = [];
+            let currentVal = '';
+            let inQuotes = false;
+            const len = csvText.length;
+
+            for (let i = 0; i < len; i++) {
+                const char = csvText[i];
+                const nextChar = csvText[i + 1];
+
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        currentVal += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    currentRow.push(currentVal.trim());
+                    currentVal = '';
+                } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
+                    if (char === '\r') i++;
+                    currentRow.push(currentVal.trim());
+                    if (currentRow.some(cell => cell.length > 0)) {
+                        rows.push(currentRow);
+                    }
+                    currentRow = [];
+                    currentVal = '';
+                } else if (char === '\r' && !inQuotes) {
+                    currentRow.push(currentVal.trim());
+                    if (currentRow.some(cell => cell.length > 0)) {
+                        rows.push(currentRow);
+                    }
+                    currentRow = [];
+                    currentVal = '';
+                } else {
+                    currentVal += char;
+                }
+            }
+            if (currentVal.length > 0 || currentRow.length > 0) {
+                currentRow.push(currentVal.trim());
+                if (currentRow.some(cell => cell.length > 0)) {
+                    rows.push(currentRow);
+                }
+            }
+            return rows;
+        }
+
+        function extractBerthAndDirection(rawBerthDir, row) {
+            const combined = String(rawBerthDir || '').replace(/[\r\n]+/g, ' ').trim();
+            
+            let dir = '좌현';
+            if (combined.toUpperCase().includes('STAR') || combined.includes('우') || /\([S]\)/i.test(combined) || /\bS\b/i.test(combined)) {
+                dir = '우현';
+            } else if (combined.includes('좌') || /\([P]\)/i.test(combined) || /\bP\b/i.test(combined)) {
+                dir = '좌현';
+            }
+
+            let berth = null;
+            const berthMatch = combined.match(/B[-_\s]?([4-8])|([4-8])\s*\([좌우SP]|([4-8])\s*번|선석\s*([4-8])/i);
+            if (berthMatch) {
+                const num = berthMatch[1] || berthMatch[2] || berthMatch[3] || berthMatch[4];
+                berth = 'B' + num;
+            }
+            if (!berth) {
+                const standaloneNum = combined.match(/(?:^|\s|\/|-)([4-8])(?:\s|\(|$)/);
+                if (standaloneNum) {
+                    berth = 'B' + standaloneNum[1];
+                }
+            }
+            if (!berth && Array.isArray(row)) {
+                for (let c = 0; c < row.length; c++) {
+                    const cellVal = String(row[c] || '').trim().toUpperCase();
+                    if (/^B[4-8]$/.test(cellVal) || /^[4-8]번?석?$/.test(cellVal)) {
+                        const digit = cellVal.match(/[4-8]/)[0];
+                        berth = 'B' + digit;
+                        break;
+                    }
+                }
+            }
+            return { berth: berth || 'B4', berthDir: dir };
+        }
+
+        function loadInitialCacheAndRender() {
+            try {
+                const localEval = localStorage.getItem('yt_dashboard_data_v48');
+                if (localEval) cachedData = JSON.parse(localEval);
+
+                const localBoard = localStorage.getItem('yt_board_data_v1');
+                if (localBoard) cachedBoardData = JSON.parse(localBoard);
+
+                const localBerth = localStorage.getItem('yt_berth_data_cache_v9');
+                if (localBerth) {
+                    activeBerthDataset = JSON.parse(localBerth);
+                    alignTimelineToDataset();
+                }
+
+                const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('yt_dark_mode') === 'true';
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                }
+                updateDarkModeUI(isDark);
+            } catch (e) {}
+            if (cachedData.length > 0) {
+                renderActiveTab();
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('yt_dark_mode', isDark);
+            updateDarkModeUI(isDark);
+        }
+
+        function updateDarkModeUI(isDark) {
+            const ball = document.getElementById('dark-mode-ball');
+            const toggleBtn = document.getElementById('dark-mode-toggle-btn');
+            if (!ball || !toggleBtn) return;
+            if (isDark) {
+                ball.style.transform = 'translateX(24px)';
+                toggleBtn.classList.remove('bg-slate-700');
+                toggleBtn.classList.add('bg-indigo-600');
+            } else {
+                ball.style.transform = 'translateX(0px)';
+                toggleBtn.classList.remove('bg-indigo-600');
+                toggleBtn.classList.add('bg-slate-700');
+            }
+        }
+
+        // PWA 엔진 렌더링 블록을 우회하여 스핀 애니메이션과 데이터를 처리하는 핵심 함수
+        async function manualRefreshAll() {
+            const dIcon = document.getElementById('desktop-refresh-icon');
+            const mIcon = document.getElementById('mobile-refresh-icon');
+            
+            if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
+            if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
+
+            // [PWA 핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
+            // setTimeout을 통해 브라우저가 화면을 갱신(Paint)할 수 있도록 짧은 휴식을 줍니다.
+            setTimeout(async () => {
+                try {
+                    await Promise.allSettled([
+                        fetchGoogleSheetData(false, true),
+                        fetchMiniBoardSheetData(true),
+                        fetchBerthDataFromSheet()
+                    ]);
+                } finally {
+                    setTimeout(() => {
+                        if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
+                        if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        async function fetchGoogleSheetData(silent = true, forceClean = false) {
+            try {
+                const url = `${SHEET_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Network error');
+                const csvText = await response.text();
+                parseCSV(csvText, forceClean);
+                if (!silent) showToast('최신 데이터로 동기화되었습니다.');
+            } catch (err) {
+                console.error('데이터 로드 오류:', err);
+                if (!silent) showToast('데이터 동기화 중 오류가 발생했습니다.', true);
+            }
+        }
+
+        async function fetchMiniBoardSheetData(forceClean = false) {
+            try {
+                const url = `${GUESTBOOK_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Network error');
+                const text = await response.text();
+                const rows = parseCSVTableFast(text);
+                if (rows.length > 1) {
+                    let parsed = [];
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (row.length >= 3) {
+                            parsed.push({
+                                id: i,
+                                date: row[0] || '-',
+                                author: row[1] || '익명',
+                                tag: row.length >= 4 ? (row[2] || '자유소통') : '자유소통',
+                                content: row.length >= 4 ? (row[3] || '') : (row[2] || '')
+                            });
+                        }
+                    }
+                    if (parsed.length > 0) {
+                        if (forceClean) {
+                            cachedBoardData = parsed.sort((a, b) => b.date.localeCompare(a.date));
+                        } else {
+                            const existing = getStoredBoardData();
+                            const map = new Map(existing.map(item => [`${item.date}_${item.author}_${item.content}`, item]));
+                            parsed.forEach(item => map.set(`${item.date}_${item.author}_${item.content}`, item));
+                            cachedBoardData = Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+                        }
+                        saveStoredBoardData(cachedBoardData);
+                        if (currentActiveTab === 'board') renderBoardList();
+                    }
+                }
+            } catch (e) {
+                console.error('방명록 데이터 로드 오류:', e);
+            }
+        }
+
+        async function fetchBerthDataFromSheet() {
+            try {
+                const url = `${BERTH_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Sheet network response failed');
+                const csvText = await response.text();
+                const allRows = parseCSVTableFast(csvText);
+                
+                if (allRows.length > 1) {
+                    const parseNum = val => Number(String(val || '0').replace(/,/g, '').trim()) || 0;
+                    let parsed = [];
+
+                    let startRowIdx = 1;
+                    for (let r = 0; r < Math.min(5, allRows.length); r++) {
+                        const joined = allRows[r].join(' ');
+                        if (joined.includes('모선명') || joined.includes('운항선사') || joined.includes('접안')) {
+                            startRowIdx = r + 1;
+                            break;
+                        }
+                    }
+
+                    for (let i = startRowIdx; i < allRows.length; i++) {
+                        const row = allRows[i];
+                        if (row.length >= 10) {
+                            const rawVesselName = String(row[1] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const vesselCode = String(row[2] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const voyage = String(row[3] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const rawCarrier = String(row[4] || '').replace(/[\r\n]+/g, ' ').trim().toUpperCase();
+                            const route = String(row[5] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const rawBerthDir = String(row[6] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const berthTime = String(row[7] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const departTime = String(row[8] || '').replace(/[\r\n]+/g, ' ').trim();
+                            const rawBerth = String(row[9] || '').replace(/[\r\n]+/g, ' ').trim().toUpperCase();
+                            const closingTime = String(row[10] || '').replace(/[\r\n]+/g, ' ').trim();
+
+                            if (!berthTime || !departTime || isNaN(parseBerthDateTime(berthTime)) || isNaN(parseBerthDateTime(departTime))) {
+                                continue;
+                            }
+
+                            let berth = 'B4';
+                            if (/^B[4-8]$/.test(rawBerth)) {
+                                berth = rawBerth;
+                            } else {
+                                for (let c = 0; c < row.length; c++) {
+                                    const val = String(row[c] || '').trim().toUpperCase();
+                                    if (/^B[4-8]$/.test(val)) {
+                                        berth = val;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            const { berthDir } = extractBerthAndDirection(rawBerthDir, row);
+                            const discharge = parseNum(row[11]);
+                            const load = parseNum(row[12]);
+                            const shift = parseNum(row[13]);
+                            const mooring = String(row[14] || '').replace(/[\r\n]+/g, ' ').trim();
+
+                            parsed.push({
+                                vesselName: rawVesselName || `${rawCarrier || 'MAE'} VESSEL`,
+                                vesselCode: vesselCode,
+                                voyage: voyage,
+                                carrier: rawCarrier || 'MAE',
+                                route: route,
+                                berthDir: berthDir,
+                                berthTime: berthTime,
+                                departTime: departTime,
+                                berth: berth,
+                                closingTime: closingTime,
+                                discharge: discharge,
+                                load: load,
+                                shift: shift,
+                                mooring: mooring
+                            });
+                        }
+                    }
+
+                    if (parsed.length > 0) {
+                        activeBerthDataset = parsed;
+                        alignTimelineToDataset();
+                        try {
+                            localStorage.setItem('yt_berth_data_cache_v9', JSON.stringify(activeBerthDataset));
+                        } catch (e) {}
+
+                        if (currentActiveTab === 'berth') {
+                            renderBerthGraphicMatrix();
+                            if (mobileBerthViewMode === 'card') renderBerthCardView();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('선석 데이터 로드 오류:', err);
+            }
+        }
+
+        function parseCSV(text, forceClean = false) {
+            const rows = parseCSVTableFast(text);
+            if (rows.length <= 1) return;
+
+            let parsed = [];
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (row.length >= 10) {
+                    parsed.push({
+                        id: i,
+                        date: row[0] || '-',
+                        ytNum: row[1] || '100',
+                        type: row[2] || '샤크만',
+                        totalScore: Number(row[3]) || 0,
+                        kidong: row[4] || '상',
+                        sangha: row[5] || '상',
+                        apdwi: row[6] || '상',
+                        uija: row[7] || '상',
+                        author: row[8] || '미확인',
+                        memo: row[9] || ''
+                    });
+                }
+            }
+
+            if (parsed.length > 0) {
+                if (forceClean) {
+                    cachedData = parsed.sort((a, b) => b.date.localeCompare(a.date));
+                } else {
+                    const existing = getStoredData();
+                    const existingMap = new Map(existing.map(item => [`${item.date}_${item.ytNum}_${item.author}`, item]));
+                    parsed.forEach(item => existingMap.set(`${item.date}_${item.ytNum}_${item.author}`, item));
+                    cachedData = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+                }
+                try {
+                    localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(cachedData));
+                } catch(e) {}
+            }
+            renderActiveTab();
+        }
+
+        function getStoredData() {
+            return cachedData.length > 0 ? cachedData : fallbackData;
+        }
+
+        function saveStoredData(data) {
+            cachedData = data;
+            try {
+                localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(data));
+            } catch(e) {}
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+            if (!toast) return;
+
+            toastMsg.innerText = msg;
+            toastIcon.className = isError ? 'w-5 h-5 text-rose-400 shrink-0' : 'w-5 h-5 text-emerald-400 shrink-0';
+
+            toast.classList.remove('-translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-24', 'opacity-0');
+            }, 1000);
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar) sidebar.classList.toggle('-translate-x-full');
+            if (overlay) overlay.classList.toggle('hidden');
+        }
+
+        function renderActiveTab() {
+            if (currentActiveTab === 'history') renderHistoryTable();
+            else if (currentActiveTab === 'integrated') renderIntegratedTable();
+            else if (currentActiveTab === 'rawdata') {
+                updateRawStats();
+                renderRawTable();
+            }
+            else if (currentActiveTab === 'board') renderBoardList();
+            else if (currentActiveTab === 'berth') {
+                renderBerthGraphicMatrix();
+                if (mobileBerthViewMode === 'card') renderBerthCardView();
+            }
+        }
+
+        function switchTab(tabId) {
+            currentActiveTab = tabId;
+            try {
+                localStorage.setItem('yt_active_tab', tabId);
+            } catch (e) {}
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.className = "nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left";
+            });
+            
+            const activeNav = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNav) {
+                activeNav.className = "nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left";
+            }
+
+            document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+                const btnTab = btn.getAttribute('data-bottom-tab');
+                if (btnTab === tabId) {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors";
+                } else {
+                    btn.className = "bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors";
+                }
+            });
+
+            const titles = {
+                'berth': '선석 현황',
+                'history': 'YT 이력 조회',
+                'register': 'YT 평가 등록',
+                'integrated': 'YT 통합 리스트',
+                'rawdata': '원본 입력 데이터',
+                'board': '미니 게시판',
+                'guide': '이용 가이드'
+            };
+            const pageTitleEl = document.getElementById('page-title');
+            if (pageTitleEl) pageTitleEl.innerText = titles[tabId] || '대시보드';
+
+            const mobileTitleEl = document.getElementById('mobile-breadcrumb-title');
+            if (mobileTitleEl) mobileTitleEl.innerText = titles[tabId] || '대시보드';
+
+            renderActiveTab();
+
+            if (tabId === 'berth') {
+                setTimeout(scrollMatrixToNow, 120);
+            } else {
+                document.querySelectorAll('.overflow-x-auto').forEach(pane => {
+                    pane.scrollLeft = 0;
+                });
+            }
+
+            const mainContentContainer = document.getElementById('main-scroll-container');
+            if (mainContentContainer) mainContentContainer.scrollTop = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar) sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        function handleMainScroll() {
+            const container = document.getElementById('main-scroll-container');
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (!scrollBtn) return;
+
+            const currentScroll = (container ? container.scrollTop : 0) || window.scrollY || document.documentElement.scrollTop || 0;
+            if (currentScroll > 150) {
+                scrollBtn.classList.remove('hidden');
+            } else {
+                scrollBtn.classList.add('hidden');
+            }
+        }
+
+        // PWA 엔진이 scroll 동작을 무시하는 버그 방지용 최적화 스크롤 함수
+        function scrollToTop(btn) {
+            if (btn && typeof btn.blur === 'function') btn.blur();
+            
+            const container = document.getElementById('main-scroll-container');
+            if (container) {
+                try { 
+                    container.scrollTo({ top: 0, behavior: 'smooth' }); 
+                } catch(e) { 
+                    container.scrollTop = 0; 
+                }
+            }
+            try { 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            } catch(e) { 
+                window.scrollTo(0,0); 
+            }
+        }
+
+        function calculateTotalScore(kidong, sangha, apdwi, uija) {
+            const scoreMap = { '상': 25, '중': 15, '하': 5 };
+            return (scoreMap[kidong] || 0) + (scoreMap[uija] || 0) + (scoreMap[sangha] || 0) + (scoreMap[apdwi] || 0);
+        }
+
+        function sortHistoryTable(field) {
+            if (historySort.field === field) {
+                historySort.order = historySort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                historySort.field = field;
+                historySort.order = 'asc';
+            }
+            historyCurrentPage = 1;
+            renderHistoryTable();
+        }
+
+        function sortIntegratedTable(field) {
+            if (integratedSort.field === field) {
+                integratedSort.order = integratedSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                integratedSort.field = field;
+                integratedSort.order = 'asc';
+            }
+            integratedCurrentPage = 1;
+            renderIntegratedTable();
+        }
+
+        function sortRawTable(field) {
+            if (rawSort.field === field) {
+                rawSort.order = rawSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                rawSort.field = field;
+                rawSort.order = 'asc';
+            }
+            rawCurrentPage = 1;
+            renderRawTable();
+        }
+
+        function onSearchFilterChange() {
+            const filterType = document.getElementById('search-filter-type').value;
+            const searchInput = document.getElementById('search-input');
+            if (filterType === 'ytNum') {
+                searchInput.type = 'search';
+                searchInput.inputMode = 'numeric';
+                searchInput.maxLength = 3;
+                searchInput.placeholder = 'YT번호 입력 (예: 227)...';
+            } else if (filterType === 'author') {
+                searchInput.type = 'search';
+                searchInput.inputMode = 'text';
+                searchInput.removeAttribute('maxLength');
+                searchInput.placeholder = '작성자 이름 입력...';
+            } else {
+                searchInput.type = 'search';
+                searchInput.inputMode = 'text';
+                searchInput.removeAttribute('maxLength');
+                searchInput.placeholder = 'YT번호 또는 작성자 검색...';
+            }
+            historyCurrentPage = 1;
+            filterHistory();
+        }
+
+        function onSearchInput(input) {
+            const filterType = document.getElementById('search-filter-type').value;
+            if (filterType === 'ytNum') {
+                input.value = input.value.replace(/[^0-9]/g, '');
+                if (input.value.length > 3) {
+                    input.value = input.value.slice(0, 3);
+                }
+                if (input.value.length === 3) {
+                    input.blur();
+                    const scrollPane = document.getElementById('history-scroll-pane');
+                    if (scrollPane) scrollPane.scrollLeft = 0;
+                }
+            }
+            filterHistory();
+        }
+
+        function onSearchKeyDown(event) {
+            if (event.key === 'Enter') {
+                event.target.blur();
+                const scrollPane = document.getElementById('history-scroll-pane');
+                if (scrollPane) scrollPane.scrollLeft = 0;
+            }
+        }
+
+        function onRegYtInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 3) {
+                input.value = input.value.slice(0, 3);
+            }
+            if (input.value.length === 3) {
+                input.blur();
+                const typeRadio = document.querySelector('input[name="reg-type"]');
+                if (typeRadio) typeRadio.focus();
+            }
+        }
+
+        function onRegYtKeyDown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                event.target.blur();
+                const typeRadio = document.querySelector('input[name="reg-type"]');
+                if (typeRadio) typeRadio.focus();
+            }
+        }
+
+        function scrollToInput(el) {
+            setTimeout(() => {
+                if (el && typeof el.scrollIntoView === 'function') {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        function parseDateOnly(dateStr) {
+            try {
+                const clean = String(dateStr).trim().replace(/\//g, '-').replace(/\./g, '-').split(' ')[0];
+                const parts = clean.split('-');
+                if (parts.length >= 3) {
+                    let yy = parseInt(parts[0], 10);
+                    let year = yy < 100 ? 2000 + yy : yy;
+                    let month = parseInt(parts[1], 10) - 1;
+                    let day = parseInt(parts[2], 10);
+                    return { year, month, day, formatted: `${String(year).slice(-2)}/${String(month+1).padStart(2,'0')}/${String(day).padStart(2,'0')}` };
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function getDiffDays(dateStr) {
+            try {
+                const p = parseDateOnly(dateStr);
+                if (!p) return 0;
+                let evalDate = new Date(p.year, p.month, p.day);
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                evalDate.setHours(0, 0, 0, 0);
+                let diffTime = today - evalDate;
+                let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays < 0 ? 0 : diffDays;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function getBadgeStyleAndText(diffDays) {
+            if (diffDays >= 7) {
+                return { badgeClass: 'bg-rose-50 text-rose-600 border border-rose-200 font-bold', text: `D+${diffDays}`, isWarning: true };
+            } else if (diffDays >= 5) {
+                return { badgeClass: 'bg-amber-50 text-amber-600 border border-amber-200 font-bold', text: `D+${diffDays}`, isWarning: false };
+            } else {
+                return { badgeClass: 'bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold', text: `D+${diffDays}`, isWarning: false };
+            }
+        }
+
+        function getIntegratedGroupedData() {
+            let data = getStoredData();
+            let grouped = {};
+
+            data.forEach(item => {
+                if (!grouped[item.ytNum]) {
+                    grouped[item.ytNum] = {
+                        ytNum: item.ytNum,
+                        type: item.type,
+                        count: 0,
+                        totalScoreSum: 0,
+                        latestDate: item.date,
+                        latestAuthor: item.author,
+                        latestMemo: item.memo
+                    };
+                }
+                grouped[item.ytNum].count += 1;
+                grouped[item.ytNum].totalScoreSum += Number(item.totalScore);
+                
+                if (item.date >= grouped[item.ytNum].latestDate) {
+                    grouped[item.ytNum].latestDate = item.date;
+                    grouped[item.ytNum].latestAuthor = item.author;
+                    grouped[item.ytNum].type = item.type;
+                    grouped[item.ytNum].latestMemo = item.memo;
+                }
+            });
+
+            return Object.values(grouped).map(group => ({
+                ytNum: group.ytNum,
+                type: group.type,
+                count: group.count,
+                avgScore: parseFloat((group.totalScoreSum / group.count).toFixed(1)),
+                latestDate: group.latestDate,
+                latestAuthor: group.latestAuthor,
+                latestMemo: group.latestMemo
+            }));
+        }
+
+        function renderHistoryTable() {
+            setTimeout(setupScrollIndicators, 50);
+            let data = getStoredData();
+            const searchInput = document.getElementById('search-input');
+            const searchFilterType = document.getElementById('search-filter-type');
+            
+            const searchKeyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            const filterType = searchFilterType ? searchFilterType.value : 'ytNum';
+
+            let filtered = data.filter(item => {
+                if (!searchKeyword) return true;
+                if (filterType === 'author') {
+                    return item.author.trim().toLowerCase().includes(searchKeyword);
+                } else if (filterType === 'ytNum') {
+                    return item.ytNum.trim().toLowerCase().includes(searchKeyword);
+                } else {
+                    return item.author.trim().toLowerCase().includes(searchKeyword) || item.ytNum.trim().toLowerCase().includes(searchKeyword);
+                }
+            });
+
+            const summaryContainer = document.getElementById('yt-search-summary-container');
+            
+            if (searchKeyword.length > 0) {
+                let activeMode = filterType;
+                if (filterType === 'all') {
+                    const isYtExactMatch = data.some(item => item.ytNum.trim().toLowerCase() === searchKeyword);
+                    const isAuthorExactMatch = data.some(item => item.author.trim().toLowerCase() === searchKeyword);
+                    if (isYtExactMatch) activeMode = 'ytNum';
+                    else if (isAuthorExactMatch) activeMode = 'author';
+                }
+
+                if (activeMode === 'ytNum') {
+                    let matchingItems = data.filter(item => item.ytNum.trim().toLowerCase() === searchKeyword);
+                    if (matchingItems.length > 0) {
+                        const totalScoreSum = matchingItems.reduce((acc, cur) => acc + Number(cur.totalScore), 0);
+                        const avgScore = (totalScoreSum / matchingItems.length).toFixed(1);
+                        const latestItem = matchingItems.reduce((latest, current) => current.date > latest.date ? current : latest, matchingItems[0]);
+
+                        document.getElementById('summary-avatar-box').innerText = 'YT';
+                        document.getElementById('summary-avatar-box').className = 'w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0';
+                        document.getElementById('summary-yt-title').innerText = `YT ${matchingItems[0].ytNum}`;
+                        
+                        const typeEl = document.getElementById('summary-yt-type');
+                        typeEl.innerText = latestItem.type;
+                        typeEl.className = `px-2.5 py-0.5 rounded-md text-xs font-semibold ${latestItem.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900' : 'bg-amber-50 text-amber-700 border border-amber-100'}`;
+                        typeEl.classList.remove('hidden');
+
+                        const ddayBadgeEl = document.getElementById('summary-dday-badge');
+                        const warningBadgeEl = document.getElementById('summary-warning-badge');
+                        const descEl = document.getElementById('summary-desc');
+                        
+                        if (ddayBadgeEl && warningBadgeEl && descEl) {
+                            let diffDays = getDiffDays(latestItem.date);
+                            let badgeInfo = getBadgeStyleAndText(diffDays);
+
+                            ddayBadgeEl.innerText = badgeInfo.text;
+                            ddayBadgeEl.className = `px-2 py-0.5 rounded-md text-xs ${badgeInfo.badgeClass}`;
+                            ddayBadgeEl.classList.remove('hidden');
+
+                            if (badgeInfo.isWarning) {
+                                warningBadgeEl.classList.remove('hidden');
+                                descEl.innerText = '해당 차량은 평가 업데이트가 필요한 차량입니다.';
+                            } else {
+                                warningBadgeEl.classList.add('hidden');
+                                descEl.innerText = '해당 차량의 누적 평가 집계 결과입니다.';
+                            }
+                        }
+
+                        document.getElementById('summary-lbl-1').innerText = '평균 총점';
+                        document.getElementById('summary-val-1').innerText = `${avgScore}점`;
+                        document.getElementById('summary-lbl-2').innerText = '평가 횟수';
+                        document.getElementById('summary-val-2').innerText = `${matchingItems.length}회`;
+                        document.getElementById('summary-lbl-3').innerText = '최근 평가일';
+                        
+                        let shortLatestDate = latestItem.date;
+                        const pLatest = parseDateOnly(latestItem.date);
+                        if (pLatest) shortLatestDate = pLatest.formatted;
+
+                        const val3El = document.getElementById('summary-val-3');
+                        val3El.innerText = shortLatestDate;
+                        val3El.title = latestItem.date;
+
+                        if (summaryContainer) summaryContainer.classList.remove('hidden');
+                    } else {
+                        if (summaryContainer) summaryContainer.classList.add('hidden');
+                    }
+                } else if (activeMode === 'author') {
+                    let matchingItems = data.filter(item => item.author.trim().toLowerCase() === searchKeyword);
+                    if (matchingItems.length > 0) {
+                        let ytCounts = {};
+                        matchingItems.forEach(item => {
+                            ytCounts[item.ytNum] = (ytCounts[item.ytNum] || 0) + 1;
+                        });
+                        let topYtNum = Object.keys(ytCounts).reduce((a, b) => ytCounts[a] > ytCounts[b] ? a : b);
+                        let topYtItems = matchingItems.filter(item => item.ytNum === topYtNum);
+                        let topYtScoreSum = topYtItems.reduce((acc, cur) => acc + Number(cur.totalScore), 0);
+                        let topYtAvgScore = (topYtScoreSum / topYtItems.length).toFixed(1);
+                        const latestItem = matchingItems.reduce((latest, current) => current.date > latest.date ? current : latest, matchingItems[0]);
+
+                        const matchedAuthorName = matchingItems[0].author.trim();
+                        const avatarText = matchedAuthorName.length > 1 ? matchedAuthorName.slice(1) : matchedAuthorName;
+
+                        document.getElementById('summary-avatar-box').innerText = avatarText;
+                        document.getElementById('summary-avatar-box').className = 'w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-indigo-600/30 shrink-0';
+                        document.getElementById('summary-yt-title').innerText = `${matchedAuthorName} 작성자 활동 요약`;
+                        
+                        document.getElementById('summary-yt-type').classList.add('hidden');
+                        document.getElementById('summary-dday-badge').classList.add('hidden');
+                        document.getElementById('summary-warning-badge').classList.add('hidden');
+
+                        document.getElementById('summary-desc').innerText = `총 ${matchingItems.length}건 평가 중 가장 많이 평가한 차량 통계입니다.`;
+                        document.getElementById('summary-lbl-1').innerText = '최다 평가 YT';
+                        document.getElementById('summary-val-1').innerText = `YT ${topYtNum} (${ytCounts[topYtNum]}회)`;
+                        document.getElementById('summary-lbl-2').innerText = '해당 YT 평균';
+                        document.getElementById('summary-val-2').innerText = `${topYtAvgScore}점`;
+                        document.getElementById('summary-lbl-3').innerText = '최근 평가일';
+                        
+                        let shortLatestDate = latestItem.date;
+                        const pLatest = parseDateOnly(latestItem.date);
+                        if (pLatest) shortLatestDate = pLatest.formatted;
+
+                        const val3El = document.getElementById('summary-val-3');
+                        val3El.innerText = shortLatestDate;
+                        val3El.title = latestItem.date;
+
+                        if (summaryContainer) summaryContainer.classList.remove('hidden');
+                    } else {
+                        if (summaryContainer) summaryContainer.classList.add('hidden');
+                    }
+                } else {
+                    if (summaryContainer) summaryContainer.classList.add('hidden');
+                }
+            } else {
+                if (summaryContainer) summaryContainer.classList.add('hidden');
+            }
+
+            filtered.sort((a, b) => {
+                let valA = a[historySort.field];
+                let valB = b[historySort.field];
+                if (historySort.field === 'totalScore' || historySort.field === 'ytNum') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                }
+                if (valA < valB) return historySort.order === 'asc' ? -1 : 1;
+                if (valA > valB) return historySort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            ['date', 'ytNum', 'type', 'totalScore', 'author'].forEach(f => {
+                const iconEl = document.getElementById(`sort-hist-${f}`);
+                if (iconEl) {
+                    if (historySort.field === f) {
+                        iconEl.innerHTML = historySort.order === 'asc' ? SVG_ICONS.asc : SVG_ICONS.desc;
+                    } else {
+                        iconEl.innerHTML = SVG_ICONS.neutral;
+                    }
+                }
+            });
+
+            const displayData = filtered.slice(0, 10);
+
+            const historyBody = document.getElementById('history-table-body');
+            const noDataEl = document.getElementById('no-history-data');
+            if (historyBody) {
+                historyBody.innerHTML = '';
+                if (filtered.length === 0) {
+                    if (noDataEl) noDataEl.classList.remove('hidden');
+                } else {
+                    if (noDataEl) noDataEl.classList.add('hidden');
+                    displayData.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
+                        
+                        let shortDate = item.date;
+                        const p = parseDateOnly(item.date);
+                        if (p) shortDate = p.formatted;
+
+                        tr.innerHTML = `
+                            <td class="py-3.5 px-3 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHtml(shortDate)}</td>
+                            <td class="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
+                            <td class="py-3.5 px-3 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                            <td class="py-3.5 px-3 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                            <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
+                            <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                        `;
+                        historyBody.appendChild(tr);
+                    });
+                }
+            }
+        }
+
+        function renderPaginationControls(elementId, totalRows, startIndex, endIndex, currentPage, totalPages, fnName) {
+            const paginationEl = document.getElementById(elementId);
+            if (!paginationEl) return;
+            paginationEl.innerHTML = `
+                <div>
+                    총 <b>${totalRows}</b>개 데이터 중 <b>${totalRows > 0 ? startIndex + 1 : 0}~${Math.min(endIndex, totalRows)}</b> 표시 (페이지 ${currentPage}/${totalPages})
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="${fnName}(1)" ${currentPage <= 1 ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>처음</button>
+                    <button onclick="${fnName}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>이전</button>
+                    <span class="px-2 font-semibold text-slate-700 dark:text-slate-300">${currentPage} / ${totalPages}</span>
+                    <button onclick="${fnName}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>다음</button>
+                    <button onclick="${fnName}(${totalPages})" ${currentPage >= totalPages ? 'disabled class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"' : 'class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium cursor-pointer"'}>맨끝</button>
+                </div>
+            `;
+        }
+
+        function renderIntegratedTable() {
+            setTimeout(setupScrollIndicators, 50);
+            let integratedData = getIntegratedGroupedData();
+
+            integratedData.sort((a, b) => {
+                let valA = a[integratedSort.field];
+                let valB = b[integratedSort.field];
+
+                if (integratedSort.field === 'ytNum' || integratedSort.field === 'count' || integratedSort.field === 'avgScore') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                }
+
+                if (valA < valB) return integratedSort.order === 'asc' ? -1 : 1;
+                if (valA > valB) return integratedSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            ['ytNum', 'type', 'avgScore', 'latestDate', 'count', 'latestAuthor', 'latestMemo'].forEach(f => {
+                const iconEl = document.getElementById(`sort-icon-${f}`);
+                if (iconEl) {
+                    if (integratedSort.field === f) {
+                        iconEl.innerHTML = integratedSort.order === 'asc' ? SVG_ICONS.asc : SVG_ICONS.desc;
+                    } else {
+                        iconEl.innerHTML = SVG_ICONS.neutral;
+                    }
+                }
+            });
+
+            const currentRowsPerPage = window.innerWidth < 768 
+                ? Math.max(3, Math.floor((window.innerHeight - 380) / 60) + 1)
+                : rowsPerPage;
+
+            const totalRows = integratedData.length;
+            const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
+            if (integratedCurrentPage > totalPages) integratedCurrentPage = totalPages;
+            if (integratedCurrentPage < 1) integratedCurrentPage = 1;
+
+            const startIndex = (integratedCurrentPage - 1) * currentRowsPerPage;
+            const endIndex = startIndex + currentRowsPerPage;
+            const paginatedData = integratedData.slice(startIndex, endIndex);
+
+            const integratedBody = document.getElementById('integrated-table-body');
+            if (integratedBody) {
+                integratedBody.innerHTML = '';
+                paginatedData.forEach(group => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
+                    
+                    let shortDate = group.latestDate;
+                    const p = parseDateOnly(group.latestDate);
+                    if (p) shortDate = p.formatted;
+
+                    let diffDays = getDiffDays(group.latestDate);
+                    let info = getBadgeStyleAndText(diffDays);
+                    let badgeHtml = `<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] ${info.badgeClass} inline-block">${info.text}</span>`;
+
+                    tr.innerHTML = `
+                        <td class="py-4 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(group.ytNum)}</td>
+                        <td class="py-4 px-4 whitespace-nowrap w-28"><span class="px-2.5 py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(group.type)}</span></td>
+                        <td class="py-4 px-4 font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap w-28">${escapeHtml(group.avgScore)}점</td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap w-40"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
+                        <td class="py-4 px-4 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap w-28">${escapeHtml(group.count)}회</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap w-32">${escapeHtml(group.latestAuthor)}</td>
+                        <td class="py-4 px-4 min-w-[280px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
+                    `;
+                    integratedBody.appendChild(tr);
+                });
+            }
+
+            renderPaginationControls('integrated-pagination', totalRows, startIndex, endIndex, integratedCurrentPage, totalPages, 'changeIntegratedPage');
+        }
+
+        function updateRawStats() {
+            let data = getStoredData();
+            const statTotal = document.getElementById('stat-total');
+            const statAvgScore = document.getElementById('stat-avg-score');
+            const statSharkman = document.getElementById('stat-sharkman');
+            const statKapa = document.getElementById('stat-kapa');
+
+            if (statTotal) statTotal.innerText = `${data.length} 건`;
+            if (data.length > 0) {
+                const totalSum = data.reduce((acc, cur) => acc + Number(cur.totalScore), 0);
+                if (statAvgScore) statAvgScore.innerText = `${(totalSum / data.length).toFixed(1)} 점`;
+            } else {
+                if (statAvgScore) statAvgScore.innerText = `0 점`;
+            }
+            if (statSharkman) statSharkman.innerText = `${data.filter(i => i.type === '샤크만').length} 건`;
+            if (statKapa) statKapa.innerText = `${data.filter(i => i.type === '카파').length} 건`;
+        }
+
+        function changeIntegratedPage(page) {
+            integratedCurrentPage = page;
+            renderIntegratedTable();
+            const pane = document.querySelector('#tab-integrated .overflow-x-auto');
+            if (pane) pane.scrollLeft = 0;
+        }
+
+        function renderRawTable() {
+            setTimeout(setupScrollIndicators, 50);
+            let data = [...getStoredData()];
+            data.sort((a, b) => {
+                let valA = a[rawSort.field];
+                let valB = b[rawSort.field];
+                if (rawSort.field === 'totalScore' || rawSort.field === 'ytNum') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                }
+                if (valA < valB) return rawSort.order === 'asc' ? -1 : 1;
+                if (valA > valB) return rawSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            ['date', 'ytNum', 'type', 'totalScore', 'author'].forEach(f => {
+                const iconEl = document.getElementById(`sort-raw-${f}`);
+                if (iconEl) {
+                    if (rawSort.field === f) {
+                        iconEl.innerHTML = rawSort.order === 'asc' ? SVG_ICONS.asc : SVG_ICONS.desc;
+                    } else {
+                        iconEl.innerHTML = SVG_ICONS.neutral;
+                    }
+                }
+            });
+
+            const currentRowsPerPage = window.innerWidth < 768 
+                ? Math.max(3, Math.min(Math.floor((window.innerHeight - 520) / 55), 10)) 
+                : rowsPerPage;
+
+            const totalRows = data.length;
+            const totalPages = Math.ceil(totalRows / currentRowsPerPage) || 1;
+            if (rawCurrentPage > totalPages) rawCurrentPage = totalPages;
+            if (rawCurrentPage < 1) rawCurrentPage = 1;
+
+            const startIndex = (rawCurrentPage - 1) * currentRowsPerPage;
+            const endIndex = startIndex + currentRowsPerPage;
+            const paginatedData = data.slice(startIndex, endIndex);
+
+            const rawTableBody = document.getElementById('raw-table-body');
+            if (rawTableBody) {
+                rawTableBody.innerHTML = '';
+                paginatedData.forEach((item) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
+                    tr.innerHTML = `
+                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">${escapeHtml(item.date)}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
+                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                        <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
+                        <td class="py-3.5 px-4 min-w-[240px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                    `;
+                    rawTableBody.appendChild(tr);
+                });
+            }
+
+            renderPaginationControls('raw-pagination', totalRows, startIndex, endIndex, rawCurrentPage, totalPages, 'changeRawPage');
+        }
+
+        function changeRawPage(page) {
+            rawCurrentPage = page;
+            renderRawTable();
+            const pane = document.querySelector('#tab-rawdata .overflow-x-auto');
+            if (pane) pane.scrollLeft = 0;
+        }
+
+        function getStoredBoardData() {
+            if (cachedBoardData.length > 0) return cachedBoardData;
+            try {
+                const local = localStorage.getItem('yt_board_data_v1');
+                if (local) {
+                    cachedBoardData = JSON.parse(local);
+                    return cachedBoardData;
+                }
+            } catch (e) {}
+            cachedBoardData = [...fallbackBoardData];
+            return cachedBoardData;
+        }
+
+        function saveStoredBoardData(data) {
+            cachedBoardData = data;
+            try {
+                localStorage.setItem('yt_board_data_v1', JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function saveAuthorToStorage(val) {
+            try {
+                localStorage.setItem('yt_eval_author_cache', val);
+                const regAuthor = document.getElementById('reg-author');
+                const boardAuthor = document.getElementById('board-author');
+                if (regAuthor && regAuthor.value !== val) regAuthor.value = val;
+                if (boardAuthor && boardAuthor.value !== val) boardAuthor.value = val;
+            } catch (e) {}
+        }
+
+        function loadAuthorFromStorage() {
+            try {
+                const saved = localStorage.getItem('yt_eval_author_cache');
+                if (saved) {
+                    const authorInput = document.getElementById('reg-author');
+                    const boardAuthorInput = document.getElementById('board-author');
+                    if (authorInput) authorInput.value = saved;
+                    if (boardAuthorInput) boardAuthorInput.value = saved;
+                }
+            } catch (e) {}
+        }
+
+        function filterBoard() {
+            boardCurrentPage = 1;
+            renderBoardList();
+        }
+
+        function changeBoardPage(page) {
+            boardCurrentPage = page;
+            renderBoardList();
+        }
+
+        function renderBoardList() {
+            setTimeout(setupScrollIndicators, 50);
+            const data = getStoredBoardData();
+            const searchEl = document.getElementById('board-search');
+            const keyword = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+            const filtered = data.filter(item => {
+                if (!keyword) return true;
+                return item.author.toLowerCase().includes(keyword) ||
+                       item.content.toLowerCase().includes(keyword) ||
+                       (item.tag && item.tag.toLowerCase().includes(keyword));
+            });
+
+            const totalBadge = document.getElementById('board-total-badge');
+            if (totalBadge) totalBadge.innerText = `${filtered.length}건`;
+
+            const totalRows = filtered.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+            if (boardCurrentPage > totalPages) boardCurrentPage = totalPages;
+            if (boardCurrentPage < 1) boardCurrentPage = 1;
+
+            const startIndex = (boardCurrentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const paginated = filtered.slice(startIndex, endIndex);
+
+            const container = document.getElementById('board-list-container');
+            if (container) {
+                container.innerHTML = '';
+                if (paginated.length === 0) {
+                    container.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs">등록된 게시글이 없습니다. 첫 번째 글을 남겨보세요!</div>`;
+                } else {
+                    const tagColors = {
+                        '자유소통': 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900',
+                        '차량정보': 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border-blue-100 dark:border-blue-900',
+                        '건의사항': 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-100 dark:border-amber-900',
+                        '응원한마디': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900'
+                    };
+                    paginated.forEach(item => {
+                        const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
+                        const avatarTxt = item.author.trim().slice(0, 1) || '익';
+                        const div = document.createElement('div');
+                        div.className = 'p-4 sm:p-5 hover:bg-slate-50/85 dark:hover:bg-slate-800/50 transition-colors flex items-start space-x-3.5';
+                        div.innerHTML = `
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600/10 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">${escapeHtml(avatarTxt)}</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2 flex-wrap">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">${escapeHtml(item.author)}</span>
+                                        <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md border ${badgeStyle}">${escapeHtml(item.tag || '자유소통')}</span>
+                                    </div>
+                                    <span class="text-[11px] font-mono text-slate-400">${escapeHtml(item.date)}</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed break-words whitespace-pre-line">${escapeHtml(item.content)}</p>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            }
+
+            renderPaginationControls('board-pagination', totalRows, startIndex, endIndex, boardCurrentPage, totalPages, 'changeBoardPage');
+        }
+
+        async function handleBoardSubmit(event) {
+            event.preventDefault();
+            const author = document.getElementById('board-author').value.trim();
+            const content = document.getElementById('board-content').value.trim();
+            const tagRadio = document.querySelector('input[name="board-tag"]:checked');
+            const tag = tagRadio ? tagRadio.value : '자유소통';
+
+            if (!author || !content) {
+                showToast('작성자와 내용을 모두 입력해주세요.', true);
+                return;
+            }
+
+            const submitBtn = document.getElementById('board-submit-btn');
+            const submitText = document.getElementById('board-submit-text');
+            if (submitBtn && submitText) {
+                submitBtn.disabled = true;
+                submitBtn.className = 'sm:w-36 py-3 px-5 bg-slate-700 text-white font-bold text-sm rounded-xl shadow-md cursor-not-allowed flex items-center justify-center gap-2 shrink-0';
+                submitText.innerHTML = `<svg class="animate-spin h-4 w-4 text-white inline-block mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>등록 중..`;
+            }
+
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const dateStr = `${yy}/${mm}/${dd}/ ${hh}:${min}`;
+
+            const newPost = {
+                sheetName: '방명록',
+                date: dateStr,
+                author: author,
+                tag: tag,
+                content: content
+            };
+
+            try {
+                await fetch(SHEET_POST_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newPost)
+                });
+                showToast('방명록에 글이 정상 등록되었습니다!');
+            } catch (err) {
+                showToast('로컬에 저장되었으나 데이터 전송 중 오류가 발생했습니다.', true);
+            }
+
+            const boardData = getStoredBoardData();
+            boardData.unshift(newPost);
+            saveStoredBoardData(boardData);
+            boardCurrentPage = 1;
+            renderBoardList();
+
+            document.getElementById('board-content').value = '';
+            if (submitBtn && submitText) {
+                submitBtn.disabled = false;
+                submitBtn.className = 'sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95';
+                submitText.innerText = '글 남기기';
+            }
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const author = document.getElementById('reg-author').value.trim();
+            const ytNum = document.getElementById('reg-ytnum').value.trim();
+            const typeRadio = document.querySelector('input[name="reg-type"]:checked');
+            
+            if (!author || !ytNum) {
+                showToast('작성자와 YT를 입력해주세요.', true);
+                return;
+            }
+
+            if (!typeRadio) {
+                showToast('차량 타입을 선택해주세요.', true);
+                return;
+            }
+            const type = typeRadio.value;
+
+            const numVal = parseInt(ytNum, 10);
+            if (isNaN(numVal) || numVal < 100 || numVal > 999) {
+                showToast('YT 번호는 3자리 숫자로 입력해 주세요.', true);
+                return;
+            }
+
+            const kidong = document.querySelector('input[name="eval-kidong"]:checked').value;
+            const sangha = document.querySelector('input[name="eval-sangha"]:checked').value;
+            const apdwi = document.querySelector('input[name="eval-apdwi"]:checked').value;
+            const uija = document.querySelector('input[name="eval-uija"]:checked').value;
+            const memo = document.getElementById('reg-memo').value.trim();
+
+            const totalScore = calculateTotalScore(kidong, sangha, apdwi, uija);
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const submitBtnText = document.getElementById('submit-btn-text');
+            if (submitBtn && submitBtnText) {
+                submitBtn.disabled = true;
+                submitBtn.className = 'w-full py-3.5 bg-slate-700 text-white font-bold text-base rounded-xl shadow-md cursor-not-allowed flex items-center justify-center gap-2.5 transition-all';
+                submitBtnText.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    평가 제출 중..
+                `;
+            }
+
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const dateStr = `${yy}/${mm}/${dd}/ ${hh}:${min}`;
+
+            const newItem = {
+                date: dateStr,
+                ytNum: ytNum,
+                type: type,
+                totalScore: totalScore,
+                kidong: kidong,
+                sangha: sangha,
+                apdwi: apdwi,
+                uija: uija,
+                author: author,
+                memo: memo
+            };
+
+            let data = getStoredData();
+            data.unshift(newItem);
+            saveStoredData(data);
+
+            showToast('YT 평가 데이터를 등록 중입니다...');
+
+            try {
+                await fetch(SHEET_POST_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newItem)
+                });
+                showToast('서버에 정상 기록되었습니다!');
+            } catch (err) {
+                showToast('로컬에 저장되었으나 데이터 동기화 중 오류가 발생했습니다.', true);
+            }
+
+            document.getElementById('evaluation-form').reset();
+            loadAuthorFromStorage();
+
+            document.activeElement?.blur();
+            
+            if (submitBtn && submitBtnText) {
+                submitBtn.disabled = false;
+                submitBtn.className = 'w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer';
+                submitBtnText.innerText = '평가 제출하기';
+            }
+
+            switchTab('history');
+            const searchFilterType = document.getElementById('search-filter-type');
+            if (searchFilterType) searchFilterType.value = 'ytNum';
+            onSearchFilterChange();
+            
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = ytNum;
+                filterHistory();
+            }
+        }
+
+        function filterHistory() {
+            historyCurrentPage = 1;
+            renderHistoryTable();
+        }
+
+        function setBerthTimeRange(mode) {
+            berthTimeRangeMode = mode;
+            ['24h', '48h', '72h'].forEach(m => {
+                const btn = document.getElementById(`btn-range-${m}`);
+                if (!btn) return;
+                if (m === mode) {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
+                }
+            });
+
+            alignTimelineToDataset();
+            renderBerthGraphicMatrix();
+            if (mobileBerthViewMode === 'card') {
+                renderBerthCardView();
+            } else {
+                setTimeout(scrollMatrixToNow, 100);
+            }
+        }
+
+        function scrollMatrixToNow() {
+            const container = document.getElementById('berth-matrix-view-container');
+            const nowLine = document.getElementById('dynamic-now-line');
+            if (!container || !nowLine) return;
+
+            if (nowLine.style.display !== 'none') {
+                const targetLeft = nowLine.offsetLeft - (container.clientWidth / 2);
+                container.scrollTo({
+                    left: Math.max(0, targetLeft),
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function setMobileBerthMode(mode) {
+            mobileBerthViewMode = mode;
+            const matrixContainer = document.getElementById('berth-matrix-view-container');
+            const cardContainer = document.getElementById('berth-card-view-container');
+            const btnMatrix = document.getElementById('btn-mode-matrix');
+            const btnCard = document.getElementById('btn-mode-card');
+
+            if (mode === 'card') {
+                if (matrixContainer) matrixContainer.classList.add('hidden');
+                if (cardContainer) cardContainer.classList.remove('hidden');
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
+                
+                const berthTabSection = document.getElementById('tab-berth');
+                if (berthTabSection) {
+                    const banner = berthTabSection.querySelector('.scroll-hint-banner');
+                    if (banner) banner.style.display = 'none';
+                }
+
+                renderBerthCardView();
+            } else {
+                if (matrixContainer) matrixContainer.classList.remove('hidden');
+                if (cardContainer) cardContainer.classList.add('hidden');
+                if (btnMatrix) btnMatrix.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all";
+                if (btnCard) btnCard.className = "flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all";
+                renderBerthGraphicMatrix();
+            }
+        }
+
+        function renderBerthGraphicMatrix() {
+            setTimeout(setupScrollIndicators, 50);
+            const headerEl = document.getElementById("matrixHeader");
+            const bodyEl = document.getElementById("matrixBody");
+            if (!headerEl || !bodyEl) return;
+
+            alignTimelineToDataset();
+
+            let rangeStartMs = timelineStart.getTime();
+            let activeHours = berthTimeRangeMode === '24h' ? 24 : (berthTimeRangeMode === '72h' ? 72 : 48);
+            let stepHours = berthTimeRangeMode === '72h' ? 2 : 1;
+            let totalColumns = Math.ceil(activeHours / stepHours);
+            let rangeEndMs = rangeStartMs + activeHours * 3600 * 1000;
+
+            const day1 = new Date(rangeStartMs);
+            const day2 = new Date(rangeStartMs + 24 * 3600 * 1000);
+            const day3 = new Date(rangeStartMs + 48 * 3600 * 1000);
+
+            let headerHTML = `
+                <div class="flex border-b border-slate-200 dark:border-slate-800 h-7 text-xs font-semibold">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono-num text-[11px] font-black text-indigo-700 dark:text-indigo-400">
+                        선석
+                    </div>
+                    <div class="flex-1 flex">
+            `;
+
+            if (activeHours === 72) {
+                headerHTML += `
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
+                        ${formatDateLabel(day1)}
+                    </div>
+                    <div class="w-1/3 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+                        ${formatDateLabel(day2)}
+                    </div>
+                    <div class="w-1/3 flex items-center justify-center bg-slate-50/90 dark:bg-slate-900/90 font-mono-num text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+                        ${formatDateLabel(day3)}
+                    </div>
+                `;
+            } else if (activeHours === 48) {
+                headerHTML += `
+                    <div class="w-1/2 flex items-center justify-center border-r-2 border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
+                        ${formatDateLabel(day1)}
+                    </div>
+                    <div class="w-1/2 flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 font-mono-num text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+                        ${formatDateLabel(day2)}
+                    </div>
+                `;
+            } else {
+                headerHTML += `
+                    <div class="w-full flex items-center justify-center bg-indigo-50/70 dark:bg-indigo-950/50 font-mono-num text-[11px] font-bold text-indigo-800 dark:text-indigo-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 mr-1.5"></span>
+                        ${formatDateLabel(day1)}
+                    </div>
+                `;
+            }
+
+            headerHTML += `
+                </div></div>
+                <div class="flex h-5 text-[9px] font-mono-num font-semibold text-slate-500 dark:text-slate-400">
+                    <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-[9px] text-slate-400">
+                        시간(H)
+                    </div>
+                    <div class="flex-1 flex">
+            `;
+
+            for (let c = 0; c < totalColumns; c++) {
+                const isLastColumn = (c === totalColumns - 1);
+                let hour = ((c + 1) * stepHours);
+                if (berthTimeRangeMode === '72h' && c === 0) hour = 2;
+
+                let tickClass = "hour-tick-border text-slate-400";
+                if (!isLastColumn) {
+                    const is6h = (hour % 6 === 0);
+                    if (is6h) tickClass = "six-hour-border text-indigo-600 dark:text-indigo-400 font-bold";
+                }
+
+                headerHTML += `
+                    <div class="flex-1 flex items-center justify-center ${tickClass} leading-none">
+                        ${String(hour % 24 === 0 ? 24 : hour % 24).padStart(2, '0')}
+                    </div>
+                `;
+            }
+
+            headerHTML += `</div></div>`;
+            headerEl.innerHTML = headerHTML;
+
+            let bodyHTML = "";
+
+            BERTH_LIST.forEach((berthName) => {
+                bodyHTML += `
+                    <div class="flex flex-1 border-b border-slate-200 dark:border-slate-800 relative min-h-[60px] sm:min-h-[64px]">
+                        <div style="width: ${BERTH_COL_WIDTH}px;" class="shrink-0 sticky-berth-col border-r border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center select-none">
+                            <span class="font-mono-num text-sm sm:text-base font-black tracking-tight text-slate-800 dark:text-slate-200">
+                                ${berthName}
+                            </span>
+                        </div>
+
+                        <div class="flex-1 relative flex h-full">
+                            <div class="absolute inset-0 flex pointer-events-none">
+                `;
+
+                for (let c = 0; c < totalColumns; c++) {
+                    const isLastColumn = (c === totalColumns - 1);
+                    let hour = ((c + 1) * stepHours);
+                    if (berthTimeRangeMode === '72h' && c === 0) hour = 2;
+
+                    let cellClass = "hour-tick-border";
+                    if (!isLastColumn) {
+                        const is6h = (hour % 6 === 0);
+                        if (is6h) cellClass = "six-hour-border";
+                    }
+
+                    bodyHTML += `<div class="flex-1 h-full ${cellClass}"></div>`;
+                }
+
+                bodyHTML += `</div>`;
+
+                activeBerthDataset.forEach((v, idx) => {
+                    if (String(v.berth || '').trim().toUpperCase() !== berthName) return;
+
+                    const bStart = parseBerthDateTime(v.berthTime);
+                    const bEnd = parseBerthDateTime(v.departTime);
+
+                    if (isNaN(bStart) || isNaN(bEnd)) return;
+                    if (bEnd <= rangeStartMs || bStart >= rangeEndMs) return;
+
+                    const visStart = Math.max(bStart, rangeStartMs);
+                    const visEnd = Math.min(bEnd, rangeEndMs);
+
+                    const startOffsetHours = (visStart - rangeStartMs) / (3600 * 1000);
+                    const durationHours = (visEnd - visStart) / (3600 * 1000);
+
+                    const leftPct = Math.max(0, Math.min(100, (startOffsetHours / activeHours) * 100));
+                    let widthPct = Math.max(1.8, (durationHours / activeHours) * 100);
+                    if (leftPct + widthPct > 100) {
+                        widthPct = Math.max(1.8, 100 - leftPct);
+                    }
+
+                    const conf = getCarrierConfig(v.carrier);
+                    const isStarboard = v.berthDir === "우현";
+                    const dirPillClass = isStarboard 
+                        ? "bg-amber-300 text-amber-950 font-black shadow-xs" 
+                        : "bg-white text-slate-900 font-black shadow-xs";
+
+                    bodyHTML += `
+                        <div 
+                            onclick="openBerthDetailByIndex(${idx})"
+                            style="left: ${leftPct.toFixed(2)}%; width: ${widthPct.toFixed(2)}%; top: 3px; bottom: 3px;"
+                            class="vessel-block absolute z-10 rounded-lg ${conf.bg} border ${conf.border} shadow-md px-1.5 sm:px-2 py-0.5 sm:py-1 flex flex-col justify-between overflow-hidden"
+                            title="모선명: ${escapeHtml(v.vesselName || v.carrier)} | 선사: ${escapeHtml(v.carrier)} | 접안방향: ${escapeHtml(v.berthDir)} | 접안: ${escapeHtml(v.berthTime)} → 출항: ${escapeHtml(v.departTime)} | D:${v.discharge} L:${v.load} S:${v.shift}"
+                        >
+                            <div class="flex items-center gap-1 sm:gap-1.5 leading-none overflow-hidden">
+                                <span class="px-1 sm:px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-black ${conf.badge} font-mono-num leading-none tracking-tight shrink-0">
+                                    ${escapeHtml(v.carrier)}
+                                </span>
+                                <span class="px-1 py-0.5 rounded ${dirPillClass} text-[8.5px] sm:text-[9px] leading-none tracking-tighter shrink-0">
+                                    ${escapeHtml(v.berthDir)}
+                                </span>
+                                <span class="text-[9px] sm:text-[10px] font-bold text-white/95 truncate hidden xs:inline" title="${escapeHtml(v.vesselName || '')}">
+                                    ${escapeHtml(v.vesselName || '')}
+                                </span>
+                            </div>
+
+                            <div class="flex items-center justify-between text-[7.5px] sm:text-[9px] font-mono-num font-semibold ${conf.subBg} -mx-1.5 sm:-mx-2 -mb-0.5 sm:-mb-1 px-1.5 sm:px-2 py-0.5 border-t leading-none">
+                                <span class="tracking-tight">D:<b class="font-bold ml-0.5 text-white">${v.discharge}</b></span>
+                                <span class="tracking-tight">L:<b class="font-bold ml-0.5 text-white">${v.load}</b></span>
+                                <span class="tracking-tight hidden xs:inline sm:inline">S:<b class="font-bold ml-0.5 text-white">${v.shift}</b></span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                bodyHTML += `</div></div>`;
+            });
+
+            bodyHTML += `
+                <div 
+                    id="dynamic-now-line"
+                    class="absolute top-0 bottom-0 w-[1.5px] now-indicator-line z-30 pointer-events-none transition-all duration-300"
+                    style="display: none;"
+                >
+                    <div class="absolute -top-3 -translate-x-1/2 left-1/2 px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none shadow-md">
+                        <span>NOW</span>
+                    </div>
+                    <div class="absolute -bottom-1 -translate-x-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-red-500/80"></div>
+                </div>
+            `;
+
+            bodyEl.innerHTML = bodyHTML;
+            updateDynamicNowPosition();
+        }
+
+        function updateDynamicNowPosition() {
+            const nowLine = document.getElementById('dynamic-now-line');
+            if (!nowLine) return;
+
+            const nowKst = getKSTDate();
+            const nowMs = nowKst.getTime();
+
+            let rangeStartMs = timelineStart.getTime();
+            let activeHours = berthTimeRangeMode === '24h' ? 24 : (berthTimeRangeMode === '72h' ? 72 : 48);
+            let rangeEndMs = rangeStartMs + activeHours * 3600 * 1000;
+
+            if (nowMs >= rangeStartMs && nowMs <= rangeEndMs) {
+                const nowOffsetHours = (nowMs - rangeStartMs) / (3600 * 1000);
+                const nowPct = (nowOffsetHours / activeHours) * 100;
+
+                nowLine.style.display = 'block';
+                nowLine.style.left = `calc(${BERTH_COL_WIDTH}px + (100% - ${BERTH_COL_WIDTH}px) * ${nowPct / 100})`;
+            } else {
+                nowLine.style.display = 'none';
+            }
+        }
+
+        function renderBerthCardView() {
+            const container = document.getElementById("berth-card-view-container");
+            if (!container) return;
+
+            alignTimelineToDataset();
+            let rangeStartMs = timelineStart.getTime();
+            let activeHours = berthTimeRangeMode === '24h' ? 24 : (berthTimeRangeMode === '72h' ? 72 : 48);
+            let rangeEndMs = rangeStartMs + activeHours * 3600 * 1000;
+
+            let html = "";
+            BERTH_LIST.forEach(berth => {
+                const vesselsWithIdx = [];
+                activeBerthDataset.forEach((v, idx) => {
+                    if (String(v.berth || '').trim().toUpperCase() !== berth) return;
+                    const bStart = parseBerthDateTime(v.berthTime);
+                    const bEnd = parseBerthDateTime(v.departTime);
+                    if (isNaN(bStart) || isNaN(bEnd)) return;
+                    if (!(bEnd <= rangeStartMs || bStart >= rangeEndMs)) {
+                        vesselsWithIdx.push({ v, idx });
+                    }
+                });
+
+                html += `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs">
+                        <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                                <span class="font-black text-slate-800 dark:text-slate-200 text-sm font-mono-num">${berth} 선석</span>
+                            </div>
+                            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">배정 선박: ${vesselsWithIdx.length}척</span>
+                        </div>
+                        <div class="p-3 divide-y divide-slate-100 dark:divide-slate-800">
+                `;
+
+                if (vesselsWithIdx.length === 0) {
+                    html += `<div class="py-4 text-center text-xs text-slate-400">접안 예정 선박이 없습니다.</div>`;
+                } else {
+                    vesselsWithIdx.forEach(({ v, idx }) => {
+                        const conf = getCarrierConfig(v.carrier);
+                        const isStarboard = v.berthDir === "우현";
+                        html += `
+                            <div onclick="openBerthDetailByIndex(${idx})" class="py-2.5 first:pt-1 last:pb-1 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-1.5 truncate">
+                                        <span class="px-2 py-0.5 rounded text-xs font-black ${conf.badge} font-mono-num shrink-0">${escapeHtml(v.carrier)}</span>
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isStarboard ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'} shrink-0">${escapeHtml(v.berthDir)}</span>
+                                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${escapeHtml(v.vesselName || '')}</span>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono-num shrink-0">총 ${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono-num flex items-center justify-between">
+                                    <span>${escapeHtml(v.berthTime.slice(5))} &rarr; ${escapeHtml(v.departTime.slice(5))}</span>
+                                    <div class="space-x-1.5 font-semibold text-[10px]">
+                                        <span class="text-blue-600 dark:text-blue-400">D:${v.discharge}</span>
+                                        <span class="text-emerald-600 dark:text-emerald-400">L:${v.load}</span>
+                                        <span class="text-amber-600 dark:text-amber-400">S:${v.shift}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updateKSTClock() {
+            const clockEl = document.getElementById('kst-clock');
+            if (clockEl) {
+                const nowKst = getKSTDate();
+                const kstTimeStr = nowKst.toLocaleTimeString('ko-KR', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                clockEl.textContent = kstTimeStr;
+            }
+            if (currentActiveTab === 'berth') {
+                updateDynamicNowPosition();
+            }
+        }
+
+        function openBerthDetailByIndex(idx) {
+            const v = activeBerthDataset[idx];
+            if (!v) return;
+
+            const modal = document.getElementById("detailModal");
+            const box = document.getElementById("modalBox");
+            const conf = getCarrierConfig(v.carrier);
+
+            box.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-xs font-black ${conf.badge} font-mono-num">${escapeHtml(v.carrier)}</span>
+                        <span class="font-mono-num font-black text-indigo-600 dark:text-indigo-400 text-base">${escapeHtml(v.berth)} 선석</span>
+                    </div>
+                    <button onclick="closeBerthModalDirect()" class="text-slate-400 hover:text-slate-700 text-lg px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 cursor-pointer">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 my-3 text-xs font-mono-num">
+                    <div class="bg-indigo-50/70 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 p-2.5 rounded-xl col-span-2">
+                        <span class="text-indigo-400 block text-[10px] font-sans">모선명 ${v.voyage ? `(${escapeHtml(v.voyage)})` : ''}</span>
+                        <span class="font-bold text-indigo-900 dark:text-indigo-200 text-sm tracking-tight">${escapeHtml(v.vesselName || '-')}</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
+                        <span class="text-slate-400 block text-[10px]">운항선사 / 항로</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${escapeHtml(v.carrier)} ${v.route ? `(${escapeHtml(v.route)})` : ''}</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
+                        <span class="text-slate-400 block text-[10px]">접안방향</span>
+                        <span class="font-bold text-indigo-600 dark:text-indigo-400 text-xs">${escapeHtml(v.berthDir)}</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl col-span-2">
+                        <span class="text-slate-400 block text-[10px]">접안(예정)일시 &rarr; 출항(예정)일시</span>
+                        <span class="font-bold text-slate-900 dark:text-slate-100 text-[11px]">${escapeHtml(v.berthTime)} &rarr; ${escapeHtml(v.departTime)}</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
+                        <span class="text-slate-400 block text-[10px]">양하수량 (D)</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400 text-xs">${v.discharge.toLocaleString()} VAN</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl">
+                        <span class="text-slate-400 block text-[10px]">선적수량 (L)</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400 text-xs">${v.load.toLocaleString()} VAN</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl col-span-2 flex items-center justify-between">
+                        <span class="text-slate-400 text-[10px]">Shift (이적수량)</span>
+                        <span class="font-bold text-amber-600 dark:text-amber-400 text-xs">${v.shift.toLocaleString()} VAN</span>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50/80 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-900 rounded-xl p-3 flex items-center justify-between text-xs font-mono-num">
+                    <span class="text-slate-600 dark:text-slate-300 text-[11px]">총 작업량 (D+L+S):</span>
+                    <span class="font-bold text-indigo-700 dark:text-indigo-300 text-sm">${(v.discharge + v.load + v.shift).toLocaleString()} VAN</span>
+                </div>
+            `;
+
+            modal.classList.remove("hidden");
+        }
+
+        function closeBerthModal(e) {
+            if (e.target.id === "detailModal") closeBerthModalDirect();
+        }
+
+        function closeBerthModalDirect() {
+            const modal = document.getElementById("detailModal");
+            if (modal) modal.classList.add("hidden");
+        }
+
+        const SVG_ICONS = {
+            neutral: `<svg class="w-3.5 h-3.5 text-slate-300 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>`,
+            asc: `<svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>`,
+            desc: `<svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 font-bold inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`
+        };
+
+        function formatDateLabel(d) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+            return `${year}.${month}.${day} (${weekdays[d.getDay()]})`;
+        }
+
+        function getCarrierConfig(c) {
+            return CARRIER_CONFIG[c] || CARRIER_CONFIG.DEFAULT;
+        }
+
+        function setupScrollIndicators() {
+            const containers = document.querySelectorAll('.overflow-x-auto, .matrix-scroll-wrapper');
+            containers.forEach(container => {
+                let wrapper = container.parentElement;
+                if (!wrapper || wrapper.classList.contains('scroll-hint-wrapper')) {
+                    wrapper = container;
+                }
+
+                let hint = wrapper.querySelector('.scroll-hint-banner');
+                const hasScroll = container.scrollWidth > container.clientWidth;
+                const isBerthCardMode = container.id === 'berth-matrix-view-container' && mobileBerthViewMode === 'card';
+
+                if (hasScroll && !isBerthCardMode) {
+                    if (!hint) {
+                        hint = document.createElement('div');
+                        hint.className = 'scroll-hint-banner flex items-center justify-center gap-2 py-1.5 px-3 bg-indigo-50/90 dark:bg-indigo-950/90 border-b border-indigo-100 dark:border-indigo-900 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300 select-none';
+                        hint.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows" viewBox="0 0 16 16">
+                                <path d="M1.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L2.707 7.5h10.586l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L13.293 8.5H2.707l1.147 1.146a.5.5 0 0 1-.708.708z"/>
+                            </svg>
+                            <span>좌우로 스크롤하여 전체 내용을 확인하세요</span>
+                        `;
+                        container.parentNode.insertBefore(hint, container);
+                    }
+                    hint.style.display = 'flex';
+                } else if (hint) {
+                    const anyTableHasScroll = Array.from(document.querySelectorAll('.overflow-x-auto')).some(c => c.scrollWidth > c.clientWidth);
+                    if (anyTableHasScroll && container.id !== 'berth-matrix-view-container') {
+                        hint.style.display = 'flex';
+                    } else {
+                        hint.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function setupPullToRefresh() {
+            const mainContainer = document.getElementById('main-scroll-container');
+            const ptrIndicator = document.getElementById('ptr-indicator');
+            const ptrIcon = document.getElementById('ptr-icon');
+            const ptrText = document.getElementById('ptr-text');
+            if (!mainContainer || !ptrIndicator) return;
+
+            let touchStartY = 0;
+            let currentTranslateY = 0;
+            let isPulling = false;
+            const threshold = 95;
+
+            mainContainer.addEventListener('touchstart', (e) => {
+                if (mainContainer.scrollTop <= 0) {
+                    touchStartY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                const currentY = e.touches[0].clientY;
+                const diff = currentY - touchStartY;
+                
+                if (diff > 0 && mainContainer.scrollTop <= 0) {
+                    currentTranslateY = Math.min(diff * 0.35, 110);
+                    
+                    ptrIndicator.style.opacity = Math.min(currentTranslateY / 50, 1);
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(${currentTranslateY + 15}px)`;
+
+                    if (currentTranslateY >= threshold) {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-180";
+                        ptrText.innerText = "놓으면 새로고침됩니다";
+                    } else {
+                        ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200 rotate-0";
+                        ptrText.innerText = "아래로 당겨서 새로고침";
+                    }
+                }
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchend', async (e) => {
+                if (!isPulling) return;
+                isPulling = false;
+
+                if (currentTranslateY >= threshold) {
+                    ptrIndicator.style.transform = `translateX(-50%) translateY(75px)`;
+                    ptrIcon.className = "w-4 h-4 text-indigo-400 inline-block mr-2 animate-spin";
+                    ptrText.innerText = "최신 데이터 동기화 중...";
+
+                    await manualRefreshAll();
+                }
+
+                ptrIndicator.style.transform = `translateX(-50%) translateY(0px)`;
+                ptrIndicator.style.opacity = '0';
+                currentTranslateY = 0;
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (!isStandalone) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                    banner.classList.remove('hidden');
+                }
+            }
+        });
+
+        function dismissPwaBanner() {
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.classList.add('hidden');
+            try { localStorage.setItem('pwa_banner_dismissed', 'true'); } catch (e) {}
+        }
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            dismissPwaBanner();
+            showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!');
+        });
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((reg) => {
+                            console.log('[PWA] Service Worker registered successfully:', reg.scope);
+                        })
+                        .catch((err) => {
+                            console.warn('[PWA] Service Worker registration failed:', err);
+                        });
+                });
+            }
+        }
+
+        async function triggerPwaInstall() {
+            dismissPwaBanner();
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isStandalone) {
+                showToast('이미 앱으로 실행 중입니다.');
+                return;
+            }
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast('앱 설치를 시작합니다.');
+                }
+                deferredPrompt = null;
+            } else {
+                const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIos) {
+                    showToast('사파리 하단 공유 버튼 [↑] 클릭 후 "홈 화면에 추가"를 눌러주세요.');
+                } else {
+                    showToast('브라우저 메뉴(⋮)에서 "앱 설치" 또는 "홈 화면에 추가"를 선택해주세요.');
+                }
+            }
+        }
+
+        window.onload = function() {
+            setupScrollIndicators();
+            setupPullToRefresh();
+            loadInitialCacheAndRender();
+            loadAuthorFromStorage();
+
+            if (currentActiveTab) {
+                switchTab(currentActiveTab);
+            } else {
+                switchTab('history');
+            }
+
+            fetchGoogleSheetData(true, false);
+            fetchMiniBoardSheetData(false);
+            fetchBerthDataFromSheet();
+
+            updateKSTClock();
+            setInterval(updateKSTClock, 1000);
+
+            registerServiceWorker();
+
+            // PWA 내부 스크롤 이벤트 감지
+            const mainContainer = document.getElementById('main-scroll-container');
+            if (mainContainer) {
+                mainContainer.addEventListener('scroll', handleMainScroll, { passive: true });
+            }
+            window.addEventListener('scroll', handleMainScroll, { passive: true });
+
+            window.addEventListener('resize', () => {
+                handleMainScroll();
+                
+                if (resizeTimer) clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    setupScrollIndicators();
+                    if (currentActiveTab === 'berth') {
+                        renderBerthGraphicMatrix();
+                        if (mobileBerthViewMode === 'card') renderBerthCardView();
+                    }
+                    if (currentActiveTab === 'history') renderHistoryTable();
+                    if (currentActiveTab === 'integrated') renderIntegratedTable();
+                    if (currentActiveTab === 'rawdata') renderRawTable();
+                    if (currentActiveTab === 'board') renderBoardList();
+                }, 150);
+            });
+
+            // 스크롤 시 스크롤바 일시적 노출 제어
+            let scrollFadeTimer;
+            window.addEventListener('scroll', function (e) {
+                if (e.target && e.target.classList) {
+                    e.target.classList.add('is-scrolling');
+                    clearTimeout(scrollFadeTimer);
+                    scrollFadeTimer = setTimeout(function() {
+                        const scrollingEls = document.querySelectorAll('.is-scrolling');
+                        scrollingEls.forEach(el => el.classList.remove('is-scrolling'));
+                    }, 800);
+                }
+            }, true);
+        };
+    </script>
+</body>
+</html>
