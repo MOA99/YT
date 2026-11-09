@@ -3012,21 +3012,21 @@
         function openInChrome() {
             const ua = navigator.userAgent || navigator.vendor || window.opera;
             const isIos = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
-            const isKakao = /KAKAOTALK/i.test(ua);
 
             if (isIos) {
                 showToast('아이폰은 "현재 주소 복사하기"를 누른 후 Safari 앱에서 열어주세요.', true);
                 return;
             }
 
-            if (isKakao) {
-                // 카카오톡 전용 외부 브라우저 호출 API
-                location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
-            } else {
-                // 안드로이드 기본 Chrome Intent 호출
-                location.href = 'intent://' + location.href.replace(/https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-            }
-            showToast('크롬 브라우저를 실행합니다.');
+            const targetUrl = location.href;
+
+            // 안드로이드 크롬 우선 실행 인텐트 (크롬 미설치 시 기본 브라우저 대체 실행 지원)
+            // 카카오톡 등 모든 안드로이드 인앱 브라우저에서 크롬을 최우선으로 호출합니다.
+            const cleanUrl = targetUrl.replace(/https?:\/\//i, '');
+            const fallbackUrl = encodeURIComponent(targetUrl);
+            location.href = `intent://${cleanUrl}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallbackUrl};end`;
+            
+            showToast('외부 브라우저를 실행합니다.');
         }
 
         function copyCurrentUrl() {
