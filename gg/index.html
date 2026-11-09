@@ -78,34 +78,22 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
         .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
 
-        /* 가로 스크롤 영역 (테이블 등) 기본 스크롤바 표시 (데스크탑 접근성 향상) */
         .overflow-x-auto::-webkit-scrollbar {
-            height: 6px;
-        }
-        @media (min-width: 768px) {
-            .overflow-x-auto::-webkit-scrollbar {
-                height: 8px; /* 데스크톱에서는 마우스로 잡기 편하게 굵게 표시 */
-            }
+            height: 4px;
         }
         .overflow-x-auto::-webkit-scrollbar-track {
-            background: rgba(241, 245, 249, 0.5); /* 옅은 트랙 배경 */
+            background: transparent;
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
+            background: transparent;
         }
         .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.45); /* 항상 살짝 보이도록 투명도 조정 */
+            background: rgba(148, 163, 184, 0);
             border-radius: 4px;
         }
         .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: rgba(71, 85, 105, 0.6);
-        }
-        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.8) !important;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 0.9) !important;
+            background: rgba(71, 85, 105, 0);
         }
         
         .sticky-col-1 {
@@ -749,15 +737,15 @@
                         <table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[1020px]">
                             <thead>
                                 <tr id="raw-table-header" class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="py-3.5 px-4 w-37 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-18 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-18 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-27 whitespace-nowrap text-center">기동</th>
-                                    <th class="py-3.5 px-4 w-27 whitespace-nowrap text-center">충격(상하)</th>
-                                    <th class="py-3.5 px-4 w-27 whitespace-nowrap text-center">충격(앞뒤)</th>
-                                    <th class="py-3.5 px-4 w-27 whitespace-nowrap text-center">의자</th>
-                                    <th class="py-3.5 px-4 w-25 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-38 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-raw-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(상하)</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">의자</th>
+                                    <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-full whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
@@ -2124,15 +2112,15 @@
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
                     tr.innerHTML = `
-                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap w-37">${escapeHtml(item.date)}</td>
-                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-18">${escapeHtml(item.ytNum)}</td>
-                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-20"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
-                        <td class="py-3.5 px-4 whitespace-nowrap w-18"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
-                        <td class="py-3.5 px-4 w-27 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                        <td class="py-3.5 px-4 w-27 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                        <td class="py-3.5 px-4 w-27 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
-                        <td class="py-3.5 px-4 w-27 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
-                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-25">${escapeHtml(item.author)}</td>
+                        <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">${escapeHtml(item.date)}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
+                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                        <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                        <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
                         <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
                     rawTableBody.appendChild(tr);
