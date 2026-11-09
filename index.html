@@ -512,7 +512,7 @@
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
                                     <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 whitespace-nowrap">특이사항</th>
+                                    <th class="py-3.5 px-3 w-full whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
                             <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
@@ -682,7 +682,7 @@
                                             <span id="sort-icon-latestAuthor" class="inline-block text-slate-400"></span>
                                         </div>
                                     </th>
-                                    <th class="py-4 px-4 min-w-[280px] whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
+                                    <th class="py-4 px-4 w-full whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('latestMemo')">
                                         <div class="flex items-center gap-1.5 whitespace-nowrap">
                                             <span>최근 특이사항</span>
                                             <span id="sort-icon-latestMemo" class="inline-block text-slate-400"></span>
@@ -746,7 +746,7 @@
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">의자</th>
                                     <th class="py-3.5 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-raw-author" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4  whitespace-nowrap">특이사항</th>
+                                    <th class="py-3.5 px-4 w-full whitespace-nowrap">특이사항</th>
                                 </tr>
                             </thead>
                             <tbody id="raw-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
@@ -2121,7 +2121,7 @@
                         <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
-                        <td class="py-3.5 px-4 min-w-[240px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
+                        <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
                     rawTableBody.appendChild(tr);
                 });
