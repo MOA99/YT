@@ -2985,6 +2985,13 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            
+            // 브라우저가 설치 프롬프트를 지원/발생시켰다는 것은 앱이 미설치 상태임을 의미
+            // 로컬스토리지의 낡은 설치 기록을 지우고 설치 버튼을 다시 노출시킵니다.
+            try { localStorage.removeItem('is_app_installed'); } catch (err) {}
+            const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+            if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'flex';
+
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             if (!isStandalone) {
                 const banner = document.getElementById('pwa-install-banner');
@@ -3096,7 +3103,15 @@
             // PWA 앱 설치 버튼 숨김 처리 (단독 실행 모드이거나 설치 완료 기록이 있을 때)
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             const isInstalled = localStorage.getItem('is_app_installed') === 'true';
-            if (isStandalone || isInstalled) {
+            
+            if (isStandalone) {
+                // 앱 내부로 실행 중일 때는 무조건 숨김 및 설치 완료 기록 동기화
+                const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+                if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
+                try { localStorage.setItem('is_app_installed', 'true'); } catch(e) {}
+            } else if (isInstalled) {
+                // 브라우저 접속인데 설치 기록이 있는 경우 일단 숨김
+                // (만약 기기에서 앱이 지워졌다면 바로 뒤에 beforeinstallprompt가 발동하여 다시 나타나게 됨)
                 const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
