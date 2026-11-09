@@ -2985,19 +2985,52 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            
+            // 브라우저가 설치 프롬프트를 지원/발생시켰다는 것은 앱이 미설치 상태임을 의미
+            // 로컬스토리지의 낡은 설치 기록을 지우고 설치 버튼을 다시 노출시킵니다.
+            try { localStorage.removeItem('is_app_installed'); } catch (err) {}
+            const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+            if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'flex';
+
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             if (!isStandalone) {
                 const banner = document.getElementById('pwa-install-banner');
-                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                if (banner && shouldShowPwaBanner()) {
                     banner.classList.remove('hidden');
                 }
             }
         });
 
+        // 💡 배너 노출 여부를 기간(7일) 단위로 계산하는 함수 추가
+        function shouldShowPwaBanner() {
+            try {
+                const dismissedAt = localStorage.getItem('pwa_banner_dismissed');
+                if (!dismissedAt) return true; // 한 번도 안 닫은 경우 노출
+                
+                // 과거에 영구 숨김('true') 처리된 유저들의 캐시 호환성 대응
+                if (dismissedAt === 'true') {
+                    localStorage.setItem('pwa_banner_dismissed', Date.now().toString());
+                    return false;
+                }
+
+                // 7일(7일 * 24시간 * 60분 * 60초 * 1000밀리초) 이후에 다시 노출
+                const hideDuration = 7 * 24 * 60 * 60 * 1000; 
+                
+                if (Date.now() - parseInt(dismissedAt, 10) > hideDuration) {
+                    localStorage.removeItem('pwa_banner_dismissed'); // 기간 만료 시 초기화
+                    return true;
+                }
+                return false; // 아직 기간이 안 지남
+            } catch (e) {
+                return true;
+            }
+        }
+
         function dismissPwaBanner() {
             const banner = document.getElementById('pwa-install-banner');
             if (banner) banner.classList.add('hidden');
-            try { localStorage.setItem('pwa_banner_dismissed', 'true'); } catch (e) {}
+            // 'true' 대신 '현재 시간(숫자)'을 저장
+            try { localStorage.setItem('pwa_banner_dismissed', Date.now().toString()); } catch (e) {}
         }
 
         window.addEventListener('appinstalled', () => {
@@ -3096,7 +3129,15 @@
             // PWA 앱 설치 버튼 숨김 처리 (단독 실행 모드이거나 설치 완료 기록이 있을 때)
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             const isInstalled = localStorage.getItem('is_app_installed') === 'true';
-            if (isStandalone || isInstalled) {
+            
+            if (isStandalone) {
+                // 앱 내부로 실행 중일 때는 무조건 숨김 및 설치 완료 기록 동기화
+                const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
+                if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
+                try { localStorage.setItem('is_app_installed', 'true'); } catch(e) {}
+            } else if (isInstalled) {
+                // 브라우저 접속인데 설치 기록이 있는 경우 일단 숨김
+                // (만약 기기에서 앱이 지워졌다면 바로 뒤에 beforeinstallprompt가 발동하여 다시 나타나게 됨)
                 const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
@@ -3108,7 +3149,8 @@
 
             if (isInAppBrowser && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
-                if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                // 영구 숨김 체크 대신 기간 만료 체크 함수 사용
+                if (banner && shouldShowPwaBanner()) {
                     const titleEl = document.getElementById('pwa-banner-title');
                     const descEl = document.getElementById('pwa-banner-desc');
                     const btnEl = document.getElementById('pwa-banner-btn');
