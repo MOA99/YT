@@ -1,1 +1,1037 @@
-<!DOCTYPE html><html lang="ko" class="h-full dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><script> (function() { try { if (localStorage.getItem('yt_dark_mode') !== 'false') { document.documentElement.classList.add('dark'); } else { document.documentElement.classList.remove('dark'); } } catch (e) {} })(); </script><meta name="theme-color" content="#0f172a"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="YT대시보드"><meta name="mobile-web-app-capable" content="yes"><meta name="application-name" content="YT 대시보드"><meta property="og:type" content="website"><meta property="og:site_name" content="YT Dashboard"><meta property="og:title" content="YT 대시보드 | 차량 & 선석 현황 정보"><meta property="og:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공"><meta property="og:image" content="/favicon.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta property="og:image:alt" content="YT Dashboard 프리뷰 로고"><meta property="og:locale" content="ko_KR"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="YT 대시보드 | 차량 & 선석 현황 정보"><meta name="twitter:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공"><meta name="twitter:image" content="/favicon.png"><meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고"><link rel="manifest" href="./manifest.json"><link rel="icon" type="image/png" sizes="512x512" href="./favicon.png"><link rel="apple-touch-icon" sizes="512x512" href="./favicon.png"><title>YT대시보드</title><script src="https://cdn.tailwindcss.com"></script><script> tailwind.config = { darkMode: 'class', } </script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet"><style> html{background-color:#020617;color-scheme:dark;}html:not(.dark){background-color:#f8fafc;color-scheme:light;}body{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;background-color:#020617;color:#f1f5f9;}html:not(.dark) body{background-color:#f8fafc;color:#1e293b;}::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(148,163,184,0);border-radius:4px;}.dark::-webkit-scrollbar-thumb{background:rgba(71,85,105,0);}:hover::-webkit-scrollbar-thumb,.is-scrolling::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.4);}.dark:hover::-webkit-scrollbar-thumb,.dark .is-scrolling::-webkit-scrollbar-thumb{background:rgba(71,85,105,0.4);}::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,0.8) !important;}.dark::-webkit-scrollbar-thumb:hover{background:rgba(71,85,105,0.8) !important;}.overflow-x-auto::-webkit-scrollbar{height:4px;}.overflow-x-auto::-webkit-scrollbar-track{background:transparent;border-radius:4px;}.overflow-x-auto::-webkit-scrollbar-thumb{background:rgba(148,163,184,0);border-radius:4px;}.sticky-col-1{position:sticky;left:0;background-color:#ffffff;z-index:10;}.dark .sticky-col-1{background-color:#0f172a;}tr:hover .sticky-col-1{background-color:#f8fafc;}.dark tr:hover .sticky-col-1{background-color:#1e293b;}thead .sticky-col-1{background-color:#f8fafc;z-index:20;}.dark thead .sticky-col-1{background-color:#1e293b;z-index:20;}.font-mono-num{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}.hour-tick-border{border-right:1px solid rgba(148,163,184,0.22);}.dark .hour-tick-border{border-right:1px solid rgba(71,85,105,0.3);}.six-hour-border{border-right:2px solid rgba(79,70,229,0.4);background-color:rgba(99,102,241,0.03);}.now-indicator-line{background-color:rgba(239,68,68,0.55);}.vessel-block{cursor:pointer;backdrop-filter:blur(4px);user-select:none;-webkit-user-select:none;transition:transform 0.15s ease,box-shadow 0.15s ease;}.vessel-block:hover{z-index:20;box-shadow:0 4px 12px rgba(0,0,0,0.18);}.sticky-berth-col{position:sticky;left:0;z-index:25;background-color:#f8fafc;box-shadow:2px 0 6px -1px rgba(0,0,0,0.06);}.dark .sticky-berth-col{background-color:#0f172a;box-shadow:2px 0 6px -1px rgba(0,0,0,0.3);}.matrix-scroll-wrapper::-webkit-scrollbar{height:7px;}.matrix-scroll-wrapper::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px;}.dark .matrix-scroll-wrapper::-webkit-scrollbar-thumb{background:#334155;}#ptr-indicator{position:absolute;top:-65px;left:50%;transform:translateX(-50%) translateY(0);width:auto;min-width:150px;height:44px;display:flex;align-items:center;justify-content:center;padding:0 16px;background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:9999px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3),0 8px 10px -6px rgba(0,0,0,0.3);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),opacity 0.2s ease;z-index:45;color:#ffffff;font-size:12px;font-weight:600;opacity:0;pointer-events:none;}.dark #ptr-indicator{background:rgba(30,41,59,0.9);border:1px solid rgba(255,255,255,0.08);}@keyframes spin-pwa{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}.pwa-spinning{animation:spin-pwa 0.8s linear infinite !important;transform-origin:center center !important;}#scrollTopBtn{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}#scrollTopBtn.btn-pressed{background-color:#4f46e5 !important;color:#ffffff !important;transform:scale(0.92);}@media (hover:hover) and (pointer:fine){#scrollTopBtn:hover{background-color:#4f46e5 !important;color:#ffffff !important;}}</style></head><body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0"><div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]"><svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg><span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span></div><div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md"><div class="flex items-center space-x-3 min-w-0"><div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div><div class="truncate"><h4 id="pwa-banner-title" class="font-bold text-xs">YT 대시보드 앱 설치</h4><p id="pwa-banner-desc" class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p></div></div><div class="flex items-center space-x-1.5 shrink-0 ml-2"><button onclick="f_dpb()" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg transition-colors">닫기</button><button id="pwa-banner-btn" onclick="f_tpi()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button></div></div><button id="scrollTopBtn" onclick="f_stt(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" title="맨 위로 이동"><svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg></button><nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2 select-none transition-colors"><button onclick="f_swt('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span class="text-xs font-bold mt-0.5">이력조회</span></button><button onclick="f_swt('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg><span class="text-xs font-bold mt-0.5">평가등록</span></button><button onclick="f_swt('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg><span class="text-xs font-bold mt-0.5">선석현황</span></button><button onclick="f_swt('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg><span class="text-xs font-bold mt-0.5">게시판</span></button><button onclick="f_tms()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><span class="text-xs font-bold mt-0.5">전체메뉴</span></button></nav><aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl"><div class="p-6 flex items-center justify-between border-b border-slate-800"><div class="flex items-center space-x-3"><div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div><div><h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1><p class="text-xs text-slate-400">YT 차량 평가 시스템</p></div></div></div><nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto"><button onclick="f_swt('history')" data-tab="history" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span>YT 이력 조회</span></button><button onclick="f_swt('register')" data-tab="register" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg><span>YT 평가 등록</span></button><button onclick="f_swt('integrated')" data-tab="integrated" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2h0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg><span>YT 통합 리스트</span></button><button onclick="f_swt('rawdata')" data-tab="rawdata" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg><span>원본 입력 데이터</span></button><button onclick="f_swt('berth')" data-tab="berth" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg><span>선석 현황</span></button><button onclick="f_swt('board')" data-tab="board" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg><span>미니 게시판</span></button><button onclick="f_swt('guide')" data-tab="guide" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>이용 가이드</span></button><button id="sidebar-install-btn" onclick="f_tpi()" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors text-indigo-300 hover:bg-indigo-950/60 hover:text-white text-left border border-dashed border-indigo-700/50 mt-2"><svg class="w-5 h-5 flex-shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>앱 설치하기</span></button></nav><div class="p-4 border-t border-slate-800 flex items-center justify-between"><span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg> 다크 모드 </span><button onclick="f_tdm()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-indigo-600 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none"><div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-6 transition-transform duration-300"></div></button></div></aside><div id="sidebar-overlay" onclick="f_tms()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div><main id="main-scroll-container" onscroll="f_hms()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative"><div id="ptr-indicator"><svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg><span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span></div><div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-30 transition-colors"><div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400"><span>YT Dashboard</span><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span></div><button id="mobile-sync-btn" onclick="f_mra()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700"><svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>동기화</span></button></div><header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-30 transition-colors"><div class="flex items-center space-x-3"><span class="text-xs font-semibold text-slate-400">YT Dashboard</span><span class="text-slate-300 dark:text-slate-700">/</span><h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2></div><div class="flex items-center space-x-3"><button onclick="f_mra()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="데이터 동기화"><svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>동기화</span></button><div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span></span><span class="font-semibold tracking-tight">실시간 연동중</span></div><div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm"> YT </div></div></header><div class="px-4 pt-10 pb-24 sm:px-6 sm:pt-12 md:px-8 md:pt-14 flex-1 max-w-7xl w-full mx-auto"><section id="tab-berth" class="tab-content hidden space-y-6"><div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors"><div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50"><div class="flex items-center"><h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정</h3></div><div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto"><div class="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 w-full sm:w-auto"><button onclick="f_smb('matrix')" id="btn-mode-matrix" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">타임라인</button><button onclick="f_smb('card')" id="btn-mode-card" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">선석별</button></div><div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner text-xs font-semibold shrink-0"><button onclick="f_sbt('24h')" id="btn-range-24h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">24H</button><button onclick="f_sbt('48h')" id="btn-range-48h" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all">48H</button><button onclick="f_sbt('72h')" id="btn-range-72h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">72H</button></div></div></div><div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-2 sm:p-4"><div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs bg-white dark:bg-slate-900 flex flex-col"><div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 select-none"></div><div id="matrixBody" class="flex flex-col relative h-[340px] sm:h-[370px] bg-slate-50/20 dark:bg-slate-900/40 select-none"></div></div></div><div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950"></div><div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end text-xs text-slate-600 dark:text-slate-400"><div class="flex items-center gap-2"><span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span><span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span></div></div></div></section><section id="tab-history" class="tab-content space-y-6"><div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors"><div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1"><select id="search-filter-type" onchange="f_osf()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"><option value="ytNum">YT번호 검색</option><option value="author">작성자 검색</option><option value="all">전체 검색</option></select><div class="relative w-full md:w-96"><svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" autocomplete="off" inputmode="numeric" enterkeyhint="search" id="search-input" maxlength="3" oninput="f_osi(this)" onkeydown="f_osk(event)" placeholder="YT번호 입력 (예: 227)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100"></div></div></div><div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors"><div class="flex items-center space-x-4"><div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div><div><div class="flex items-center gap-2 flex-wrap"><h3 id="summary-yt-title" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">YT 000</h3><span id="summary-yt-type" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900">샤크만</span><span id="summary-dday-badge" class="hidden px-2 py-0.5 rounded-md text-xs font-bold"></span><span id="summary-warning-badge" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">주의</span></div><p id="summary-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">해당 차량의 누적 평가 집계 결과입니다.</p></div></div><div class="grid grid-cols-3 gap-4 lg:gap-8 border-t lg:border-t-0 border-slate-100 dark:border-slate-800 pt-4 lg:pt-0 w-full lg:w-auto"><div class="text-center px-2"><p id="summary-lbl-1" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평균 총점</p><h4 id="summary-val-1" class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">0점</h4></div><div class="text-center px-2 border-x border-slate-100 dark:border-slate-800"><p id="summary-lbl-2" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평가 횟수</p><h4 id="summary-val-2" class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5">0회</h4></div><div class="text-center px-2 flex flex-col items-center justify-center"><p id="summary-lbl-3" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">최근 평가일</p><div class="flex items-center gap-1 mt-1"><h4 id="summary-val-3" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">-</h4></div></div></div></div><div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors"><div id="history-scroll-pane" class="overflow-x-auto"><table class="w-full text-left border-collapse table-auto min-w-[780px]"><thead><tr class="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs tracking-wider font-bold"><th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="f_sht('date')"><div class="flex items-center gap-1"><span>등록일</span><span id="sort-hist-date" class="inline-block text-slate-400"></span></div></th><th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="f_sht('ytNum')"><div class="flex items-center gap-1"><span>YT</span><span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th><th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="f_sht('type')"><div class="flex items-center gap-1"><span>타입</span><span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th><th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="f_sht('totalScore')"><div class="flex items-center gap-1"><span>총점</span><span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th><th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">출력</th><th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(상하)</th><th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th><th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th><th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="f_sht('author')"><div class="flex items-center gap-1"><span>작성자</span><span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th><th class="py-3.5 px-3 w-full whitespace-nowrap">특이사항</th></tr></thead><tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300"><tr class="animate-pulse"><td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td></tr></tbody></table></div><div id="no-history-data" class="hidden py-16 text-center space-y-4"><div><p class="text-slate-500 font-medium">조회된 데이터가 없습니다.</p><p class="text-xs text-slate-400 mt-1">새로운 평가를 등록해 보세요.</p></div><button onclick="f_swt('register')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition-all inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg><span>YT 평가 등록</span></button></div></div></section><section id="tab-register" class="tab-content hidden space-y-6"><div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors"><form id="evaluation-form" onsubmit="f_hfs(event)" class="p-6 sm:p-8 space-y-6"><div class="grid grid-cols-1 sm:grid-cols-2 gap-5"><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5"><span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자 </label><input type="text" id="reg-author" autocomplete="off" onfocus="f_sti(this)" oninput="f_sas(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></div><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5"><span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호 </label><input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" autocomplete="off" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="f_sti(this)" oninput="f_oryi(this)" onkeydown="f_oryk(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></div></div><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5"><span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입 </label><div class="grid grid-cols-2 gap-3"><label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200"><input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"><span>샤크만</span></label><label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200"><input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"><span>카파</span></label></div></div><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가 </div><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">별 1개당 5점 (항목별 25점 만점)</span></label><div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-50/30 dark:bg-slate-800/30 divide-y divide-slate-200 dark:divide-slate-700"><div class="flex items-center justify-between p-3.5 sm:px-5"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">출력</span><div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-kidong"><svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div><input type="hidden" id="eval-kidong" name="eval-kidong" value="5"></div><div class="flex items-center justify-between p-3.5 sm:px-5"><div class="flex flex-col"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(상하)</span></span></div><div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-sangha"><svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div><input type="hidden" id="eval-sangha" name="eval-sangha" value="5"></div><div class="flex items-center justify-between p-3.5 sm:px-5"><div class="flex flex-col"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(앞뒤)</span></span></div><div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-apdwi"><svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div><input type="hidden" id="eval-apdwi" name="eval-apdwi" value="5"></div><div class="flex items-center justify-between p-3.5 sm:px-5"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">의자</span><div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-uija"><svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div><input type="hidden" id="eval-uija" name="eval-uija" value="5"></div></div></div><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5"><span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항 </label><textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="f_sti(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea></div><div class="pt-2"><button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"><span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span></button></div></form></div></section><section id="tab-integrated" class="tab-content hidden space-y-6"><div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors"><div class="overflow-x-auto"><table class="w-full text-left border-collapse table-fixed min-w-[960px]"><thead><tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold"><th class="py-4 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="f_sit('ytNum')"><div class="flex items-center gap-1.5"><span>YT</span><span id="sort-icon-ytNum" class="inline-block text-slate-400"></span></div></th><th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="f_sit('type')"><div class="flex items-center gap-1.5"><span>타입</span><span id="sort-icon-type" class="inline-block text-slate-400"></span></div></th><th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer" onclick="f_sit('avgScore')">평균총점</th><th class="py-4 px-4 w-40 whitespace-nowrap cursor-pointer" onclick="f_sit('latestDate')">최근 평가일</th><th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer" onclick="f_sit('count')">평가횟수</th><th class="py-4 px-4 w-32 whitespace-nowrap cursor-pointer" onclick="f_sit('latestAuthor')">최근 작성자</th><th class="py-4 px-4 w-full whitespace-nowrap cursor-pointer" onclick="f_sit('latestMemo')">최근 특이사항</th></tr></thead><tbody id="integrated-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300"></tbody></table></div><div id="integrated-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400"></div></div></section><section id="tab-rawdata" class="tab-content hidden space-y-6"><div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5"><div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between"><div><p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">전체 평가</p><h3 id="stat-total" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 건</h3></div><div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm sm:text-lg font-bold">건</div></div></div><div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors"><div class="overflow-x-auto"><table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[1020px]"><thead id="raw-table-header">...</thead><tbody id="raw-table-body"></tbody></table></div><div id="raw-pagination"></div></div></section><div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4" onclick="f_cbm(event)"><div id="modalBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl text-slate-800 dark:text-slate-100 font-sans" onclick="event.stopPropagation()"></div></div><section id="tab-board" class="tab-content hidden space-y-6"><div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors"><form id="board-form" onsubmit="f_hbs(event)" class="space-y-4"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><div><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">작성자</label><input type="text" id="board-author" oninput="f_sas(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></div><div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">분류 태그</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><label class="cursor-pointer"><input type="radio" name="board-tag" value="자유소통" checked class="peer sr-only"><div class="...">💬 자유소통</div></label><label class="cursor-pointer"><input type="radio" name="board-tag" value="차량정보" class="peer sr-only"><div class="...">🚛 차량정보</div></label><label class="cursor-pointer"><input type="radio" name="board-tag" value="건의사항" class="peer sr-only"><div class="...">💡 건의사항</div></label><label class="cursor-pointer"><input type="radio" name="board-tag" value="응원한마디" class="peer sr-only"><div class="...">🙌 응원한마디</div></label></div></div></div><div class="flex flex-col sm:flex-row gap-3"><textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></textarea><button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">글 남기기</button></div></form></div><div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors"><div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3"><div class="flex items-center gap-2"><span class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</span><span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 text-indigo-600 rounded-md">0건</span></div><div class="relative w-full sm:w-64"><input type="search" id="board-search" oninput="f_fib()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none bg-slate-50 dark:bg-slate-800"></div></div><div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800"></div><div id="board-pagination" class="..."></div></div></section><section id="tab-guide" class="tab-content hidden space-y-6">...</section><section id="tab-install-guide" class="tab-content hidden space-y-6">...</section></div></main><script> const _U1 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=0&single=true&output=csv"; const _U2 = "https://script.google.com/macros/s/AKfycbyYo5SFrajHtHo0tt4zSgRBgBKpZGN88KLKeyPb_-9O7aIwm9-twcKk_PRgkimhZ65p/exec"; const _U3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=1545178136&single=true&output=csv"; const _U4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmKJA-MJAW_b9gL8j549JkdE-ma6qah0T0Q-wRy5c7Pp5u8yQ4F9R01dfgOvm-bf3D1V5YxKwD4NQm/pub?gid=103045736&single=true&output=csv"; const _fD = []; const _fBD = []; let _cD = []; let _cBD = []; let _cAT = 'history'; let _hS = { field: 'date', order: 'desc' }; let _iS = { field: 'ytNum', order: 'asc' }; let _rS = { field: 'date', order: 'desc' }; let historyCurrentPage = 1; let integratedCurrentPage = 1; let rawCurrentPage = 1; let boardCurrentPage = 1; const rowsPerPage = 10; let _aBD = []; const BERTH_LIST = ["B4", "B5", "B6", "B7", "B8"]; const BERTH_COL_WIDTH = 56; let berthTimeRangeMode = '48h'; let mobileBerthViewMode = 'matrix'; let timelineStart = new Date(); let timelineEnd = new Date(); let toastTimer = null; let resizeTimer = null; let deferredPrompt = null; function escapeHtml(str) { if (str === null || str === undefined) return ''; return String(str) .replace(/&/g, '&amp;') .replace(/</g, '&lt;') .replace(/>/g, '&gt;') .replace(/"/g, '&quot;') .replace(/'/g, '&#39;'); } function getKSTDate() { const now = new Date(); const utc = now.getTime() + (now.getTimezoneOffset() * 60 * 1000); return new Date(utc + (9 * 60 * 60 * 1000)); } function parseCSVTableFast(csvText) { const rows = []; let currentRow = []; let currentVal = ''; let inQuotes = false; const len = csvText.length; for (let i = 0; i < len; i++) { const char = csvText[i]; const nextChar = csvText[i + 1]; if (char === '"') { if (inQuotes && nextChar === '"') { currentVal += '"'; i++; } else { inQuotes = !inQuotes; } } else if (char === ',' && !inQuotes) { currentRow.push(currentVal.trim()); currentVal = ''; } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) { if (char === '\r') i++; currentRow.push(currentVal.trim()); if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow); currentRow = []; currentVal = ''; } else if (char === '\r' && !inQuotes) { currentRow.push(currentVal.trim()); if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow); currentRow = []; currentVal = ''; } else { currentVal += char; } } if (currentVal.length > 0 || currentRow.length > 0) { currentRow.push(currentVal.trim()); if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow); } return rows; } function f_lic() { try { const localEval = localStorage.getItem('yt_dashboard_data_v48'); if (localEval) _cD = JSON.parse(localEval); const localBoard = localStorage.getItem('yt_board_data_v1'); if (localBoard) _cBD = JSON.parse(localBoard); const localBerth = localStorage.getItem('yt_berth_data_cache_v9'); if (localBerth) { _aBD = JSON.parse(localBerth); alignTimelineToDataset(); } const isDark = localStorage.getItem('yt_dark_mode') !== 'false'; if (isDark) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); f_udm(isDark); } catch (e) {} if (_cD.length > 0) f_rat(); } async function f_mra() { const dIcon = document.getElementById('desktop-refresh-icon'); const mIcon = document.getElementById('mobile-refresh-icon'); if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin'); if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin'); setTimeout(async () => { try { await Promise.allSettled([ f_fgs(false, true), f_fmb(true), f_fbd() ]); } finally { setTimeout(() => { if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin'); if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin'); }, 500); } }, 50); } async function f_fgs(silent = true, forceClean = false) { try { const url = `${_U1}&t=${Date.now()}`; const response = await fetch(url, { cache: 'no-store' }); if (!response.ok) throw new Error('Network error'); const csvText = await response.text(); f_pcs(csvText, forceClean); if (!silent) f_sht('최신 데이터로 동기화되었습니다.'); } catch (err) { console.error('데이터 로드 오류:', err); if (!silent) f_sht('데이터 동기화 중 오류가 발생했습니다.', true); } } async function f_hfs(event) { event.preventDefault(); const author = document.getElementById('reg-author').value.trim(); const ytNum = document.getElementById('reg-ytnum').value.trim(); const typeRadio = document.querySelector('input[name="reg-type"]:checked'); if (!author || !ytNum) { f_sht('작성자와 YT를 입력해주세요.', true); return; } if (!typeRadio) { f_sht('차량 타입을 선택해주세요.', true); return; } const type = typeRadio.value; const numVal = parseInt(ytNum, 10); if (isNaN(numVal) || numVal < 100 || numVal > 999) { f_sht('YT 번호는 3자리 숫자로 입력해 주세요.', true); return; } const kidong = document.getElementById('eval-kidong').value; const sangha = document.getElementById('eval-sangha').value; const apdwi = document.getElementById('eval-apdwi').value; const uija = document.getElementById('eval-uija').value; const memo = document.getElementById('reg-memo').value.trim(); const totalScore = (Number(kidong) * 5) + (Number(sangha) * 5) + (Number(apdwi) * 5) + (Number(uija) * 5); const submitBtn = document.getElementById('submit-btn'); const submitBtnText = document.getElementById('submit-btn-text'); if (submitBtn && submitBtnText) { submitBtn.disabled = true; submitBtn.className = 'w-full py-3.5 bg-slate-700 text-white font-bold text-base rounded-xl shadow-md cursor-not-allowed flex items-center justify-center gap-2.5 transition-all'; submitBtnText.innerHTML = `평가 제출 중..`; } const now = new Date(); const yy = String(now.getFullYear()).slice(-2); const mm = String(now.getMonth() + 1).padStart(2, '0'); const dd = String(now.getDate()).padStart(2, '0'); const hh = String(now.getHours()).padStart(2, '0'); const min = String(now.getMinutes()).padStart(2, '0'); const dateStr = `${yy}/${mm}/${dd}/ ${hh}:${min}`; const newItem = { date: dateStr, ytNum: ytNum, type: type, totalScore: totalScore, kidong: kidong, sangha: sangha, apdwi: apdwi, uija: uija, author: author, memo: memo }; let data = f_gsd(); data.unshift(newItem); f_ssd(data); f_sht('YT 평가 데이터를 등록 중입니다...'); try { await fetch(_U2, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(newItem) }); f_sht('서버에 정상 기록되었습니다!'); } catch (err) { f_sht('로컬에 저장되었으나 데이터 동기화 중 오류가 발생했습니다.', true); } document.getElementById('evaluation-form').reset(); f_rsr(); f_las(); if (submitBtn && submitBtnText) { submitBtn.disabled = false; submitBtn.className = 'w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]'; submitBtnText.innerText = '평가 제출하기'; } f_swt('history'); } function f_isr() { const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"; document.querySelectorAll('.star-rating').forEach(container => { const stars = container.querySelectorAll('svg'); const inputId = container.getAttribute('data-target'); const input = document.getElementById(inputId); const updateStars = (val) => { input.value = val; stars.forEach((s, idx) => { if (idx + 1 <= val) { s.classList.add('text-amber-400'); s.classList.remove('text-slate-200', 'dark:text-slate-700'); } else { s.classList.remove('text-amber-400'); s.classList.add('text-slate-200', 'dark:text-slate-700'); } }); }; updateStars(Number(input.value) || 5); const handleInteraction = (clientX) => { let val = 1; for (let i = 0; i < stars.length; i++) { const rect = stars[i].getBoundingClientRect(); if (clientX < rect.right) { val = i + 1; break; } val = i + 1; } updateStars(Math.max(1, Math.min(5, val))); }; if (!container.dataset.initialized) { container.dataset.initialized = 'true'; let startX = 0, startY = 0, isScrolling = false, hasMoved = false; container.addEventListener('mousedown', (e) => handleInteraction(e.clientX)); container.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isScrolling = false; hasMoved = false; }, { passive: true }); container.addEventListener('touchmove', (e) => { if (isScrolling) return; hasMoved = true; const diffX = Math.abs(e.touches[0].clientX - startX); const diffY = Math.abs(e.touches[0].clientY - startY); if (diffY > diffX && diffY > 5) { isScrolling = true; return; } if (diffX > diffY && diffX > 5) { if (e.cancelable) e.preventDefault(); handleInteraction(e.touches[0].clientX); } }, { passive: false }); container.addEventListener('touchend', (e) => { if (!isScrolling && !hasMoved) handleInteraction(e.changedTouches[0].clientX); }); } }); } function f_rsw() { if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js') .then((reg) => console.log('[PWA] Service Worker registered successfully:', reg.scope)) .catch((err) => console.warn('[PWA] Service Worker registration failed:', err)); } } window.onload = function() { f_isr(); f_lic(); f_fgs(true, false); f_rsw(); const mainContainer = document.getElementById('main-scroll-container'); if (mainContainer) mainContainer.addEventListener('scroll', f_hms, { passive: true }); }; </script></body></html>
+<!DOCTYPE html>
+<html lang="ko" class="h-full dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- [1] 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드 활성화) -->
+    <script>
+        (function() {
+            try {
+                // 로컬 스토리지에 저장된 설정값에 따라 'dark' 클래스 동적 추가/제거
+                if (localStorage.getItem('yt_dark_mode') !== 'false') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- [2] PWA 및 테마 메타태그 설정 -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="YT대시보드">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="YT 대시보드">
+
+    <!-- [3] Open Graph / 오픈 그래프 (카카오톡, 슬랙, 페이스북 링크 프리뷰 설정) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="YT Dashboard">
+    <meta property="og:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta property="og:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
+    <meta property="og:image" content="/favicon.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="YT Dashboard 프리뷰 로고">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- [4] Twitter Card / 트위터 와이드 프리뷰 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YT 대시보드 | 차량 & 선석 현황 정보">
+    <meta name="twitter:description" content="차량 상태 실시간 평가 집계 및 선석별 타임라인 제공">
+    <meta name="twitter:image" content="/favicon.png">
+    <meta name="twitter:image:alt" content="YT Dashboard 프리뷰 로고">
+
+    <!-- [5] Web App Manifest 연동 (PWA 아이콘 및 설치 정보) -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="./favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="./favicon.png">
+
+    <title>YT대시보드</title>
+    
+    <!-- [6] Tailwind CSS CDN 로드 및 다크모드 설정 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // CSS 클래스를 통한 수동 다크모드 제어
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- [7] 커스텀 스타일 (전역 스크롤바, 특수 테이블 열 고정 등) -->
+    <style>
+        /* Tailwind 파싱 전 배경 깜빡임 차단 */
+        html { background-color: #020617; color-scheme: dark; }
+        html:not(.dark) { background-color: #f8fafc; color-scheme: light; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #020617; color: #f1f5f9; }
+        html:not(.dark) body { background-color: #f8fafc; color: #1e293b; }
+
+        /* 전역 스크롤바 스타일링 (스크롤/호버 시에만 표시) */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0); }
+        
+        :hover::-webkit-scrollbar-thumb, .is-scrolling::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); }
+        .dark :hover::-webkit-scrollbar-thumb, .dark .is-scrolling::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
+
+        /* 수평 스크롤 전용 스타일 */
+        .overflow-x-auto::-webkit-scrollbar { height: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
+        .overflow-x-auto::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0); border-radius: 4px; }
+        
+        /* 데이터 테이블 좌측 첫 열(Sticky) 고정 스타일 */
+        .sticky-col-1 { position: sticky; left: 0; background-color: #ffffff; z-index: 10; }
+        .dark .sticky-col-1 { background-color: #0f172a; }
+        tr:hover .sticky-col-1 { background-color: #f8fafc; }
+        .dark tr:hover .sticky-col-1 { background-color: #1e293b; }
+        thead .sticky-col-1 { background-color: #f8fafc; z-index: 20; }
+        .dark thead .sticky-col-1 { background-color: #1e293b; z-index: 20; }
+
+        /* 선석 현황 타임라인(매트릭스) 전용 스타일 */
+        .font-mono-num { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; }
+        .hour-tick-border { border-right: 1px solid rgba(148, 163, 184, 0.22); }
+        .dark .hour-tick-border { border-right: 1px solid rgba(71, 85, 105, 0.3); }
+        .six-hour-border { border-right: 2px solid rgba(79, 70, 229, 0.4); background-color: rgba(99, 102, 241, 0.03); }
+        .now-indicator-line { background-color: rgba(239, 68, 68, 0.55); }
+        .vessel-block { cursor: pointer; backdrop-filter: blur(4px); user-select: none; -webkit-user-select: none; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .vessel-block:hover { z-index: 20; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); }
+
+        /* 모바일 및 데스크톱 좌측 선석 라벨 고정 (Sticky Column) */
+        .sticky-berth-col { position: sticky; left: 0; z-index: 25; background-color: #f8fafc; box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.06); }
+        .dark .sticky-berth-col { background-color: #0f172a; box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.3); }
+        
+        .matrix-scroll-wrapper::-webkit-scrollbar { height: 7px; }
+        .matrix-scroll-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .matrix-scroll-wrapper::-webkit-scrollbar-thumb { background: #334155; }
+
+        /* 모바일 당겨서 새로고침(Pull to Refresh) 인디케이터 */
+        #ptr-indicator {
+            position: absolute; top: -65px; left: 50%; transform: translateX(-50%) translateY(0);
+            width: auto; min-width: 150px; height: 44px; display: flex; align-items: center; justify-content: center;
+            padding: 0 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 9999px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+            z-index: 45; color: #ffffff; font-size: 12px; font-weight: 600; opacity: 0; pointer-events: none;
+        }
+        .dark #ptr-indicator { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+        /* 동기화 스핀 애니메이션 */
+        @keyframes spin-pwa {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .pwa-spinning { animation: spin-pwa 0.8s linear infinite !important; transform-origin: center center !important; }
+
+        /* 맨 위로 스크롤 버튼 애니메이션 */
+        #scrollTopBtn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        #scrollTopBtn.btn-pressed { background-color: #4f46e5 !important; color: #ffffff !important; transform: scale(0.92); }
+        @media (hover: hover) and (pointer: fine) {
+            #scrollTopBtn:hover { background-color: #4f46e5 !important; color: #ffffff !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
+
+    <!-- ========================================== -->
+    <!-- [공통 컴포넌트] 알림 토스트, PWA 설치 배너, 스크롤탑 버튼 -->
+    <!-- ========================================== -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
+        <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg" class="tracking-tight text-slate-100">성공적으로 처리되었습니다.</span>
+    </div>
+
+    <!-- PWA(웹 앱) 홈 화면 설치 유도 플로팅 배너 -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:bottom-6 md:w-96 z-40 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700/80 backdrop-blur-md">
+        <div class="flex items-center space-x-3 min-w-0">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold shrink-0 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <div class="truncate">
+                <h4 id="pwa-banner-title" class="font-bold text-xs">YT 대시보드 앱 설치</h4>
+                <p id="pwa-banner-desc" class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-1.5 shrink-0 ml-2">
+            <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg transition-colors">닫기</button>
+            <button id="pwa-banner-btn" onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button>
+        </div>
+    </div>
+
+    <!-- 페이지 최상단 이동 버튼 -->
+    <button id="scrollTopBtn" onclick="scrollToTop(this)" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-5 z-50 bg-slate-900/90 dark:bg-slate-800/90 text-slate-100 w-10 h-10 md:w-11 md:h-11 rounded-2xl shadow-xl border border-slate-700/50 dark:border-slate-700 backdrop-blur-md flex items-center justify-center focus:outline-none cursor-pointer group transition-all duration-200" title="맨 위로 이동">
+        <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- ========================================== -->
+    <!-- [네비게이션] 모바일 하단 탭 & 데스크탑 사이드바 -->
+    <!-- ========================================== -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2 select-none transition-colors">
+        <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">이력조회</span>
+        </button>
+        <button onclick="switchTab('register')" data-bottom-tab="register" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">평가등록</span>
+        </button>
+        <button onclick="switchTab('berth')" data-bottom-tab="berth" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+            <span class="text-xs font-bold mt-0.5">선석현황</span>
+        </button>
+        <button onclick="switchTab('board')" data-bottom-tab="board" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-xs font-bold mt-0.5">게시판</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+            <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span class="text-xs font-bold mt-0.5">전체메뉴</span>
+        </button>
+    </nav>
+
+    <!-- 좌측 사이드바 -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl">
+        <div class="p-6 flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white font-bold shadow-lg shadow-indigo-600/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-white tracking-wide text-base">YT Dashboard</h1>
+                    <p class="text-xs text-slate-400">YT 차량 평가 시스템</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+            <button onclick="switchTab('history')" data-tab="history" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors bg-indigo-600 text-white shadow-md shadow-indigo-600/20 text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span>YT 이력 조회</span>
+            </button>
+            <button onclick="switchTab('register')" data-tab="register" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <span>YT 평가 등록</span>
+            </button>
+            <button onclick="switchTab('integrated')" data-tab="integrated" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2h0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <span>YT 통합 리스트</span>
+            </button>
+            <button onclick="switchTab('rawdata')" data-tab="rawdata" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                <span>원본 입력 데이터</span>
+            </button>
+            <button onclick="switchTab('berth')" data-tab="berth" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l1.5-6h15L21 17M4 17h16a1 1 0 011 1.2l-1.5 3a1 1 0 01-.9.8H4.4a1 1 0 01-.9-.8L2 18.2A1 1 0 013 17zm9-12v6m-4 0V8a1 1 0 011-1h6a1 1 0 011 1v3"></path></svg>
+                <span>선석 현황</span>
+            </button>
+            <button onclick="switchTab('board')" data-tab="board" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                <span>미니 게시판</span>
+            </button>
+            <button onclick="switchTab('guide')" data-tab="guide" class="nav-link w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-left">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>이용 가이드</span>
+            </button>
+
+            <!-- 앱 설치하기 버튼 (데스크탑 등) -->
+            <button id="sidebar-install-btn" onclick="triggerPwaInstall()" class="w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-colors text-indigo-300 hover:bg-indigo-950/60 hover:text-white text-left border border-dashed border-indigo-700/50 mt-2">
+                <svg class="w-5 h-5 flex-shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>앱 설치하기</span>
+            </button>
+        </nav>
+
+        <!-- 다크 모드 토글 스위치 -->
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                다크 모드
+            </span>
+            <button onclick="toggleDarkMode()" id="dark-mode-toggle-btn" class="w-12 h-6 flex items-center bg-indigo-600 rounded-full p-1 cursor-pointer transition-colors duration-300 focus:outline-none">
+                <div id="dark-mode-ball" class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-6 transition-transform duration-300"></div>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 모바일 사이드바 배경 오버레이 -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+    <!-- ========================================== -->
+    <!-- [메인 본문] 탭 클릭 시 전환되는 메인 뷰 컨테이너 -->
+    <!-- ========================================== -->
+    <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
+        
+        <!-- Pull to Refresh 인디케이터 (모바일 당겨서 새로고침) -->
+        <div id="ptr-indicator">
+            <svg id="ptr-icon" class="w-4 h-4 text-indigo-400 inline-block mr-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <span id="ptr-text" class="tracking-tight text-slate-200">아래로 당겨서 새로고침</span>
+        </div>
+
+        <!-- 모바일 상단 브레드크럼 바 -->
+        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-30 transition-colors">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>YT Dashboard</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <span id="mobile-breadcrumb-title" class="text-indigo-600 dark:text-indigo-400 font-bold">YT 이력 조회</span>
+            </div>
+            <button id="mobile-sync-btn" onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 active:bg-slate-200 dark:active:bg-slate-700">
+                <svg id="mobile-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transform-gpu" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>동기화</span>
+            </button>
+        </div>
+
+        <!-- 데스크톱 헤더 (브레드크럼 및 동기화 상태) -->
+        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 md:px-8 py-4 hidden md:flex items-center justify-between sticky top-0 z-30 transition-colors">
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-semibold text-slate-400">YT Dashboard</span>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">YT 이력 조회</h2>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="manualRefreshAll()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-full font-semibold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95" title="데이터 동기화">
+                    <svg id="desktop-refresh-icon" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>동기화</span>
+                </button>
+                <div class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full font-medium border border-indigo-100 dark:border-indigo-900 flex items-center gap-2">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
+                    </span>
+                    <span class="font-semibold tracking-tight">실시간 연동중</span>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                    YT
+                </div>
+            </div>
+        </header>
+
+        <div class="px-4 pt-10 pb-24 sm:px-6 sm:pt-12 md:px-8 md:pt-14 flex-1 max-w-7xl w-full mx-auto">
+
+            <!-- [탭 1] 선석 현황 (B4~B8 배정 현황 시각화) -->
+            <section id="tab-berth" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transition-colors">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                        <div class="flex items-center">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">선석별 접안 일정</h3>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
+                            <!-- 보기 모드 토글 (타임라인 vs 카드형) -->
+                            <div class="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 w-full sm:w-auto">
+                                <button onclick="setMobileBerthMode('matrix')" id="btn-mode-matrix" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition-all">타임라인</button>
+                                <button onclick="setMobileBerthMode('card')" id="btn-mode-card" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">선석별</button>
+                            </div>
+
+                            <!-- 시간 범위(24/48/72시간) 토글 -->
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner text-xs font-semibold shrink-0">
+                                <button onclick="setBerthTimeRange('24h')" id="btn-range-24h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">24H</button>
+                                <button onclick="setBerthTimeRange('48h')" id="btn-range-48h" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold transition-all">48H</button>
+                                <button onclick="setBerthTimeRange('72h')" id="btn-range-72h" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all">72H</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 타임라인 매트릭스 뷰 렌더링 컨테이너 -->
+                    <div id="berth-matrix-view-container" class="matrix-scroll-wrapper overflow-x-auto p-2 sm:p-4">
+                        <div id="matrix-scroll-content" class="min-w-[760px] sm:min-w-[960px] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs bg-white dark:bg-slate-900 flex flex-col">
+                            <div id="matrixHeader" class="shrink-0 flex flex-col bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 select-none"></div>
+                            <div id="matrixBody" class="flex flex-col relative h-[340px] sm:h-[370px] bg-slate-50/20 dark:bg-slate-900/40 select-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- 카드형 뷰 렌더링 컨테이너 -->
+                    <div id="berth-card-view-container" class="hidden p-2 space-y-4 bg-slate-50/60 dark:bg-slate-950"></div>
+
+                    <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end text-xs text-slate-600 dark:text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- [탭 2] YT 이력 조회 (검색 및 데이터 테이블) -->
+            <section id="tab-history" class="tab-content space-y-6">
+                <!-- 검색창 및 필터 -->
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between transition-colors">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full flex-1">
+                        <select id="search-filter-type" onchange="onSearchFilterChange()" class="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+                            <option value="ytNum">YT번호 검색</option>
+                            <option value="author">작성자 검색</option>
+                            <option value="all">전체 검색</option>
+                        </select>
+                        <div class="relative w-full md:w-96">
+                            <svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="search" autocomplete="off" inputmode="numeric" enterkeyhint="search" id="search-input" maxlength="3" oninput="onSearchInput(this)" onkeydown="onSearchKeyDown(event)" placeholder="YT번호 입력 (예: 227)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 검색 결과 요약 배너 (특정 YT 또는 작성자 검색 시 표시) -->
+                <div id="yt-search-summary-container" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 transition-colors">
+                    <div class="flex items-center space-x-4">
+                        <div id="summary-avatar-box" class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 shrink-0">YT</div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 id="summary-yt-title" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">YT 000</h3>
+                                <span id="summary-yt-type" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-100 dark:border-blue-900">샤크만</span>
+                                <span id="summary-dday-badge" class="hidden px-2 py-0.5 rounded-md text-xs font-bold"></span>
+                                <span id="summary-warning-badge" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">주의</span>
+                            </div>
+                            <p id="summary-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">해당 차량의 누적 평가 집계 결과입니다.</p>
+                        </div>
+                    </div>
+                    <!-- 요약 통계 수치 -->
+                    <div class="grid grid-cols-3 gap-4 lg:gap-8 border-t lg:border-t-0 border-slate-100 dark:border-slate-800 pt-4 lg:pt-0 w-full lg:w-auto">
+                        <div class="text-center px-2">
+                            <p id="summary-lbl-1" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평균 총점</p>
+                            <h4 id="summary-val-1" class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">0점</h4>
+                        </div>
+                        <div class="text-center px-2 border-x border-slate-100 dark:border-slate-800">
+                            <p id="summary-lbl-2" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">평가 횟수</p>
+                            <h4 id="summary-val-2" class="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5">0회</h4>
+                        </div>
+                        <div class="text-center px-2 flex flex-col items-center justify-center">
+                            <p id="summary-lbl-3" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">최근 평가일</p>
+                            <div class="flex items-center gap-1 mt-1">
+                                <h4 id="summary-val-3" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">-</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 이력 데이터 리스트 테이블 -->
+                <div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div id="history-scroll-pane" class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse table-auto min-w-[780px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs tracking-wider font-bold">
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('date')"><div class="flex items-center gap-1"><span>등록일</span> <span id="sort-hist-date" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">출력</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(상하)</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
+                                    <th class="py-3.5 px-3 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('author')"><div class="flex items-center gap-1"><span>작성자</span> <span id="sort-hist-author" class="inline-block text-slate-400"></span></div></th>
+                                    <th class="py-3.5 px-3 w-full whitespace-nowrap">특이사항</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                                <!-- 초기 로딩 시 스켈레톤 UI 노출 영역 -->
+                                <tr class="animate-pulse">
+                                    <td class="py-4 px-3"><div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-20"></div></td>
+                                    <!-- ...(스켈레톤 생략)... -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 데이터 없을 시 노출 영역 -->
+                    <div id="no-history-data" class="hidden py-16 text-center space-y-4">
+                        <div>
+                            <p class="text-slate-500 font-medium">조회된 데이터가 없습니다.</p>
+                            <p class="text-xs text-slate-400 mt-1">새로운 평가를 등록해 보세요.</p>
+                        </div>
+                        <button onclick="switchTab('register')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition-all inline-flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span>YT 평가 등록</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- [탭 3] YT 평가 등록 (입력 폼) -->
+            <section id="tab-register" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-2xl mx-auto overflow-hidden transition-colors">
+                    <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                        
+                        <!-- 작성자 및 차량번호 입력 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 작성자
+                                </label>
+                                <input type="text" id="reg-author" autocomplete="off" onfocus="scrollToInput(this)" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> YT 번호
+                                </label>
+                                <input type="number" inputmode="numeric" enterkeyhint="next" id="reg-ytnum" autocomplete="off" maxlength="3" required placeholder="예: 227 (3자리 숫자)" onfocus="scrollToInput(this)" oninput="onRegYtInput(this)" onkeydown="onRegYtKeyDown(event)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- 차량 타입 선택 라디오 버튼 -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span>샤크만</span>
+                                </label>
+                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
+                                    <input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span>카파</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 세부 항목별 별점 평가 (출력, 상하, 앞뒤, 의자) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                                </div>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">별 1개당 5점 (항목별 25점 만점)</span>
+                            </label>
+                            <div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-50/30 dark:bg-slate-800/30 divide-y divide-slate-200 dark:divide-slate-700">
+                                
+                                <!-- 평가 항목: 출력 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">출력</span>
+                                    <div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-kidong">
+                                        <!-- SVG 별 아이콘 5개 (js를 통해 동적 조작) -->
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-kidong" name="eval-kidong" value="5">
+                                </div>
+                                
+                                <!-- 평가 항목: 충격(상하) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(상하)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-sangha">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-sangha" name="eval-sangha" value="5">
+                                </div>
+                                
+                                <!-- 평가 항목: 충격(앞뒤) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(앞뒤)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-apdwi">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-apdwi" name="eval-apdwi" value="5">
+                                </div>
+                                
+                                <!-- 평가 항목: 의자 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">의자</span>
+                                    <div class="flex items-center gap-1.5 star-rating touch-pan-y select-none" data-target="eval-uija">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-uija" name="eval-uija" value="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 특이사항 입력 영역 -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 특이사항
+                            </label>
+                            <textarea id="reg-memo" rows="3" enterkeyhint="send" onfocus="scrollToInput(this)" placeholder="특이사항이나 전달 내용을 자유롭게 작성해주세요." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 resize-none font-normal text-slate-700 dark:text-slate-200 placeholder:text-slate-400"></textarea>
+                        </div>
+
+                        <!-- 폼 제출 버튼 -->
+                        <div class="pt-2">
+                            <button type="submit" id="submit-btn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                                <span id="submit-btn-text" class="text-base font-bold">평가 제출하기</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- [탭 4] YT 통합 리스트 (데이터 집계 테이블) -->
+            <section id="tab-integrated" class="tab-content hidden space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[960px]">
+                            <thead>
+                                <tr class="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="py-4 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('ytNum')">
+                                        <div class="flex items-center gap-1.5"><span>YT</span><span id="sort-icon-ytNum" class="inline-block text-slate-400"></span></div>
+                                    </th>
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onclick="sortIntegratedTable('type')">
+                                        <div class="flex items-center gap-1.5"><span>타입</span><span id="sort-icon-type" class="inline-block text-slate-400"></span></div>
+                                    </th>
+                                    <!-- (기타 테이블 헤더 생략 - 정렬 이벤트 연동) -->
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer" onclick="sortIntegratedTable('avgScore')">평균총점</th>
+                                    <th class="py-4 px-4 w-40 whitespace-nowrap cursor-pointer" onclick="sortIntegratedTable('latestDate')">최근 평가일</th>
+                                    <th class="py-4 px-4 w-28 whitespace-nowrap cursor-pointer" onclick="sortIntegratedTable('count')">평가횟수</th>
+                                    <th class="py-4 px-4 w-32 whitespace-nowrap cursor-pointer" onclick="sortIntegratedTable('latestAuthor')">최근 작성자</th>
+                                    <th class="py-4 px-4 w-full whitespace-nowrap cursor-pointer" onclick="sortIntegratedTable('latestMemo')">최근 특이사항</th>
+                                </tr>
+                            </thead>
+                            <tbody id="integrated-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
+                                <!-- 통합 데이터 JS 렌더링 영역 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="integrated-pagination" class="p-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400"></div>
+                </div>
+            </section>
+
+            <!-- [탭 5] 원본 입력 데이터 (전체 데이터 열람 및 주요 통계) -->
+            <section id="tab-rawdata" class="tab-content hidden space-y-6">
+                <!-- 주요 통계 카드 위젯 -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight">전체 평가</p>
+                            <h3 id="stat-total" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0 건</h3>
+                        </div>
+                        <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm sm:text-lg font-bold">건</div>
+                    </div>
+                    <!-- (다른 통계 카드 생략) -->
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="overflow-x-auto">
+                        <table id="raw-table" class="w-full text-left border-collapse table-auto min-w-[1020px]">
+                            <!-- 원본 테이블 헤더/바디 영역 -->
+                            <thead id="raw-table-header">...</thead>
+                            <tbody id="raw-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div id="raw-pagination"></div>
+                </div>
+            </section>
+
+            <!-- [선석 현황 상세 모달 팝업] -->
+            <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4" onclick="closeBerthModal(event)">
+                <div id="modalBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl text-slate-800 dark:text-slate-100 font-sans" onclick="event.stopPropagation()">
+                </div>
+            </div>
+
+            <!-- [탭 7] 미니 게시판 (사내 소통용 게시판) -->
+            <section id="tab-board" class="tab-content hidden space-y-6">
+                <!-- 게시판 작성 폼 -->
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 transition-colors">
+                    <form id="board-form" onsubmit="handleBoardSubmit(event)" class="space-y-4">
+                        <!-- 작성자 및 태그 선택 UI -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">작성자</label>
+                                <input type="text" id="board-author" oninput="saveAuthorToStorage(this.value)" required placeholder="성함 또는 닉네임" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">분류 태그</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <label class="cursor-pointer"><input type="radio" name="board-tag" value="자유소통" checked class="peer sr-only"><div class="...">💬 자유소통</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="board-tag" value="차량정보" class="peer sr-only"><div class="...">🚛 차량정보</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="board-tag" value="건의사항" class="peer sr-only"><div class="...">💡 건의사항</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="board-tag" value="응원한마디" class="peer sr-only"><div class="...">🙌 응원한마디</div></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <textarea id="board-content" rows="2" required placeholder="남기실 글을 간단하게 입력해주세요..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50/50 dark:bg-slate-800 text-slate-800 dark:text-slate-200"></textarea>
+                            <button type="submit" id="board-submit-btn" class="sm:w-36 py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">글 남기기</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 작성된 게시글 목록 컨테이너 -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">남긴 글 목록</span>
+                            <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 text-indigo-600 rounded-md">0건</span>
+                        </div>
+                        <!-- 검색창 -->
+                        <div class="relative w-full sm:w-64">
+                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none bg-slate-50 dark:bg-slate-800">
+                        </div>
+                    </div>
+                    <div id="board-list-container" class="divide-y divide-slate-100 dark:divide-slate-800"></div>
+                    <div id="board-pagination" class="..."></div>
+                </div>
+            </section>
+
+            <!-- [탭 8 & 9] 이용 가이드 및 앱 설치 안내 페이지 (정적 컨텐츠 영역 - 생략 방지 차원 단순화) -->
+            <section id="tab-guide" class="tab-content hidden space-y-6">...</section>
+            <section id="tab-install-guide" class="tab-content hidden space-y-6">...</section>
+
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- [자바스크립트 로직] 데이터 처리 및 UI 동작 핸들링 -->
+    <!-- ========================================== -->
+    <script>
+        // --- 1. 통신 엔드포인트 URL 상수 ---
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=0&single=true&output=csv";
+        const SHEET_POST_URL = "https://script.google.com/macros/s/AKfycbyYo5SFrajHtHo0tt4zSgRBgBKpZGN88KLKeyPb_-9O7aIwm9-twcKk_PRgkimhZ65p/exec";
+        const GUESTBOOK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=1545178136&single=true&output=csv";
+        const BERTH_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmKJA-MJAW_b9gL8j549JkdE-ma6qah0T0Q-wRy5c7Pp5u8yQ4F9R01dfgOvm-bf3D1V5YxKwD4NQm/pub?gid=103045736&single=true&output=csv";
+
+        // --- 2. 전역 상태 및 데이터 캐시 변수 ---
+        const fallbackData = [];
+        const fallbackBoardData = [];
+        let cachedData = [];
+        let cachedBoardData = [];
+        let currentActiveTab = 'history';
+
+        // 각 테이블별 정렬 상태
+        let historySort = { field: 'date', order: 'desc' };
+        let integratedSort = { field: 'ytNum', order: 'asc' };
+        let rawSort = { field: 'date', order: 'desc' };
+        
+        // 페이징 상태
+        let historyCurrentPage = 1;
+        let integratedCurrentPage = 1;
+        let rawCurrentPage = 1;
+        let boardCurrentPage = 1;
+        const rowsPerPage = 10;
+
+        // 선석 현황 데이터 및 옵션
+        let activeBerthDataset = [];
+        const BERTH_LIST = ["B4", "B5", "B6", "B7", "B8"];
+        const BERTH_COL_WIDTH = 56;
+        let berthTimeRangeMode = '48h';
+        let mobileBerthViewMode = 'matrix';
+
+        let timelineStart = new Date();
+        let timelineEnd = new Date();
+        let toastTimer = null;
+        let resizeTimer = null;
+        let deferredPrompt = null;
+
+        // --- 3. 유틸리티 함수 ---
+        // XSS 방지용 HTML 특수기호 이스케이프
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // 한국 표준시(KST) 강제 설정
+        function getKSTDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+            return new Date(utc + (9 * 60 * 60 * 1000));
+        }
+
+        // CSV 문자열 고속 파싱 알고리즘
+        function parseCSVTableFast(csvText) {
+            const rows = [];
+            let currentRow = [];
+            let currentVal = '';
+            let inQuotes = false;
+            const len = csvText.length;
+
+            for (let i = 0; i < len; i++) {
+                const char = csvText[i];
+                const nextChar = csvText[i + 1];
+
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        currentVal += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    currentRow.push(currentVal.trim());
+                    currentVal = '';
+                } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
+                    if (char === '\r') i++;
+                    currentRow.push(currentVal.trim());
+                    if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow);
+                    currentRow = [];
+                    currentVal = '';
+                } else if (char === '\r' && !inQuotes) {
+                    currentRow.push(currentVal.trim());
+                    if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow);
+                    currentRow = [];
+                    currentVal = '';
+                } else {
+                    currentVal += char;
+                }
+            }
+            if (currentVal.length > 0 || currentRow.length > 0) {
+                currentRow.push(currentVal.trim());
+                if (currentRow.some(cell => cell.length > 0)) rows.push(currentRow);
+            }
+            return rows;
+        }
+
+        // --- 4. 데이터 Fetch 및 캐시 로직 ---
+        // 초기 로컬 스토리지 캐시 로드
+        function loadInitialCacheAndRender() {
+            try {
+                const localEval = localStorage.getItem('yt_dashboard_data_v48');
+                if (localEval) cachedData = JSON.parse(localEval);
+
+                const localBoard = localStorage.getItem('yt_board_data_v1');
+                if (localBoard) cachedBoardData = JSON.parse(localBoard);
+
+                const localBerth = localStorage.getItem('yt_berth_data_cache_v9');
+                if (localBerth) {
+                    activeBerthDataset = JSON.parse(localBerth);
+                    alignTimelineToDataset();
+                }
+
+                const isDark = localStorage.getItem('yt_dark_mode') !== 'false';
+                if (isDark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+                updateDarkModeUI(isDark);
+            } catch (e) {}
+            if (cachedData.length > 0) renderActiveTab();
+        }
+
+        // 수동 새로고침 (Pull to Refresh, 상단 동기화 버튼 대응)
+        async function manualRefreshAll() {
+            const dIcon = document.getElementById('desktop-refresh-icon');
+            const mIcon = document.getElementById('mobile-refresh-icon');
+            
+            if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
+            if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
+
+            setTimeout(async () => {
+                try {
+                    await Promise.allSettled([
+                        fetchGoogleSheetData(false, true),
+                        fetchMiniBoardSheetData(true),
+                        fetchBerthDataFromSheet()
+                    ]);
+                } finally {
+                    setTimeout(() => {
+                        if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
+                        if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        // 평가 데이터 (이력) Google Sheet 연동
+        async function fetchGoogleSheetData(silent = true, forceClean = false) {
+            try {
+                const url = `${SHEET_CSV_URL}&t=${Date.now()}`;
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Network error');
+                const csvText = await response.text();
+                parseCSV(csvText, forceClean);
+                if (!silent) showToast('최신 데이터로 동기화되었습니다.');
+            } catch (err) {
+                console.error('데이터 로드 오류:', err);
+                if (!silent) showToast('데이터 동기화 중 오류가 발생했습니다.', true);
+            }
+        }
+        
+        // --- 5. 평가 폼 제출 및 등록 로직 ---
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const author = document.getElementById('reg-author').value.trim();
+            const ytNum = document.getElementById('reg-ytnum').value.trim();
+            const typeRadio = document.querySelector('input[name="reg-type"]:checked');
+            
+            if (!author || !ytNum) {
+                showToast('작성자와 YT를 입력해주세요.', true);
+                return;
+            }
+
+            if (!typeRadio) {
+                showToast('차량 타입을 선택해주세요.', true);
+                return;
+            }
+            const type = typeRadio.value;
+
+            // YT 번호 검증 (3자리)
+            const numVal = parseInt(ytNum, 10);
+            if (isNaN(numVal) || numVal < 100 || numVal > 999) {
+                showToast('YT 번호는 3자리 숫자로 입력해 주세요.', true);
+                return;
+            }
+
+            // 별점 데이터 수집
+            const kidong = document.getElementById('eval-kidong').value;
+            const sangha = document.getElementById('eval-sangha').value;
+            const apdwi = document.getElementById('eval-apdwi').value;
+            const uija = document.getElementById('eval-uija').value;
+            const memo = document.getElementById('reg-memo').value.trim();
+
+            const totalScore = (Number(kidong) * 5) + (Number(sangha) * 5) + (Number(apdwi) * 5) + (Number(uija) * 5);
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const submitBtnText = document.getElementById('submit-btn-text');
+            if (submitBtn && submitBtnText) {
+                submitBtn.disabled = true;
+                submitBtn.className = 'w-full py-3.5 bg-slate-700 text-white font-bold text-base rounded-xl shadow-md cursor-not-allowed flex items-center justify-center gap-2.5 transition-all';
+                submitBtnText.innerHTML = `평가 제출 중..`;
+            }
+
+            // 제출 시각 생성
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const dateStr = `${yy}/${mm}/${dd}/ ${hh}:${min}`;
+
+            const newItem = {
+                date: dateStr, ytNum: ytNum, type: type, totalScore: totalScore,
+                kidong: kidong, sangha: sangha, apdwi: apdwi, uija: uija,
+                author: author, memo: memo
+            };
+
+            // 낙관적 UI 업데이트 (서버 전송 전 로컬에 먼저 반영하여 즉각적인 피드백 제공)
+            let data = getStoredData();
+            data.unshift(newItem);
+            saveStoredData(data);
+            showToast('YT 평가 데이터를 등록 중입니다...');
+
+            try {
+                await fetch(SHEET_POST_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // 구글 앱스 스크립트 특성상 no-cors 전송
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newItem)
+                });
+                showToast('서버에 정상 기록되었습니다!');
+            } catch (err) {
+                showToast('로컬에 저장되었으나 데이터 동기화 중 오류가 발생했습니다.', true);
+            }
+
+            // 폼 초기화 및 조회 탭으로 복귀
+            document.getElementById('evaluation-form').reset();
+            resetStarRatings();
+            loadAuthorFromStorage();
+
+            if (submitBtn && submitBtnText) {
+                submitBtn.disabled = false;
+                submitBtn.className = 'w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]';
+                submitBtnText.innerText = '평가 제출하기';
+            }
+
+            switchTab('history');
+        }
+
+        // --- 6. 별점 및 이벤트 바인딩 로직 ---
+        function initStarRatings() {
+            const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const stars = container.querySelectorAll('svg');
+                const inputId = container.getAttribute('data-target');
+                const input = document.getElementById(inputId);
+
+                // 별 상태 업데이트 함수
+                const updateStars = (val) => {
+                    input.value = val;
+                    stars.forEach((s, idx) => {
+                        if (idx + 1 <= val) {
+                            s.classList.add('text-amber-400');
+                            s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                        } else {
+                            s.classList.remove('text-amber-400');
+                            s.classList.add('text-slate-200', 'dark:text-slate-700');
+                        }
+                    });
+                };
+
+                updateStars(Number(input.value) || 5);
+
+                const handleInteraction = (clientX) => {
+                    let val = 1;
+                    for (let i = 0; i < stars.length; i++) {
+                        const rect = stars[i].getBoundingClientRect();
+                        if (clientX < rect.right) { val = i + 1; break; }
+                        val = i + 1;
+                    }
+                    updateStars(Math.max(1, Math.min(5, val)));
+                };
+
+                if (!container.dataset.initialized) {
+                    container.dataset.initialized = 'true';
+                    let startX = 0, startY = 0, isScrolling = false, hasMoved = false;
+
+                    container.addEventListener('mousedown', (e) => handleInteraction(e.clientX));
+                    container.addEventListener('touchstart', (e) => {
+                        startX = e.touches[0].clientX;
+                        startY = e.touches[0].clientY;
+                        isScrolling = false; hasMoved = false;
+                    }, { passive: true });
+
+                    container.addEventListener('touchmove', (e) => {
+                        if (isScrolling) return;
+                        hasMoved = true;
+                        const diffX = Math.abs(e.touches[0].clientX - startX);
+                        const diffY = Math.abs(e.touches[0].clientY - startY);
+                        // 수직 스크롤과 별점 스와이프를 구분하여 처리
+                        if (diffY > diffX && diffY > 5) { isScrolling = true; return; }
+                        if (diffX > diffY && diffX > 5) {
+                            if (e.cancelable) e.preventDefault();
+                            handleInteraction(e.touches[0].clientX);
+                        }
+                    }, { passive: false });
+
+                    container.addEventListener('touchend', (e) => {
+                        if (!isScrolling && !hasMoved) handleInteraction(e.changedTouches[0].clientX);
+                    });
+                }
+            });
+        }
+
+        // --- 7. 부가 동작 및 서비스워커 등록 ---
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => console.log('[PWA] Service Worker registered successfully:', reg.scope))
+                    .catch((err) => console.warn('[PWA] Service Worker registration failed:', err));
+            }
+        }
+
+        // 앱이 로드될 때 실행되는 Init 블록
+        window.onload = function() {
+            initStarRatings();
+            loadInitialCacheAndRender();
+            
+            // 데이터 비동기 호출
+            fetchGoogleSheetData(true, false);
+            
+            // PWA 활성화
+            registerServiceWorker();
+
+            // 상단으로 가기 스크롤 이벤트
+            const mainContainer = document.getElementById('main-scroll-container');
+            if (mainContainer) mainContainer.addEventListener('scroll', handleMainScroll, { passive: true });
+        };
+    </script>
+</body>
+</html>
