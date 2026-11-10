@@ -2209,7 +2209,7 @@
                     tr.innerHTML = `
                         <td class="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">${escapeHtml(item.date)}</td>
                         <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
-                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
+                        <td class="py-3.5 px-4 font-medium whitespace-nowrap w-26"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
                         <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
                         <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.kidong)}</td>
                         <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${formatRatingDisplay(item.sangha)}</td>
