@@ -582,46 +582,65 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                                </div>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">별 1개당 5점 (항목별 25점 만점)</span>
                             </label>
-                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                                <table class="w-full text-center border-collapse text-xs">
-                                    <thead>
-                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle">구분</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle text-emerald-600 dark:text-emerald-400">상 (25)</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle text-amber-600 dark:text-amber-400">중 (15)</th>
-                                            <th class="py-3 px-3 w-1/4 align-middle text-rose-600 dark:text-rose-400">하 (5)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700">기동</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(상하)</span></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(앞뒤)</span></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700">의자</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-uija" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-uija" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-50/30 dark:bg-slate-800/30 divide-y divide-slate-200 dark:divide-slate-700">
+                                <!-- 기동 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">기동</span>
+                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-kidong">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-kidong" name="eval-kidong" value="5">
+                                </div>
+                                <!-- 충격(상하) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(상하)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-sangha">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-sangha" name="eval-sangha" value="5">
+                                </div>
+                                <!-- 충격(앞뒤) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(앞뒤)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-apdwi">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-apdwi" name="eval-apdwi" value="5">
+                                </div>
+                                <!-- 의자 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">의자</span>
+                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-uija">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-uija" name="eval-uija" value="5">
+                                </div>
                             </div>
                         </div>
 
@@ -1558,8 +1577,61 @@
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
-            const scoreMap = { '상': 25, '중': 15, '하': 5 };
-            return (scoreMap[kidong] || 0) + (scoreMap[uija] || 0) + (scoreMap[sangha] || 0) + (scoreMap[apdwi] || 0);
+            // 구버전(상/중/하) 데이터 호환성 유지
+            if (['상', '중', '하'].includes(kidong)) {
+                const scoreMap = { '상': 25, '중': 15, '하': 5 };
+                return (scoreMap[kidong] || 0) + (scoreMap[uija] || 0) + (scoreMap[sangha] || 0) + (scoreMap[apdwi] || 0);
+            }
+            // 신버전(별 1~5점) 점수 산정: 1별당 5점 (항목별 최대 25점)
+            return (Number(kidong) * 5) + (Number(sangha) * 5) + (Number(apdwi) * 5) + (Number(uija) * 5);
+        }
+
+        function formatRatingDisplay(val) {
+            // 값이 상/중/하인 경우 그대로 반환, 숫자인 경우 별 모양 아이콘 추가
+            if (['상', '중', '하'].includes(val)) return escapeHtml(val);
+            return `${escapeHtml(val)}<span class="text-amber-400 text-[10px] ml-0.5 align-baseline">★</span>`;
+        }
+
+        function initStarRatings() {
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const stars = container.querySelectorAll('svg');
+                const inputId = container.getAttribute('data-target');
+                const input = document.getElementById(inputId);
+
+                stars.forEach((star) => {
+                    star.addEventListener('click', () => {
+                        const val = parseInt(star.getAttribute('data-val'));
+                        input.value = val;
+                        stars.forEach((s, idx) => {
+                            if (idx < val) {
+                                s.classList.add('text-amber-400');
+                                s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                            } else {
+                                s.classList.remove('text-amber-400');
+                                s.classList.add('text-slate-200', 'dark:text-slate-700');
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        function resetStarRatings() {
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const inputId = container.getAttribute('data-target');
+                const input = document.getElementById(inputId);
+                input.value = "5"; // 폼 리셋 후 기본 5성 세팅
+                const stars = container.querySelectorAll('svg');
+                stars.forEach((s, idx) => {
+                    if (idx < 5) {
+                        s.classList.add('text-amber-400');
+                        s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                    } else {
+                        s.classList.remove('text-amber-400');
+                        s.classList.add('text-slate-200', 'dark:text-slate-700');
+                    }
+                });
+            });
         }
 
         function sortHistoryTable(field) {
@@ -1933,10 +2005,10 @@
                             <td class="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
                             <td class="py-3.5 px-3 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
                             <td class="py-3.5 px-3 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.kidong)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.sangha)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.apdwi)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.uija)}</td>
                             <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
                             <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                         `;
@@ -2118,10 +2190,10 @@
                         <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
                         <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
                         <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.kidong)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${formatRatingDisplay(item.sangha)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${formatRatingDisplay(item.apdwi)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.uija)}</td>
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
                         <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
@@ -2339,10 +2411,10 @@
                 return;
             }
 
-            const kidong = document.querySelector('input[name="eval-kidong"]:checked').value;
-            const sangha = document.querySelector('input[name="eval-sangha"]:checked').value;
-            const apdwi = document.querySelector('input[name="eval-apdwi"]:checked').value;
-            const uija = document.querySelector('input[name="eval-uija"]:checked').value;
+            const kidong = document.getElementById('eval-kidong').value;
+            const sangha = document.getElementById('eval-sangha').value;
+            const apdwi = document.getElementById('eval-apdwi').value;
+            const uija = document.getElementById('eval-uija').value;
             const memo = document.getElementById('reg-memo').value.trim();
 
             const totalScore = calculateTotalScore(kidong, sangha, apdwi, uija);
@@ -2401,6 +2473,7 @@
             }
 
             document.getElementById('evaluation-form').reset();
+            resetStarRatings();
             loadAuthorFromStorage();
 
             document.activeElement?.blur();
@@ -3128,6 +3201,7 @@
         }
 
         window.onload = function() {
+            initStarRatings();
             setupScrollIndicators();
             setupPullToRefresh();
             loadInitialCacheAndRender();
