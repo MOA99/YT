@@ -247,13 +247,13 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             </div>
             <div class="truncate">
-                <h4 class="font-bold text-xs">YT 대시보드 앱 설치</h4>
-                <p class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p>
+                <h4 id="pwa-banner-title" class="font-bold text-xs">YT 대시보드 앱 설치</h4>
+                <p id="pwa-banner-desc" class="text-[11px] text-slate-400 truncate">홈 화면에 추가하고 빠르게 실행하세요!</p>
             </div>
         </div>
         <div class="flex items-center space-x-1.5 shrink-0 ml-2">
             <button onclick="dismissPwaBanner()" class="text-xs text-slate-400 hover:text-white px-2 py-1.5 rounded-lg transition-colors">닫기</button>
-            <button onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button>
+            <button id="pwa-banner-btn" onclick="triggerPwaInstall()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-colors">설치</button>
         </div>
     </div>
 
@@ -898,7 +898,7 @@
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">앱 설치 및 화면 전환 안내</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                            현재 열고 계신 환경(네이버, 카카오톡 등 인앱 브라우저)에서는 <strong>앱설치가 제한</strong>됩니다. 정상적인 설치를 위해 기본 브라우저로 이동 후 다시 시도해 주세요.
+                            현재 열고 계신 환경(삼성 인터넷, 카카오톡 등)에서는 <strong>앱 설치가 원활하지 않을 수 있습니다.</strong> 완벽한 PWA 설치를 위해 구글 크롬(Chrome) 브라우저로 이동해 주세요.
                         </p>
                     </div>
                     
@@ -3095,13 +3095,15 @@
                 return;
             }
 
-            // 인앱 브라우저 감지 (카카오톡, 네이버, 라인, 인스타그램, 페이스북 등)
+            // 인앱 브라우저 및 삼성 인터넷 등 타 브라우저 감지
             const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /Android/i.test(ua);
             const isKakao = /KAKAOTALK/i.test(ua);
             const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+            const isSamsungOrOther = isAndroid && /SamsungBrowser|EdgA|Whale/i.test(ua);
 
-            if (isInAppBrowser) {
-                // 인앱 브라우저일 경우 강제 이탈하지 않고 앱 설치 안내 페이지 탭으로만 유도
+            if (isInAppBrowser || isSamsungOrOther) {
+                // 크롬이 아닌 환경일 경우 강제 이탈하지 않고 앱 설치 안내 페이지 탭으로만 유도
                 switchTab('install-guide');
                 return;
             }
@@ -3152,21 +3154,23 @@
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
 
-            // 인앱 브라우저 감지 및 외부 브라우저 유도 플로팅 배너 자동 표시
+            // 인앱 브라우저 및 타 브라우저 감지하여 플로팅 배너 내용 변경 및 표시
             const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /Android/i.test(ua);
             const isKakao = /KAKAOTALK/i.test(ua);
             const isInAppBrowser = /NAVER|Line|Instagram|FBAV|FBAN/i.test(ua) || isKakao;
+            const isSamsungOrOther = isAndroid && /SamsungBrowser|EdgA|Whale/i.test(ua);
 
-            if (isInAppBrowser && !isStandalone && !isInstalled) {
+            if ((isInAppBrowser || isSamsungOrOther) && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
                 // 영구 숨김 체크 대신 기간 만료 체크 함수 사용
                 if (banner && shouldShowPwaBanner()) {
                     const titleEl = document.getElementById('pwa-banner-title');
                     const descEl = document.getElementById('pwa-banner-desc');
                     const btnEl = document.getElementById('pwa-banner-btn');
-                    if (titleEl) titleEl.innerText = '외부 브라우저 연결 필요';
-                    if (descEl) descEl.innerText = '앱 설치를 위해 외부 브라우저로 엽니다.';
-                    if (btnEl) btnEl.innerText = '앱 열기';
+                    if (titleEl) titleEl.innerText = isSamsungOrOther ? '크롬 브라우저 권장' : '외부 브라우저 연결 필요';
+                    if (descEl) descEl.innerText = isSamsungOrOther ? '안정적인 앱 설치를 위해 크롬으로 이동합니다.' : '앱 설치를 위해 외부 브라우저로 엽니다.';
+                    if (btnEl) btnEl.innerText = isSamsungOrOther ? '크롬 열기' : '앱 열기';
                     banner.classList.remove('hidden');
                 }
             }
