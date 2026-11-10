@@ -8,7 +8,6 @@
     <script>
         (function() {
             try {
-                // 사용자가 명시적으로 'false'(라이트 모드)로 저장하지 않은 이상 무조건 다크 모드 적용
                 if (localStorage.getItem('yt_dark_mode') !== 'false') {
                     document.documentElement.classList.add('dark');
                 } else {
@@ -507,7 +506,7 @@
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-hist-ytNum" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-3 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-hist-type" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortHistoryTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-hist-totalScore" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">출력</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(상하)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-3 w-20 whitespace-nowrap text-center">의자</th>
@@ -582,46 +581,65 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                                <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 배점표 및 세부평가
+                                </div>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">별 1개당 5점 (항목별 25점 만점)</span>
                             </label>
-                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                                <table class="w-full text-center border-collapse text-xs">
-                                    <thead>
-                                        <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle">구분</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle text-emerald-600 dark:text-emerald-400">상 (25)</th>
-                                            <th class="py-3 px-3 border-r border-slate-200 dark:border-slate-700 w-1/4 align-middle text-amber-600 dark:text-amber-400">중 (15)</th>
-                                            <th class="py-3 px-3 w-1/4 align-middle text-rose-600 dark:text-rose-400">하 (5)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700">기동</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-kidong" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-kidong" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(상하)</span></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-sangha" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-sangha" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700 leading-tight">충격<br><span class="text-[10px] font-normal text-slate-500 dark:text-slate-400 -mt-0.5 inline-block">(앞뒤)</span></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-apdwi" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-apdwi" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="py-3.5 px-3 font-bold bg-slate-50/70 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-700">의자</td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-uija" value="상" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3 border-r border-slate-200 dark:border-slate-700"><input type="radio" name="eval-uija" value="중" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                            <td class="py-3.5 px-3"><input type="radio" name="eval-uija" value="하" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm bg-slate-50/30 dark:bg-slate-800/30 divide-y divide-slate-200 dark:divide-slate-700">
+                                <!-- 출력 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">출력</span>
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-kidong">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-kidong" name="eval-kidong" value="5">
+                                </div>
+                                <!-- 충격(상하) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(상하)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-sangha">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-sangha" name="eval-sangha" value="5">
+                                </div>
+                                <!-- 충격(앞뒤) -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(앞뒤)</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-apdwi">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-apdwi" name="eval-apdwi" value="5">
+                                </div>
+                                <!-- 의자 -->
+                                <div class="flex items-center justify-between p-3.5 sm:px-5">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200">의자</span>
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-uija">
+                                        <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="4" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                        <svg data-val="5" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    </div>
+                                    <input type="hidden" id="eval-uija" name="eval-uija" value="5">
+                                </div>
                             </div>
                         </div>
 
@@ -743,7 +761,7 @@
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap sticky-col-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('ytNum')"><div class="flex items-center gap-1"><span>YT</span> <span id="sort-raw-ytNum" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('type')"><div class="flex items-center gap-1"><span>타입</span> <span id="sort-raw-type" class="inline-block text-slate-400"></span></div></th>
                                     <th class="py-3.5 px-4 w-20 whitespace-nowrap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700" onclick="sortRawTable('totalScore')"><div class="flex items-center gap-1"><span>총점</span> <span id="sort-raw-totalScore" class="inline-block text-slate-400"></span></div></th>
-                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">기동</th>
+                                    <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">출력</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(상하)</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">충격(앞뒤)</th>
                                     <th class="py-3.5 px-4 w-24 whitespace-nowrap text-center">의자</th>
@@ -950,7 +968,6 @@
 
         let cachedData = [];
         let cachedBoardData = [];
-        // 항상 기본값 'history' 탭으로 시작하도록 수정 (캐시 버그 방지)
         let currentActiveTab = 'history';
 
         let historySort = { field: 'date', order: 'desc' };
@@ -975,9 +992,6 @@
         let toastTimer = null;
         let resizeTimer = null;
         let deferredPrompt = null;
-
-        let touchStartY = 0;
-        let isPulling = false;
 
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
@@ -1158,7 +1172,6 @@
                     alignTimelineToDataset();
                 }
 
-                // 사용자가 명시적으로 'false'를 저장하지 않았다면 기본적으로 다크모드로 동작
                 const isDark = localStorage.getItem('yt_dark_mode') !== 'false';
                 if (isDark) {
                     document.documentElement.classList.add('dark');
@@ -1193,17 +1206,13 @@
             }
         }
 
-        // PWA 엔진 렌더링 블록을 우회하여 스핀 애니메이션과 데이터를 처리하는 핵심 함수
         async function manualRefreshAll() {
             const dIcon = document.getElementById('desktop-refresh-icon');
             const mIcon = document.getElementById('mobile-refresh-icon');
             
-            // 일반 spin과 강력한 pwa-spinning 동시 적용
             if (dIcon) dIcon.classList.add('pwa-spinning', 'animate-spin');
             if (mIcon) mIcon.classList.add('pwa-spinning', 'animate-spin');
 
-            // [핵심 패치] JS 연산으로 인해 CSS 애니메이션 프레임이 무시되는 현상 방지
-            // 브라우저가 화면을 갱신(Paint)할 수 있도록 50ms 휴식을 줍니다.
             setTimeout(async () => {
                 try {
                     await Promise.allSettled([
@@ -1212,7 +1221,6 @@
                         fetchBerthDataFromSheet()
                     ]);
                 } finally {
-                    // 데이터 로드 완료 후 애니메이션이 자연스럽게 멈추도록 최소 지연을 줍니다.
                     setTimeout(() => {
                         if (dIcon) dIcon.classList.remove('pwa-spinning', 'animate-spin');
                         if (mIcon) mIcon.classList.remove('pwa-spinning', 'animate-spin');
@@ -1501,6 +1509,10 @@
             const mobileTitleEl = document.getElementById('mobile-breadcrumb-title');
             if (mobileTitleEl) mobileTitleEl.innerText = titles[tabId] || '대시보드';
 
+            if (tabId === 'register') {
+                setTimeout(initStarRatings, 50);
+            }
+
             renderActiveTab();
 
             if (tabId === 'berth') {
@@ -1558,8 +1570,90 @@
         }
 
         function calculateTotalScore(kidong, sangha, apdwi, uija) {
-            const scoreMap = { '상': 25, '중': 15, '하': 5 };
-            return (scoreMap[kidong] || 0) + (scoreMap[uija] || 0) + (scoreMap[sangha] || 0) + (scoreMap[apdwi] || 0);
+            if (['상', '중', '하'].includes(kidong)) {
+                const scoreMap = { '상': 25, '중': 15, '하': 5 };
+                return (scoreMap[kidong] || 0) + (scoreMap[uija] || 0) + (scoreMap[sangha] || 0) + (scoreMap[apdwi] || 0);
+            }
+            return (Number(kidong) * 5) + (Number(sangha) * 5) + (Number(apdwi) * 5) + (Number(uija) * 5);
+        }
+
+        function formatRatingDisplay(val) {
+            if (['상', '중', '하'].includes(val)) return escapeHtml(val);
+            return `${escapeHtml(val)}<span class="text-amber-400 text-[10px] ml-0.5 align-baseline">★</span>`;
+        }
+
+        function initStarRatings() {
+            const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const stars = container.querySelectorAll('svg');
+                const inputId = container.getAttribute('data-target');
+                const input = document.getElementById(inputId);
+
+                const updateStars = (val) => {
+                    input.value = val;
+                    
+                    stars.forEach((s, idx) => {
+                        const starIndex = idx + 1; // 1 to 5
+                        if (starIndex <= val) {
+                            s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                            s.classList.add('text-amber-400');
+                            s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                        } else {
+                            s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                            s.classList.remove('text-amber-400');
+                            s.classList.add('text-slate-200', 'dark:text-slate-700');
+                        }
+                    });
+                };
+
+                updateStars(Number(input.value) || 5);
+
+                const handleInteraction = (clientX) => {
+                    let val = 1;
+                    for (let i = 0; i < stars.length; i++) {
+                        const rect = stars[i].getBoundingClientRect();
+                        if (clientX < rect.right) {
+                            val = i + 1;
+                            break;
+                        }
+                        val = i + 1;
+                    }
+                    updateStars(Math.max(1, Math.min(5, val)));
+                };
+
+                if (!container.dataset.initialized) {
+                    container.dataset.initialized = 'true';
+                    container.addEventListener('mousedown', (e) => handleInteraction(e.clientX));
+                    container.addEventListener('touchstart', (e) => handleInteraction(e.touches[0].clientX), { passive: true });
+
+                    container.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        handleInteraction(e.touches[0].clientX);
+                    }, { passive: false });
+
+                    container.addEventListener('mousemove', (e) => {
+                        if (e.buttons === 1) {
+                            handleInteraction(e.clientX);
+                        }
+                    });
+                }
+            });
+        }
+
+        function resetStarRatings() {
+            const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const inputId = container.getAttribute('data-target');
+                const input = document.getElementById(inputId);
+                input.value = "5";
+                const stars = container.querySelectorAll('svg');
+                stars.forEach((s) => {
+                    s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                    s.classList.add('text-amber-400');
+                    s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                });
+            });
         }
 
         function sortHistoryTable(field) {
@@ -1909,7 +2003,6 @@
                 }
             });
 
-            // 페이지네이션 제거 및 최신 데이터 최대 10개만 슬라이스
             const displayData = filtered.slice(0, 10);
 
             const historyBody = document.getElementById('history-table-body');
@@ -1933,10 +2026,10 @@
                             <td class="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap">${escapeHtml(item.ytNum)}</td>
                             <td class="py-3.5 px-3 font-medium whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
                             <td class="py-3.5 px-3 whitespace-nowrap"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
-                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.kidong)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.sangha)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.apdwi)}</td>
+                            <td class="py-3.5 px-3 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.uija)}</td>
                             <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
                             <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                         `;
@@ -2118,10 +2211,10 @@
                         <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(item.ytNum)}</td>
                         <td class="py-3.5 px-4 font-medium whitespace-nowrap w-24"><span class="px-2.5 py-1 rounded-md text-[11px] ${item.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(item.type)}</span></td>
                         <td class="py-3.5 px-4 whitespace-nowrap w-20"><span class="font-bold ${item.totalScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : item.totalScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(item.totalScore)}점</span></td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.kidong)}</td>
-                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.sangha)}</td>
-                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${escapeHtml(item.apdwi)}</td>
-                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${escapeHtml(item.uija)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.kidong)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${formatRatingDisplay(item.sangha)}</td>
+                        <td class="py-3.5 px-4 w-24 whitespace-nowrap text-center">${formatRatingDisplay(item.apdwi)}</td>
+                        <td class="py-3.5 px-4 w-20 whitespace-nowrap text-center">${formatRatingDisplay(item.uija)}</td>
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
                         <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
@@ -2339,10 +2432,10 @@
                 return;
             }
 
-            const kidong = document.querySelector('input[name="eval-kidong"]:checked').value;
-            const sangha = document.querySelector('input[name="eval-sangha"]:checked').value;
-            const apdwi = document.querySelector('input[name="eval-apdwi"]:checked').value;
-            const uija = document.querySelector('input[name="eval-uija"]:checked').value;
+            const kidong = document.getElementById('eval-kidong').value;
+            const sangha = document.getElementById('eval-sangha').value;
+            const apdwi = document.getElementById('eval-apdwi').value;
+            const uija = document.getElementById('eval-uija').value;
             const memo = document.getElementById('reg-memo').value.trim();
 
             const totalScore = calculateTotalScore(kidong, sangha, apdwi, uija);
@@ -2401,6 +2494,7 @@
             }
 
             document.getElementById('evaluation-form').reset();
+            resetStarRatings();
             loadAuthorFromStorage();
 
             document.activeElement?.blur();
@@ -2987,9 +3081,6 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            
-            // 브라우저가 설치 프롬프트를 지원/발생시켰다는 것은 앱이 미설치 상태임을 의미
-            // 로컬스토리지의 낡은 설치 기록을 지우고 설치 버튼을 다시 노출시킵니다.
             try { localStorage.removeItem('is_app_installed'); } catch (err) {}
             const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
             if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'flex';
@@ -3003,26 +3094,20 @@
             }
         });
 
-        // 💡 배너 노출 여부를 기간(7일) 단위로 계산하는 함수 추가
         function shouldShowPwaBanner() {
             try {
                 const dismissedAt = localStorage.getItem('pwa_banner_dismissed');
-                if (!dismissedAt) return true; // 한 번도 안 닫은 경우 노출
-                
-                // 과거에 영구 숨김('true') 처리된 유저들의 캐시 호환성 대응
+                if (!dismissedAt) return true;
                 if (dismissedAt === 'true') {
                     localStorage.setItem('pwa_banner_dismissed', Date.now().toString());
                     return false;
                 }
-
-                // 7일(7일 * 24시간 * 60분 * 60초 * 1000밀리초) 이후에 다시 노출
                 const hideDuration = 7 * 24 * 60 * 60 * 1000; 
-                
                 if (Date.now() - parseInt(dismissedAt, 10) > hideDuration) {
-                    localStorage.removeItem('pwa_banner_dismissed'); // 기간 만료 시 초기화
+                    localStorage.removeItem('pwa_banner_dismissed');
                     return true;
                 }
-                return false; // 아직 기간이 안 지남
+                return false;
             } catch (e) {
                 return true;
             }
@@ -3031,7 +3116,6 @@
         function dismissPwaBanner() {
             const banner = document.getElementById('pwa-install-banner');
             if (banner) banner.classList.add('hidden');
-            // 'true' 대신 '현재 시간(숫자)'을 저장
             try { localStorage.setItem('pwa_banner_dismissed', Date.now().toString()); } catch (e) {}
         }
 
@@ -3040,7 +3124,6 @@
             dismissPwaBanner();
             try { 
                 localStorage.setItem('is_app_installed', 'true'); 
-                // 실제 앱이 켜질 때 토스트를 띄우기 위해 쿠폰(플래그)을 저장해 둡니다.
                 localStorage.setItem('show_install_toast', 'true');
             } catch (e) {}
             const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
@@ -3057,14 +3140,11 @@
             }
 
             const targetUrl = location.href;
-
-            // 안드로이드 크롬 우선 실행 인텐트 (크롬 미설치 시 기본 브라우저 대체 실행 지원)
-            // 카카오톡 등 모든 안드로이드 인앱 브라우저에서 크롬을 최우선으로 호출합니다.
             const cleanUrl = targetUrl.replace(/https?:\/\//i, '');
             const fallbackUrl = encodeURIComponent(targetUrl);
             location.href = `intent://${cleanUrl}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallbackUrl};end`;
             
-            showToast('외부 브라우저를 실행합니다.');
+            showToast('크롬 브라우저를 실행합니다.');
         }
 
         function copyCurrentUrl() {
@@ -3097,7 +3177,6 @@
                 return;
             }
 
-            // 인앱 브라우저 및 삼성 인터넷 등 타 브라우저 감지
             const ua = navigator.userAgent || navigator.vendor || window.opera;
             const isAndroid = /Android/i.test(ua);
             const isKakao = /KAKAOTALK/i.test(ua);
@@ -3105,7 +3184,6 @@
             const isSamsungOrOther = isAndroid && /SamsungBrowser|EdgA|Whale/i.test(ua);
 
             if (isInAppBrowser || isSamsungOrOther) {
-                // 크롬이 아닌 환경일 경우 강제 이탈하지 않고 앱 설치 안내 페이지 탭으로만 유도
                 switchTab('install-guide');
                 return;
             }
@@ -3128,21 +3206,19 @@
         }
 
         window.onload = function() {
+            initStarRatings();
             setupScrollIndicators();
             setupPullToRefresh();
             loadInitialCacheAndRender();
             loadAuthorFromStorage();
 
-            // PWA 앱 설치 버튼 숨김 처리 (단독 실행 모드이거나 설치 완료 기록이 있을 때)
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             const isInstalled = localStorage.getItem('is_app_installed') === 'true';
             
             if (isStandalone) {
-                // 앱 내부로 실행 중일 때는 무조건 숨김 및 설치 완료 기록 동기화
                 const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
                 
-                // 실제 앱(Standalone)으로 최초 실행 시 설치 완료 토스트 출력 (iOS, Android 완벽 호환)
                 if (!isInstalled || localStorage.getItem('show_install_toast') === 'true') {
                     setTimeout(() => showToast('YT 대시보드 앱이 성공적으로 설치되었습니다!'), 500);
                     try { localStorage.removeItem('show_install_toast'); } catch(e) {}
@@ -3150,13 +3226,10 @@
 
                 try { localStorage.setItem('is_app_installed', 'true'); } catch(e) {}
             } else if (isInstalled) {
-                // 브라우저 접속인데 설치 기록이 있는 경우 일단 숨김
-                // (만약 기기에서 앱이 지워졌다면 바로 뒤에 beforeinstallprompt가 발동하여 다시 나타나게 됨)
                 const sidebarInstallBtn = document.getElementById('sidebar-install-btn');
                 if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
             }
 
-            // 인앱 브라우저 및 타 브라우저 감지하여 플로팅 배너 내용 변경 및 표시
             const ua = navigator.userAgent || navigator.vendor || window.opera;
             const isAndroid = /Android/i.test(ua);
             const isKakao = /KAKAOTALK/i.test(ua);
@@ -3165,19 +3238,17 @@
 
             if ((isInAppBrowser || isSamsungOrOther) && !isStandalone && !isInstalled) {
                 const banner = document.getElementById('pwa-install-banner');
-                // 영구 숨김 체크 대신 기간 만료 체크 함수 사용
                 if (banner && shouldShowPwaBanner()) {
                     const titleEl = document.getElementById('pwa-banner-title');
                     const descEl = document.getElementById('pwa-banner-desc');
                     const btnEl = document.getElementById('pwa-banner-btn');
-                    if (titleEl) titleEl.innerText = isSamsungOrOther ? '크롬 브라우저 권장' : '외부 브라우저 연결 필요';
-                    if (descEl) descEl.innerText = isSamsungOrOther ? '안정적인 앱 설치를 위해 크롬으로 이동합니다.' : '앱 설치를 위해 외부 브라우저로 엽니다.';
-                    if (btnEl) btnEl.innerText = isSamsungOrOther ? '크롬 열기' : '앱 열기';
+                    if (titleEl) titleEl.innerText = isSamsungOrOther ? 'YT 대시보드 앱 설치' : 'YT 대시보드 앱 설치';
+                    if (descEl) descEl.innerText = isSamsungOrOther ? '홈 화면에 추가하고 빠르게 실행하세요!' : '홈 화면에 추가하고 빠르게 실행하세요!';
+                    if (btnEl) btnEl.innerText = isSamsungOrOther ? '설치' : '설치';
                     banner.classList.remove('hidden');
                 }
             }
 
-            // 페이지 접속 시 무조건 히스토리(이력조회) 탭으로 시작 (이전 탭 기억 캐시 버그 방지)
             switchTab('history');
 
             fetchGoogleSheetData(true, false);
@@ -3189,7 +3260,6 @@
 
             registerServiceWorker();
 
-            // 상단 이동 플로팅 버튼 터치 인터랙션 바인딩
             const scrollBtn = document.getElementById('scrollTopBtn');
             if (scrollBtn) {
                 scrollBtn.addEventListener('touchstart', function() {
@@ -3203,7 +3273,6 @@
                 }, { passive: true });
             }
 
-            // PWA 내부 스크롤 이벤트 감지
             const mainContainer = document.getElementById('main-scroll-container');
             if (mainContainer) {
                 mainContainer.addEventListener('scroll', handleMainScroll, { passive: true });
@@ -3227,7 +3296,6 @@
                 }, 150);
             });
 
-            // 스크롤 시 스크롤바 일시적 노출 제어
             let scrollFadeTimer;
             window.addEventListener('scroll', function (e) {
                 if (e.target && e.target.classList) {
