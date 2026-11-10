@@ -1,40 +1,28 @@
 {
-"name": "YT대시보드",
-"short_name": "YT대시보드",
-"description": "YT 차량 승하차 평가 및 선석 배정 현황 통합 시스템",
-"id": "./",
-"start_url": "./",
-"scope": "./",
-"display": "standalone",
-"orientation": "portrait-primary",
-"background_color": "#090d16",
-"theme_color": "#0f172a",      
-"lang": "ko-KR",
-"categories": ["productivity", "utilities", "business"],
-"icons": [
-{
-"src": "./favicon.png",
-"sizes": "192x192",
-"type": "image/png",
-"purpose": "maskable"
-},
-{
-"src": "./favicon.png",
-"sizes": "192x192",
-"type": "image/png",
-"purpose": "any"
-},
-{
-"src": "./favicon.png",
-"sizes": "512x512",
-"type": "image/png",
-"purpose": "maskable"
-},
-{
-"src": "./favicon.png",
-"sizes": "512x512",
-"type": "image/png",
-"purpose": "any"
-}
-]
+  "name": "YT대시보드",               // 앱 설치 시 표시되는 전체 이름
+  "short_name": "YT대시보드",         // 기기 홈 화면 등 공간이 좁을 때 표시되는 짧은 이름
+  "description": "YT 차량 승하차 평가 및 선석 배정 현황 통합 시스템", // 앱 설명
+  "id": "./",                       // 앱의 고유 식별자
+  "start_url": "./",                // 앱 실행 시 처음 로드되는 URL 경로
+  "scope": "./",                    // PWA가 적용되는 URL 범위
+  "display": "standalone",          // 브라우저 UI 없이 네이티브 앱처럼 전체화면(독립형)으로 표시
+  "orientation": "portrait-primary",// 앱 실행 시 기본 화면 방향 (세로 모드 고정)
+  "background_color": "#090d16",    // 스플래시 화면 및 초기 로딩 시 배경색 (다크톤)
+  "theme_color": "#0f172a",         // OS 상단 상태바 및 브라우저 테마 색상
+  "lang": "ko-KR",                  // 기본 언어 설정 (한국어)
+  "categories": ["productivity", "utilities", "business"], // 앱 스토어 분류 카테고리
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"     // 다양한 기기(안드로이드/iOS)의 아이콘 모양(원형, 사각형 등)에 맞춰 자동 크롭 지원
+    },
+    {
+      "src": "./favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
