@@ -234,6 +234,18 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
+    <!-- 별점 반개(Half Star) 렌더링을 위한 SVG Clip Path 정의 -->
+    <svg width="0" height="0" class="absolute hidden" aria-hidden="true">
+        <defs>
+            <clipPath id="star-left-half">
+                <rect x="0" y="0" width="12" height="24" />
+            </clipPath>
+            <clipPath id="star-right-half">
+                <rect x="12" y="0" width="12" height="24" />
+            </clipPath>
+        </defs>
+    </svg>
+
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -592,7 +604,7 @@
                                 <!-- 기동 -->
                                 <div class="flex items-center justify-between p-3.5 sm:px-5">
                                     <span class="text-sm font-bold text-slate-700 dark:text-slate-200">기동</span>
-                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-kidong">
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-kidong">
                                         <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -606,7 +618,7 @@
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(상하)</span></span>
                                     </div>
-                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-sangha">
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-sangha">
                                         <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -620,7 +632,7 @@
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-slate-700 dark:text-slate-200">충격 <span class="text-xs font-normal text-slate-500">(앞뒤)</span></span>
                                     </div>
-                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-apdwi">
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-apdwi">
                                         <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -632,7 +644,7 @@
                                 <!-- 의자 -->
                                 <div class="flex items-center justify-between p-3.5 sm:px-5">
                                     <span class="text-sm font-bold text-slate-700 dark:text-slate-200">의자</span>
-                                    <div class="flex items-center gap-1.5 star-rating" data-target="eval-uija">
+                                    <div class="flex items-center gap-1.5 star-rating touch-none select-none" data-target="eval-uija">
                                         <svg data-val="1" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="2" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                         <svg data-val="3" class="w-7 h-7 sm:w-8 sm:h-8 text-amber-400 cursor-pointer transition-transform hover:scale-110 active:scale-95 drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -1593,43 +1605,93 @@
         }
 
         function initStarRatings() {
+            const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+
             document.querySelectorAll('.star-rating').forEach(container => {
                 const stars = container.querySelectorAll('svg');
                 const inputId = container.getAttribute('data-target');
                 const input = document.getElementById(inputId);
 
-                stars.forEach((star) => {
-                    star.addEventListener('click', () => {
-                        const val = parseInt(star.getAttribute('data-val'));
-                        input.value = val;
-                        stars.forEach((s, idx) => {
-                            if (idx < val) {
-                                s.classList.add('text-amber-400');
-                                s.classList.remove('text-slate-200', 'dark:text-slate-700');
-                            } else {
-                                s.classList.remove('text-amber-400');
-                                s.classList.add('text-slate-200', 'dark:text-slate-700');
-                            }
-                        });
+                const updateStars = (val) => {
+                    if (input.value == val) return;
+                    input.value = val;
+                    
+                    stars.forEach((s, idx) => {
+                        const starIndex = idx + 1; // 1 to 5
+                        if (starIndex <= val) {
+                            // 완전히 채워진 별
+                            s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                            s.classList.add('text-amber-400');
+                            s.classList.remove('text-slate-200', 'dark:text-slate-700');
+                        } else if (starIndex - 0.5 === val) {
+                            // 반만 채워진 별 (SVG Clip Path 활용)
+                            s.innerHTML = `
+                                <path d="${starPath}" fill="currentColor" class="text-amber-400" clip-path="url(#star-left-half)"></path>
+                                <path d="${starPath}" fill="currentColor" class="text-slate-200 dark:text-slate-700" clip-path="url(#star-right-half)"></path>
+                            `;
+                            // 개별 Path에서 색상을 제어하므로 부모 SVG의 단일 색상 클래스 제거
+                            s.classList.remove('text-amber-400', 'text-slate-200', 'dark:text-slate-700');
+                        } else {
+                            // 비워진 별
+                            s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                            s.classList.remove('text-amber-400');
+                            s.classList.add('text-slate-200', 'dark:text-slate-700');
+                        }
                     });
+                };
+
+                // 스와이프(드래그) 및 클릭 시 별 반 개(0.5) 단위로 정밀하게 계산하는 로직
+                const handleInteraction = (clientX) => {
+                    let val = 0.5;
+                    for (let i = 0; i < stars.length; i++) {
+                        const rect = stars[i].getBoundingClientRect();
+                        // 1) 터치/마우스가 별의 왼쪽 절반 이하인 경우 (이전 별과의 빈 간격 영역 포함)
+                        if (clientX < rect.left + (rect.width / 2)) {
+                            val = i + 0.5;
+                            break;
+                        }
+                        // 2) 터치/마우스가 별의 오른쪽 절반인 경우
+                        if (clientX < rect.right) {
+                            val = i + 1;
+                            break;
+                        }
+                        // 3) 마우스/터치가 현재 별을 완전히 넘어갔다면, 임시로 현재 별 만점 처리 후 다음 별 검사
+                        val = i + 1;
+                    }
+                    // 최종 계산된 값을 0.5점 ~ 5점 사이로 보정
+                    updateStars(Math.max(0.5, Math.min(5, val)));
+                };
+
+                // 빈 공간이나 별 자체를 눌렀을 때 즉시 반영
+                container.addEventListener('mousedown', (e) => handleInteraction(e.clientX));
+                container.addEventListener('touchstart', (e) => handleInteraction(e.touches[0].clientX), { passive: true });
+
+                // 모바일 터치 스와이프 (좌우로 부드럽게 문지르기)
+                container.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // 스와이프 도중 화면이 위아래로 꿀렁이는 것 원천 차단
+                    handleInteraction(e.touches[0].clientX);
+                }, { passive: false });
+
+                // 데스크탑 마우스 드래그
+                container.addEventListener('mousemove', (e) => {
+                    if (e.buttons === 1) { // 마우스 왼쪽 버튼 클릭을 누른 상태로 이동할 때만
+                        handleInteraction(e.clientX);
+                    }
                 });
             });
         }
 
         function resetStarRatings() {
+            const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
             document.querySelectorAll('.star-rating').forEach(container => {
                 const inputId = container.getAttribute('data-target');
                 const input = document.getElementById(inputId);
                 input.value = "5"; // 폼 리셋 후 기본 5성 세팅
                 const stars = container.querySelectorAll('svg');
-                stars.forEach((s, idx) => {
-                    if (idx < 5) {
-                        s.classList.add('text-amber-400');
-                        s.classList.remove('text-slate-200', 'dark:text-slate-700');
-                    } else {
-                        s.classList.remove('text-amber-400');
-                        s.classList.add('text-slate-200', 'dark:text-slate-700');
-                    }
+                stars.forEach((s) => {
+                    s.innerHTML = `<path d="${starPath}" fill="currentColor"></path>`;
+                    s.classList.add('text-amber-400');
+                    s.classList.remove('text-slate-200', 'dark:text-slate-700');
                 });
             });
         }
