@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트 (기본 다크모드 활성화) -->
+    <!-- [1] 다크 모드 새로고침 플리커(깜빡임) 방지 즉시 실행 스크립트
+         브라우저 렌더링 전 로컬 스토리지를 확인하여 즉시 클래스를 적용해 화면 깜빡임을 막습니다. -->
     <script>
         (function() {
             try {
@@ -17,7 +18,7 @@
         })();
     </script>
 
-    <!-- PWA 및 테마 메타태그 설정 -->
+    <!-- [2] PWA(웹 앱) 설정 및 모바일 브라우저 테마/상태바 색상 지정 -->
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -59,6 +60,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* [UI 스타일링 영역] CSS 설정 (스크롤바 커스텀, 테이블 틀고정, 다크모드 처리 등) */
         /* Tailwind CDN 파싱 전 초기 렌더링 시 다크모드 배경 깜빡임 원천 차단 */
         html { background-color: #020617; color-scheme: dark; }
         html:not(.dark) { background-color: #f8fafc; color-scheme: light; }
@@ -233,6 +235,9 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 h-full flex flex-col md:flex-row text-slate-800 dark:text-slate-100 overflow-hidden pb-16 md:pb-0">
 
+    <!-- ==========================================
+         [공통 컴포넌트] 알림 토스트, PWA 설치 배너, 최상단 스크롤 버튼
+         ========================================== -->
     <!-- 토스트 알림창 -->
     <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-20 opacity-0 transition-all duration-300 ease-out z-[60] bg-slate-900/85 dark:bg-slate-800/90 text-white px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-none border border-white/10 dark:border-white/10 backdrop-blur-xl w-max max-w-[90vw]">
         <svg id="toast-icon" class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -261,6 +266,9 @@
         <svg class="w-5 h-5 pointer-events-none transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
+    <!-- ==========================================
+         [네비게이션] 모바일 하단 탭 & 데스크탑 좌측 사이드바
+         ========================================== -->
     <!-- 모바일 하단 고정 네비게이션 바 -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2 select-none transition-colors">
         <button onclick="switchTab('history')" data-bottom-tab="history" class="bottom-nav-btn flex flex-col items-center justify-center flex-1 h-full text-indigo-600 dark:text-indigo-400 transition-colors">
@@ -355,6 +363,9 @@
     <!-- 모바일 사이드바 배경 오버레이 -->
     <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
+    <!-- ==========================================
+         [메인 본문] 선택된 탭에 따라 내용이 전환되는 동적 뷰 영역
+         ========================================== -->
     <!-- 본문 메인 영역 -->
     <main id="main-scroll-container" onscroll="handleMainScroll()" class="flex-1 flex flex-col h-full overflow-y-auto md:ml-64 relative">
         
@@ -444,7 +455,11 @@
                     <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-end text-xs text-slate-600 dark:text-slate-400">
                         <div class="flex items-center gap-2">
                             <span id="kst-clock" class="font-mono-num font-bold text-slate-800 dark:text-slate-200">--:--:--</span>
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-red-600 text-white font-mono-num leading-none">NOW</span>
+                            <!-- [UI/UX 개선] NOW 배지를 클릭 가능한 버튼으로 변경하여 현재 시간 위치로 즉시 스크롤 이동 지원 -->
+                            <button type="button" onclick="scrollMatrixToNow()" title="현재 시간 위치로 스크롤 이동" class="px-2 py-1 rounded-md text-[10px] font-black bg-red-600 hover:bg-red-500 text-white font-mono-num leading-none cursor-pointer active:scale-95 transition-all shadow-xs flex items-center gap-1">
+                                <span>NOW</span>
+                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -498,6 +513,13 @@
                 </div>
 
                 <div id="history-table-container-wrapper" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                    <!-- [UI/UX 개선] 최근 10건만 표시됨을 알리는 상단 안내 헤더 추가 -->
+                    <div class="px-4 py-2.5 bg-slate-50/60 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center gap-1.5 font-medium">
+                            <svg class="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>최근 10건의 평가만 표시됩니다</span>
+                        </div>
+                    </div>
                     <div id="history-scroll-pane" class="overflow-x-auto">
                         <table class="w-full text-left border-collapse table-auto min-w-[780px]">
                             <thead>
@@ -568,14 +590,19 @@
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
                                 <span class="w-1.5 h-3.5 bg-indigo-600 rounded-full inline-block"></span> 차량 타입
                             </label>
+                            <!-- [UI/UX 개선] 차량 타입 선택 시 마우스 호버 상태와 충돌하지 않고 즉시 색상이 반전되도록 수정 -->
                             <div class="grid grid-cols-2 gap-3">
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
-                                    <input type="radio" name="reg-type" value="샤크만" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                                    <span>샤크만</span>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reg-type" value="샤크만" class="peer sr-only">
+                                    <div class="flex items-center justify-center py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 peer-checked:shadow-md peer-checked:shadow-indigo-600/20 transition-all font-bold text-sm select-none">
+                                        <span>샤크만</span>
+                                    </div>
                                 </label>
-                                <label class="flex items-center justify-center space-x-2.5 cursor-pointer py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-semibold text-sm text-slate-700 dark:text-slate-200">
-                                    <input type="radio" name="reg-type" value="카파" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                                    <span>카파</span>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reg-type" value="카파" class="peer sr-only">
+                                    <div class="flex items-center justify-center py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 peer-checked:shadow-md peer-checked:shadow-indigo-600/20 transition-all font-bold text-sm select-none">
+                                        <span>카파</span>
+                                    </div>
                                 </label>
                             </div>
                         </div>
@@ -831,7 +858,7 @@
                             <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
                         </div>
                         <div class="relative w-full sm:w-64">
-                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                            <input type="search" id="board-search" oninput="debouncedFilterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                             <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                     </div>
@@ -957,12 +984,17 @@
         </div>
     </main>
 
+    <!-- ==========================================
+         [자바스크립트 핵심 로직] 데이터 통신, 화면 렌더링, 이벤트 핸들링
+         ========================================== -->
     <script>
+        // --- 1. 통신 엔드포인트 (구글 스프레드시트 배포 URL) ---
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=0&single=true&output=csv";
         const SHEET_POST_URL = "https://script.google.com/macros/s/AKfycbyYo5SFrajHtHo0tt4zSgRBgBKpZGN88KLKeyPb_-9O7aIwm9-twcKk_PRgkimhZ65p/exec";
         const GUESTBOOK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRkBIl6bR4_YJfU4crV5iUVO4cR-loeUAeoXAFx6FlxC8oLxxvyNDxJWE7IxB2VMkz4mhSQ7PgFRex7/pub?gid=1545178136&single=true&output=csv";
         const BERTH_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmKJA-MJAW_b9gL8j549JkdE-ma6qah0T0Q-wRy5c7Pp5u8yQ4F9R01dfgOvm-bf3D1V5YxKwD4NQm/pub?gid=103045736&single=true&output=csv";
 
+        // --- 2. 전역 상태 및 데이터 캐시 변수 ---
         const fallbackData = [];
         const fallbackBoardData = [];
 
@@ -992,7 +1024,21 @@
         let toastTimer = null;
         let resizeTimer = null;
         let deferredPrompt = null;
+        let cachedIntegratedGroups = null; // [최적화] 통합 리스트 그룹화 결과 메모이제이션 캐시
 
+        // [최적화] 연속 입력 이벤트 제어용 디바운스(Debounce) 유틸리티 함수
+        function debounce(func, delay = 180) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+        const debouncedFilterHistory = debounce(filterHistory, 180);
+        const debouncedFilterBoard = debounce(filterBoard, 180);
+
+        // --- 3. 유틸리티 함수 (보안, 날짜, 데이터 파싱) ---
+        // XSS 방지용 문자열 이스케이프 함수
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -1158,10 +1204,15 @@
             return { berth: berth || 'B4', berthDir: dir };
         }
 
+        // --- 4. 데이터 Fetch 및 화면 초기화 로직 ---
+        // 앱 시작 시 로컬 저장소 캐시를 불러와 화면을 즉시 렌더링
         function loadInitialCacheAndRender() {
             try {
                 const localEval = localStorage.getItem('yt_dashboard_data_v48');
-                if (localEval) cachedData = JSON.parse(localEval);
+                if (localEval) {
+                    cachedData = JSON.parse(localEval);
+                    cachedIntegratedGroups = null;
+                }
 
                 const localBoard = localStorage.getItem('yt_board_data_v1');
                 if (localBoard) cachedBoardData = JSON.parse(localBoard);
@@ -1410,6 +1461,7 @@
                     parsed.forEach(item => existingMap.set(`${item.date}_${item.ytNum}_${item.author}`, item));
                     cachedData = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
                 }
+                cachedIntegratedGroups = null; // [최적화] 원본 데이터 갱신 시 메모이제이션 캐시 초기화
                 try {
                     localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(cachedData));
                 } catch(e) {}
@@ -1423,6 +1475,7 @@
 
         function saveStoredData(data) {
             cachedData = data;
+            cachedIntegratedGroups = null; // [최적화] 데이터 저장 시 통합 그룹 캐시 무효화
             try {
                 localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(data));
             } catch(e) {}
@@ -1440,11 +1493,13 @@
             toast.classList.remove('-translate-y-24', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
 
+            // [UI/UX 개선] 메시지를 충분히 읽을 수 있도록 노출 시간 연장 (일반 2.5초, 오류 3.5초)
+            const duration = isError ? 3500 : 2500;
             if (toastTimer) clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('-translate-y-24', 'opacity-0');
-            }, 1000);
+            }, duration);
         }
 
         function toggleMobileSidebar() {
@@ -1582,6 +1637,7 @@
             return `${escapeHtml(val)}<span class="text-amber-400 text-[10px] ml-0.5 align-baseline">★</span>`;
         }
 
+        // --- 6. 별점 UI 인터랙션 (터치, 마우스 스와이프) 처리 ---
         function initStarRatings() {
             const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
 
@@ -1760,9 +1816,11 @@
                     input.blur();
                     const scrollPane = document.getElementById('history-scroll-pane');
                     if (scrollPane) scrollPane.scrollLeft = 0;
+                    filterHistory(); // 3자리 완성 시에는 즉시 검색
+                    return;
                 }
             }
-            filterHistory();
+            debouncedFilterHistory(); // [최적화] 타이핑 중에는 디바운스 적용 (180ms 대기)
         }
 
         function onSearchKeyDown(event) {
@@ -1844,6 +1902,10 @@
         }
 
         function getIntegratedGroupedData() {
+            // [최적화] 이미 계산된 그룹화 캐시가 있으면 재연산 없이 복사본 즉시 반환
+            if (cachedIntegratedGroups) {
+                return [...cachedIntegratedGroups];
+            }
             let data = getStoredData();
             let grouped = {};
 
@@ -1870,7 +1932,7 @@
                 }
             });
 
-            return Object.values(grouped).map(group => ({
+            cachedIntegratedGroups = Object.values(grouped).map(group => ({
                 ytNum: group.ytNum,
                 type: group.type,
                 count: group.count,
@@ -1879,6 +1941,7 @@
                 latestAuthor: group.latestAuthor,
                 latestMemo: group.latestMemo
             }));
+            return [...cachedIntegratedGroups];
         }
 
         function renderHistoryTable() {
@@ -2050,6 +2113,8 @@
                     if (noDataEl) noDataEl.classList.remove('hidden');
                 } else {
                     if (noDataEl) noDataEl.classList.add('hidden');
+                    // [최적화] DocumentFragment를 사용하여 리플로우(Reflow)를 1회로 최소화
+                    const fragment = document.createDocumentFragment();
                     displayData.forEach(item => {
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2070,8 +2135,9 @@
                             <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
                             <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                         `;
-                        historyBody.appendChild(tr);
+                        fragment.appendChild(tr);
                     });
+                    historyBody.appendChild(fragment);
                 }
             }
         }
@@ -2145,6 +2211,8 @@
             const integratedBody = document.getElementById('integrated-table-body');
             if (integratedBody) {
                 integratedBody.innerHTML = '';
+                // [최적화] DocumentFragment 일괄 DOM 삽입
+                const fragment = document.createDocumentFragment();
                 paginatedData.forEach(group => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2166,8 +2234,9 @@
                         <td class="py-4 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap w-32">${escapeHtml(group.latestAuthor)}</td>
                         <td class="py-4 px-4 min-w-[280px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
                     `;
-                    integratedBody.appendChild(tr);
+                    fragment.appendChild(tr);
                 });
+                integratedBody.appendChild(fragment);
             }
 
             renderPaginationControls('integrated-pagination', totalRows, startIndex, endIndex, integratedCurrentPage, totalPages, 'changeIntegratedPage');
@@ -2240,6 +2309,8 @@
             const rawTableBody = document.getElementById('raw-table-body');
             if (rawTableBody) {
                 rawTableBody.innerHTML = '';
+                // [최적화] DocumentFragment 일괄 DOM 삽입
+                const fragment = document.createDocumentFragment();
                 paginatedData.forEach((item) => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2255,8 +2326,9 @@
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
                         <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
-                    rawTableBody.appendChild(tr);
+                    fragment.appendChild(tr);
                 });
+                rawTableBody.appendChild(fragment);
             }
 
             renderPaginationControls('raw-pagination', totalRows, startIndex, endIndex, rawCurrentPage, totalPages, 'changeRawPage');
@@ -2358,6 +2430,8 @@
                         '건의사항': 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-100 dark:border-amber-900',
                         '응원한마디': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900'
                     };
+                    // [최적화] DocumentFragment 일괄 DOM 삽입
+                    const fragment = document.createDocumentFragment();
                     paginated.forEach(item => {
                         const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
                         const avatarTxt = item.author.trim().slice(0, 1) || '익';
@@ -2376,8 +2450,9 @@
                                 <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed break-words whitespace-pre-line">${escapeHtml(item.content)}</p>
                             </div>
                         `;
-                        container.appendChild(div);
+                        fragment.appendChild(div);
                     });
+                    container.appendChild(fragment);
                 }
             }
 
@@ -2446,6 +2521,7 @@
             }
         }
 
+        // --- 5. 평가 폼 제출 및 서버 전송 로직 ---
         async function handleFormSubmit(event) {
             event.preventDefault();
             const author = document.getElementById('reg-author').value.trim();
@@ -2918,19 +2994,19 @@
             container.innerHTML = html;
         }
 
+        let lastNowLineMinute = -1;
         function updateKSTClock() {
+            const nowKst = getKSTDate();
             const clockEl = document.getElementById('kst-clock');
             if (clockEl) {
-                const nowKst = getKSTDate();
-                const kstTimeStr = nowKst.toLocaleTimeString('ko-KR', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                clockEl.textContent = kstTimeStr;
+                const hh = String(nowKst.getHours()).padStart(2, '0');
+                const mm = String(nowKst.getMinutes()).padStart(2, '0');
+                const ss = String(nowKst.getSeconds()).padStart(2, '0');
+                clockEl.textContent = `${hh}:${mm}:${ss}`;
             }
-            if (currentActiveTab === 'berth') {
+            // [최적화] 현재 시간선(NOW) 위치 계산은 매초가 아닌 분(Minute)이 바뀔 때만 수행하여 연산 절감
+            if (currentActiveTab === 'berth' && nowKst.getMinutes() !== lastNowLineMinute) {
+                lastNowLineMinute = nowKst.getMinutes();
                 updateDynamicNowPosition();
             }
         }
@@ -3184,7 +3260,15 @@
             showToast('크롬 브라우저를 실행합니다.');
         }
 
-        function copyCurrentUrl() {
+        async function copyCurrentUrl() {
+            // [최적화] 최신 표준 Clipboard API 우선 사용 및 구형 브라우저 폴백 지원
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(window.location.href);
+                    showToast('주소가 복사되었습니다. 사파리/크롬에 붙여넣기 해주세요.');
+                    return;
+                }
+            } catch (e) {}
             const dummy = document.createElement('input');
             document.body.appendChild(dummy);
             dummy.value = window.location.href;
@@ -3242,6 +3326,7 @@
             }
         }
 
+        // --- 7. 초기화 함수 (브라우저 로드 완료 시 실행) ---
         window.onload = function() {
             initStarRatings();
             setupScrollIndicators();
