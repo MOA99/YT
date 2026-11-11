@@ -842,7 +842,7 @@
                             <span id="board-total-badge" class="px-2 py-0.5 text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-md">0건</span>
                         </div>
                         <div class="relative w-full sm:w-64">
-                            <input type="search" id="board-search" oninput="debouncedFilterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                            <input type="search" id="board-search" oninput="filterBoard()" placeholder="작성자 또는 내용 검색..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                             <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                     </div>
@@ -1008,18 +1008,6 @@
         let toastTimer = null;
         let resizeTimer = null;
         let deferredPrompt = null;
-        let cachedIntegratedGroups = null; // [최적화] 통합 리스트 그룹화 결과 메모이제이션 캐시
-
-        // [최적화] 연속 입력 이벤트 제어용 디바운스(Debounce) 유틸리티 함수
-        function debounce(func, delay = 180) {
-            let timer;
-            return function(...args) {
-                clearTimeout(timer);
-                timer = setTimeout(() => func.apply(this, args), delay);
-            };
-        }
-        const debouncedFilterHistory = debounce(filterHistory, 180);
-        const debouncedFilterBoard = debounce(filterBoard, 180);
 
         // --- 3. 유틸리티 함수 (보안, 날짜, 데이터 파싱) ---
         // XSS 방지용 문자열 이스케이프 함수
@@ -1193,10 +1181,7 @@
         function loadInitialCacheAndRender() {
             try {
                 const localEval = localStorage.getItem('yt_dashboard_data_v48');
-                if (localEval) {
-                    cachedData = JSON.parse(localEval);
-                    cachedIntegratedGroups = null;
-                }
+                if (localEval) cachedData = JSON.parse(localEval);
 
                 const localBoard = localStorage.getItem('yt_board_data_v1');
                 if (localBoard) cachedBoardData = JSON.parse(localBoard);
@@ -1445,7 +1430,6 @@
                     parsed.forEach(item => existingMap.set(`${item.date}_${item.ytNum}_${item.author}`, item));
                     cachedData = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
                 }
-                cachedIntegratedGroups = null; // [최적화] 원본 데이터 갱신 시 메모이제이션 캐시 초기화
                 try {
                     localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(cachedData));
                 } catch(e) {}
@@ -1459,7 +1443,6 @@
 
         function saveStoredData(data) {
             cachedData = data;
-            cachedIntegratedGroups = null; // [최적화] 데이터 저장 시 통합 그룹 캐시 무효화
             try {
                 localStorage.setItem('yt_dashboard_data_v48', JSON.stringify(data));
             } catch(e) {}
@@ -1798,11 +1781,9 @@
                     input.blur();
                     const scrollPane = document.getElementById('history-scroll-pane');
                     if (scrollPane) scrollPane.scrollLeft = 0;
-                    filterHistory(); // 3자리 완성 시에는 즉시 검색
-                    return;
                 }
             }
-            debouncedFilterHistory(); // [최적화] 타이핑 중에는 디바운스 적용 (180ms 대기)
+            filterHistory();
         }
 
         function onSearchKeyDown(event) {
@@ -1884,10 +1865,6 @@
         }
 
         function getIntegratedGroupedData() {
-            // [최적화] 이미 계산된 그룹화 캐시가 있으면 재연산 없이 복사본 즉시 반환
-            if (cachedIntegratedGroups) {
-                return [...cachedIntegratedGroups];
-            }
             let data = getStoredData();
             let grouped = {};
 
@@ -1914,7 +1891,7 @@
                 }
             });
 
-            cachedIntegratedGroups = Object.values(grouped).map(group => ({
+            return Object.values(grouped).map(group => ({
                 ytNum: group.ytNum,
                 type: group.type,
                 count: group.count,
@@ -1923,7 +1900,6 @@
                 latestAuthor: group.latestAuthor,
                 latestMemo: group.latestMemo
             }));
-            return [...cachedIntegratedGroups];
         }
 
         function renderHistoryTable() {
@@ -2095,8 +2071,6 @@
                     if (noDataEl) noDataEl.classList.remove('hidden');
                 } else {
                     if (noDataEl) noDataEl.classList.add('hidden');
-                    // [최적화] DocumentFragment를 사용하여 리플로우(Reflow)를 1회로 최소화
-                    const fragment = document.createDocumentFragment();
                     displayData.forEach(item => {
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2117,9 +2091,8 @@
                             <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">${escapeHtml(item.author)}</td>
                             <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                         `;
-                        fragment.appendChild(tr);
+                        historyBody.appendChild(tr);
                     });
-                    historyBody.appendChild(fragment);
                 }
             }
         }
@@ -2193,8 +2166,6 @@
             const integratedBody = document.getElementById('integrated-table-body');
             if (integratedBody) {
                 integratedBody.innerHTML = '';
-                // [최적화] DocumentFragment 일괄 DOM 삽입
-                const fragment = document.createDocumentFragment();
                 paginatedData.forEach(group => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2216,9 +2187,8 @@
                         <td class="py-4 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap w-32">${escapeHtml(group.latestAuthor)}</td>
                         <td class="py-4 px-4 min-w-[280px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(group.latestMemo || '')}">${escapeHtml(group.latestMemo || '-')}</td>
                     `;
-                    fragment.appendChild(tr);
+                    integratedBody.appendChild(tr);
                 });
-                integratedBody.appendChild(fragment);
             }
 
             renderPaginationControls('integrated-pagination', totalRows, startIndex, endIndex, integratedCurrentPage, totalPages, 'changeIntegratedPage');
@@ -2291,8 +2261,6 @@
             const rawTableBody = document.getElementById('raw-table-body');
             if (rawTableBody) {
                 rawTableBody.innerHTML = '';
-                // [최적화] DocumentFragment 일괄 DOM 삽입
-                const fragment = document.createDocumentFragment();
                 paginatedData.forEach((item) => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800';
@@ -2308,9 +2276,8 @@
                         <td class="py-3.5 px-4 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap w-28">${escapeHtml(item.author)}</td>
                         <td class="py-3.5 px-4 w-full text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${escapeHtml(item.memo || '')}">${escapeHtml(item.memo || '-')}</td>
                     `;
-                    fragment.appendChild(tr);
+                    rawTableBody.appendChild(tr);
                 });
-                rawTableBody.appendChild(fragment);
             }
 
             renderPaginationControls('raw-pagination', totalRows, startIndex, endIndex, rawCurrentPage, totalPages, 'changeRawPage');
@@ -2412,8 +2379,6 @@
                         '건의사항': 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-100 dark:border-amber-900',
                         '응원한마디': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900'
                     };
-                    // [최적화] DocumentFragment 일괄 DOM 삽입
-                    const fragment = document.createDocumentFragment();
                     paginated.forEach(item => {
                         const badgeStyle = tagColors[item.tag] || 'bg-slate-100 text-slate-700 border-slate-200';
                         const avatarTxt = item.author.trim().slice(0, 1) || '익';
@@ -2432,9 +2397,8 @@
                                 <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed break-words whitespace-pre-line">${escapeHtml(item.content)}</p>
                             </div>
                         `;
-                        fragment.appendChild(div);
+                        container.appendChild(div);
                     });
-                    container.appendChild(fragment);
                 }
             }
 
@@ -2976,19 +2940,19 @@
             container.innerHTML = html;
         }
 
-        let lastNowLineMinute = -1;
         function updateKSTClock() {
-            const nowKst = getKSTDate();
             const clockEl = document.getElementById('kst-clock');
             if (clockEl) {
-                const hh = String(nowKst.getHours()).padStart(2, '0');
-                const mm = String(nowKst.getMinutes()).padStart(2, '0');
-                const ss = String(nowKst.getSeconds()).padStart(2, '0');
-                clockEl.textContent = `${hh}:${mm}:${ss}`;
+                const nowKst = getKSTDate();
+                const kstTimeStr = nowKst.toLocaleTimeString('ko-KR', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                clockEl.textContent = kstTimeStr;
             }
-            // [최적화] 현재 시간선(NOW) 위치 계산은 매초가 아닌 분(Minute)이 바뀔 때만 수행하여 연산 절감
-            if (currentActiveTab === 'berth' && nowKst.getMinutes() !== lastNowLineMinute) {
-                lastNowLineMinute = nowKst.getMinutes();
+            if (currentActiveTab === 'berth') {
                 updateDynamicNowPosition();
             }
         }
@@ -3242,15 +3206,7 @@
             showToast('크롬 브라우저를 실행합니다.');
         }
 
-        async function copyCurrentUrl() {
-            // [최적화] 최신 표준 Clipboard API 우선 사용 및 구형 브라우저 폴백 지원
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(window.location.href);
-                    showToast('주소가 복사되었습니다. 사파리/크롬에 붙여넣기 해주세요.');
-                    return;
-                }
-            } catch (e) {}
+        function copyCurrentUrl() {
             const dummy = document.createElement('input');
             document.body.appendChild(dummy);
             dummy.value = window.location.href;
