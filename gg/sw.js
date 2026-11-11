@@ -1,27 +1,27 @@
-// 캐시 버전을 관리하여 업데이트 시 기존 캐시를 무효화 (버전 강제 업데이트용)
-const CACHE_NAME = 'yt-dashboard-v14'; 
+const CACHE_NAME = 'yt-dashboard-v15'; // 성능 및 폰트 캐싱 최적화 버전 업
 
-// 캐싱할 핵심 에셋 목록 (오프라인 구동을 위한 필수 파일)
+// 초기 캐싱할 핵심 에셋 (구글 폰트 스타일시트 추가)
 const ASSETS_TO_CACHE = [
     'index.html',
     'manifest.json',
     'favicon.png',
-    'https://cdn.tailwindcss.com'
+    'https://cdn.tailwindcss.com',
+    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap'
 ];
 
-// [1단계] 서비스 워커 설치 (Install)
+// 1. 서비스 워커 설치 (오류가 나도 멈추지 않는 안정화 캐싱)
 self.addEventListener('install', (event) => {
-    self.skipWaiting(); // 대기 상태를 건너뛰고 즉시 활성화
+    self.skipWaiting(); // 즉시 활성화
     event.waitUntil(
         caches.open(CACHE_NAME).then(async (cache) => {
-            console.log('[PWA] 안정화된 초기 캐싱 시작 (v14)...');
-            // cache.add() 대신 안전하게 하나씩 수동 fetch 후 저장 (실패 시 앱 중단 방지)
+            console.log('[PWA] 안정화된 초기 캐싱 시작 (v15)...');
             for (let asset of ASSETS_TO_CACHE) {
                 try {
-                    // 리다이렉트나 CORS 제약을 무시하기 위해 no-cors 모드 사용
                     const req = new Request(asset, { mode: 'no-cors' });
                     const res = await fetch(req);
-                    if (res) await cache.put(req, res);
+                    if (res) {
+                        await cache.put(req, res);
+                    }
                 } catch (e) {
                     console.warn('[PWA] 에셋 캐시 실패 (무시됨):', asset, e);
                 }
@@ -30,46 +30,45 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// [2단계] 서비스 워커 활성화 (Activate) - 구버전 캐시 정리
+// 2. 구버전 캐시 완벽 제거 후 즉시 제어권 확보
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
-            // 현재 버전(CACHE_NAME)이 아닌 이전 캐시 데이터는 모두 삭제
             return Promise.all(
                 keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
             );
-        }).then(() => self.clients.claim()) // 활성화 즉시 모든 클라이언트(페이지) 제어권 확보
+        }).then(() => self.clients.claim())
     );
 });
 
-// [3단계] 네트워크 요청 가로채기 (Fetch) - 오프라인 지원 및 캐시 전략
+// 3. 강력한 Fetch 가로채기 (폰트 파일 및 정적 에셋 Stale-While-Revalidate 적용)
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     const url = new URL(req.url);
 
-    // Google Sheets API 데이터 요청은 캐싱하지 않고 항상 네트워크를 통해 최신 데이터 확보
+    // 구글 시트 API 요청은 캐시에 간섭하지 않고 브라우저에 그대로 위임
     if (url.href.includes('docs.google.com') || url.href.includes('script.google.com')) return;
-    
-    // GET 요청이 아니거나 HTTP/HTTPS 프로토콜이 아닌 경우 처리 안 함
     if (req.method !== 'GET' || !url.protocol.startsWith('http')) return;
 
     event.respondWith((async () => {
         try {
             const cache = await caches.open(CACHE_NAME);
             
-            // [전략 1] Stale-While-Revalidate: 캐시 먼저 반환 후 백그라운드에서 네트워크로 업데이트
-            const cachedRes = await cache.match(req, { ignoreSearch: true });
+            // 구글 폰트 파일(fonts.gstatic.com)은 한 번 받으면 변하지 않으므로 ignoreSearch 없이 정확히 매칭
+            const isFontAsset = url.hostname.includes('fonts.gstatic.com') || url.hostname.includes('fonts.googleapis.com');
+            const cachedRes = await cache.match(req, { ignoreSearch: !isFontAsset });
+            
             if (cachedRes) {
-                event.waitUntil(fetch(req).then(netRes => {
-                    // 네트워크 응답이 정상(200)이거나 opaque 타입일 경우 캐시 갱신
-                    if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) {
-                        cache.put(req, netRes.clone());
-                    }
-                }).catch(() => {})); // 오프라인 시 에러 무시
+                // 폰트 파일이 아닌 경우에만 백그라운드 최신화 수행 (불필요한 네트워크 트래픽 절감)
+                if (!url.hostname.includes('fonts.gstatic.com')) {
+                    event.waitUntil(fetch(req).then(netRes => {
+                        if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) cache.put(req, netRes.clone());
+                    }).catch(() => {}));
+                }
                 return cachedRes;
             }
 
-            // [전략 2] 캐시에 없으면 네트워크 시도 후 캐시에 저장
+            // 캐시에 없으면 네트워크 시도 후 캐시에 저장
             const netRes = await fetch(req);
             if (netRes && (netRes.status === 200 || netRes.type === 'opaque')) {
                 cache.put(req, netRes.clone());
@@ -77,25 +76,24 @@ self.addEventListener('fetch', (event) => {
             return netRes;
 
         } catch (error) {
-            // [오프라인 상태 처리] 네트워크 연결이 없고 캐시에도 데이터가 없을 때
+            // 오프라인 진입 & 캐시 없음 상황
             const isHtml = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
             
             if (isHtml) {
                 const cache = await caches.open(CACHE_NAME);
-                // 미리 저장해둔 index.html을 강제 반환하여 오프라인 앱 구동 유지
                 const fallback = await cache.match('index.html', { ignoreSearch: true }) || 
                                  await cache.match('/index.html', { ignoreSearch: true });
                 
                 if (fallback) return fallback;
 
-                // 캐시마저 완전히 비워진 최악의 경우, 최소한의 뼈대 UI 제공
-                const fallbackHtml = `<!DOCTYPE html><html lang="ko"><body><h2>인터넷 연결이 끊겼습니다</h2><button onclick="location.reload()">재연결 시도</button></body></html>`;
+                const fallbackHtml = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>오프라인 상태</title><style>body{font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background-color:#0f172a;color:#f1f5f9;margin:0;text-align:center;}h2{margin-bottom:10px;font-size:1.5rem;color:#fff;}p{color:#94a3b8;font-size:0.9rem;margin-bottom:24px;}button{padding:12px 24px;border-radius:12px;border:none;background:#4f46e5;color:white;font-weight:bold;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);}</style></head><body><h2>인터넷 연결이 끊겼습니다</h2><p>오프라인 데이터를 불러오지 못했습니다.</p><button onclick="location.reload()">네트워크 재연결 시도</button></body></html>`;
                 return new Response(fallbackHtml, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
             }
+            
             return new Response('', { status: 404 });
         }
     })().catch(() => {
-        // SW 엔진 자체 치명적 에러 발생 시 최후의 방어막 (크롬 공룡 화면 방지)
-        return new Response(`<!DOCTYPE html><html lang="ko"><body><h2>앱 오프라인 모드</h2><button onclick="location.reload()">새로고침</button></body></html>`, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+        const ultimateHtml = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>오프라인</title><style>body{background-color:#0f172a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;}button{margin-top:20px;padding:10px 20px;border-radius:8px;background:#4f46e5;color:#fff;border:none;}</style></head><body><h2>앱 오프라인 모드</h2><p>네트워크 연결이 필요합니다.</p><button onclick="location.reload()">새로고침</button></body></html>`;
+        return new Response(ultimateHtml, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }));
 });
