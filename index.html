@@ -79,22 +79,51 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8) !important; }
         .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8) !important; }
 
-        .overflow-x-auto::-webkit-scrollbar {
-            height: 4px;
+        /* [UI/UX 개선] 데이터 테이블 가로 스크롤바: 모바일(<768px)은 숨김, 데스크탑(>=768px)은 내용이 넘칠 때 표시 */
+        @media (max-width: 767px) {
+            .overflow-x-auto {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .overflow-x-auto::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+            }
         }
-        .overflow-x-auto::-webkit-scrollbar-track {
-            background: transparent;
-            border-radius: 4px;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0);
-            border-radius: 4px;
-        }
-        .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: rgba(71, 85, 105, 0);
+        @media (min-width: 768px) {
+            .overflow-x-auto {
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e1 transparent;
+            }
+            .dark .overflow-x-auto {
+                scrollbar-color: #334155 transparent;
+            }
+            .overflow-x-auto::-webkit-scrollbar {
+                height: 7px;
+            }
+            .overflow-x-auto::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.08);
+                border-radius: 4px;
+            }
+            .dark .overflow-x-auto::-webkit-scrollbar-track {
+                background: rgba(30, 41, 59, 0.4);
+                border-radius: 4px;
+            }
+            .overflow-x-auto::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            .dark .overflow-x-auto::-webkit-scrollbar-thumb {
+                background: #334155;
+                border-radius: 4px;
+            }
+            .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8 !important;
+            }
+            .dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+                background: #475569 !important;
+            }
         }
         
         .sticky-col-1 {
