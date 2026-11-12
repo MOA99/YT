@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yt-dashboard-v17'; // ★ index.html 수정 후 배포 시 이 숫자를 v17, v18로 올려주세요!
+const CACHE_NAME = 'yt-dashboard-v18'; // ★ index.html 수정 후 배포 시 이 숫자를 v17, v18로 올려주세요!
 
 // 초기 캐싱할 핵심 에셋
 const ASSETS_TO_CACHE = [
