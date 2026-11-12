@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yt-dashboard-v20'; // 성능 및 폰트 캐싱 최적화 버전 업
+const CACHE_NAME = 'yt-dashboard-v21'; // 성능 및 폰트 캐싱 최적화 버전 업
 
 // 초기 캐싱할 핵심 에셋 (구글 폰트 스타일시트 추가)
 const ASSETS_TO_CACHE = [
