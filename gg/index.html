@@ -3309,9 +3309,20 @@
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
+                // 1. 새로운 서비스 워커가 제어권을 가져오면(버전 업데이트 시) 자동으로 화면을 새로고침하여 최신본 표시
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshing) return;
+                    refreshing = true;
+                    window.location.reload();
+                });
+
+                // 2. sw.js 파일 자체도 브라우저 캐시에 묶이지 않도록 updateViaCache: 'none' 옵션 추가
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
                     .then((reg) => {
                         console.log('[PWA] Service Worker registered successfully:', reg.scope);
+                        // 앱 실행 시 서버에 새로운 sw.js가 있는지 즉시 확인
+                        reg.update();
                     })
                     .catch((err) => {
                         console.warn('[PWA] Service Worker registration failed:', err);
