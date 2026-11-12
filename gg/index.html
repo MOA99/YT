@@ -898,68 +898,96 @@
                 </div>
             </section>
 
-            <!-- 8. 이용 가이드 탭 -->
+            <!-- 8. 이용 가이드 탭 (시인성 개선 및 하단 버전 정보 표시) -->
             <section id="tab-guide" class="tab-content hidden space-y-6">
                 <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto space-y-8 transition-colors">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">1</span>
-                                <span>YT 이력 조회</span>
+                    
+                    <!-- 상단 안내 헤더 -->
+                    <div class="border-b border-slate-200 dark:border-slate-800 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">YT 대시보드 주요 기능 안내</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">현장 차량 상태 평가와 선석 일정을 한눈에 파악할 수 있는 통합 시스템입니다.</p>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 px-3.5 py-2 rounded-xl text-slate-700 dark:text-slate-200 shrink-0">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>80점↑ 양호</span>
+                            <span class="w-2 h-2 rounded-full bg-amber-500 ml-1"></span>
+                            <span>50~79점 보통</span>
+                            <span class="w-2 h-2 rounded-full bg-rose-500 ml-1"></span>
+                            <span>50점↓ 점검필요</span>
+                        </div>
+                    </div>
+
+                    <!-- 기능별 카드 그리드 (폰트 크기, 명도 대비, 테두리 시인성 대폭 강화) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">1</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">YT 이력 조회</h4>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                YT 번호 또는 작성자 조건별로 <strong class="text-indigo-700 dark:text-indigo-400">일치하는 데이터</strong>를 검색하고 요약 통계를 확인합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                YT 번호(3자리) 또는 작성자 조건별로 <strong class="text-indigo-600 dark:text-indigo-400 font-bold">일치하는 평가 이력</strong>을 검색하고, 차량별 평균 점수와 경과일(<span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">D+N</span>) 요약 통계를 즉시 확인합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">2</span>
-                                <span>YT 평가 등록</span>
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">2</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">YT 평가 등록</h4>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                현장 기사님의 실시간 평가 데이터를 입력하여 차량 상태를 투명하게 기록합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                현장 기사님의 실시간 운행 체감 상태(<strong class="text-slate-900 dark:text-white font-bold">출력, 상하/앞뒤 충격, 의자</strong>)를 별점 터치/스와이프로 간편하게 기록하고 특이사항을 공유합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">3</span>
-                                <span>YT 통합 리스트 및 통계</span>
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">3</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">YT 통합 리스트 및 통계</h4>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                동일 YT별 주요 평가 지표를 한곳에 집계하여 제공합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                전체 YT 차량별로 누적된 <strong class="text-indigo-600 dark:text-indigo-400 font-bold">평균 총점, 평가 횟수, 최근 특이사항</strong>을 한곳에 집계하여 정렬 및 비교할 수 있습니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">4</span>
-                                <span>원본 입력 데이터 연동</span>
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">4</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">원본 입력 데이터 연동</h4>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                사용자로부터 입력받은 원본 데이터를 시점별로 편리하게 확인합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                전체 평가 건수, 차종별(샤크만/카파) 비율 요약과 함께 모든 원본 평가 기록을 등록 시점별로 상세히 열람합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">5</span>
-                                <span>선석 현황</span>
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">5</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">선석 현황 (타임라인 / 카드뷰)</h4>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                24H/48H/72H 기간별 선석(B4~B8) 접안 일정과 선사, 양하/선적/이적 작업 물량을 모니터링합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                <strong class="text-indigo-600 dark:text-indigo-400 font-bold">24H / 48H / 72H</strong> 기간별 선석(B4~B8) 접안 일정과 선사, 양하(D)·선적(L)·이적(S) 물량을 실시간 모니터링합니다.
                             </p>
                         </div>
 
-                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-3">
-                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
-                                <span class="w-7 h-7 rounded-xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-xs font-bold">6</span>
-                                <span>미니 게시판</span>
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-3 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-extrabold shadow-xs shrink-0">6</span>
+                                <h4 class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">미니 게시판</h4>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                현장 소통, 차량 정보, 건의사항 등을 자유롭게 남기고 소통합니다.
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium pl-11">
+                                자유소통, 차량정보, 건의사항, 응원한마디 분류 태그를 선택하여 현장 의견을 자유롭게 남기고 검색할 수 있습니다.
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- 하단 현재 버전 표시 영역 -->
+                    <div class="pt-5 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+                        <span>YT 차량 승하차 평가 및 선석 배정 현황 통합 시스템</span>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 font-mono-num font-bold">
+                                현재 버전: <span id="app-version-label">v1.6 (Build v16)</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -2257,7 +2285,7 @@
                     tr.innerHTML = `
                         <td class="py-4 px-4 font-bold text-slate-800 dark:text-slate-200 sticky-col-1 whitespace-nowrap w-20">${escapeHtml(group.ytNum)}</td>
                         <td class="py-4 px-4 whitespace-nowrap w-28"><span class="inline-block w-[56px] text-center py-1 rounded-md text-xs ${group.type === '샤크만' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-semibold'}">${escapeHtml(group.type)}</span></td>
-                        <td class="py-4 px-4 font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap w-28">${escapeHtml(group.avgScore)}점</td>
+                        <td class="py-4 px-4 whitespace-nowrap w-28"><span class="font-bold ${group.avgScore >= 80 ? 'text-emerald-600 dark:text-emerald-400' : group.avgScore >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">${escapeHtml(group.avgScore)}점</span></td>
                         <td class="py-4 px-4 text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap w-40"><span class="inline-block w-14 font-mono">${escapeHtml(shortDate)}</span><span class="inline-block">${badgeHtml}</span></td>
                         <td class="py-4 px-4 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap w-28">${escapeHtml(group.count)}회</td>
                         <td class="py-4 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap w-32">${escapeHtml(group.latestAuthor)}</td>
@@ -3307,9 +3335,12 @@
             showToast('주소가 복사되었습니다. 사파리/크롬에 붙여넣기 해주세요.');
         }
 
+        const APP_VERSION = 'v1.6 (Build v16)';
         function registerServiceWorker() {
+            const verEl = document.getElementById('app-version-label');
+            if (verEl) verEl.textContent = APP_VERSION;
+
             if ('serviceWorker' in navigator) {
-                // 1. 새로운 서비스 워커가 제어권을 가져오면(버전 업데이트 시) 자동으로 화면을 새로고침하여 최신본 표시
                 let refreshing = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
                     if (refreshing) return;
@@ -3317,11 +3348,9 @@
                     window.location.reload();
                 });
 
-                // 2. sw.js 파일 자체도 브라우저 캐시에 묶이지 않도록 updateViaCache: 'none' 옵션 추가
-                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
                         console.log('[PWA] Service Worker registered successfully:', reg.scope);
-                        // 앱 실행 시 서버에 새로운 sw.js가 있는지 즉시 확인
                         reg.update();
                     })
                     .catch((err) => {
