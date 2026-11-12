@@ -966,7 +966,7 @@
                     <!-- 하단 버전 표시 (심플한 텍스트 스타일) -->
                     <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
                         <span>YT Dashboard</span>
-                        <span class="font-mono-num">Version <strong id="app-version-label" class="font-semibold text-slate-600 dark:text-slate-400">v1.6 (Build v16)</strong></span>
+                        <span class="font-mono-num">Version <strong id="app-version-label" class="font-semibold text-slate-600 dark:text-slate-400">-</strong></span>
                     </div>
                 </div>
             </section>
@@ -3313,10 +3313,44 @@
             showToast('주소가 복사되었습니다. 사파리/크롬에 붙여넣기 해주세요.');
         }
 
-        const APP_VERSION = 'v1.6 (Build v16)';
-        function registerServiceWorker() {
+        // [최적화] sw.js의 CACHE_NAME 버전을 동적으로 읽어와 이용 가이드 하단 버전 표기에 자동 반영
+        async function syncAppVersionFromSW() {
             const verEl = document.getElementById('app-version-label');
-            if (verEl) verEl.textContent = APP_VERSION;
+            if (!verEl) return;
+
+            try {
+                // 1순위: sw.js 소스 파일에서 직접 CACHE_NAME 상수를 파싱하여 최신 버전 추출
+                const res = await fetch('./sw.js', { cache: 'no-cache' });
+                if (res.ok) {
+                    const text = await res.text();
+                    const match = text.match(/CACHE_NAME\s*=\s*['"]([^'"]+)['"]/);
+                    if (match && match[1]) {
+                        const rawName = match[1]; // 예: 'yt-dashboard-v15'
+                        const verPart = rawName.replace(/^yt-dashboard-/i, ''); // 예: 'v15'
+                        verEl.textContent = `${verPart} (${rawName})`;
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                // 2순위 (오프라인 폴백): 브라우저 Cache Storage에 등록된 캐시 키에서 버전 추출
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    const ytKey = keys.reverse().find(k => k.startsWith('yt-dashboard-')) || keys[0];
+                    if (ytKey) {
+                        const verPart = ytKey.replace(/^yt-dashboard-/i, '');
+                        verEl.textContent = `${verPart} (${ytKey})`;
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            verEl.textContent = 'v15';
+        }
+
+        function registerServiceWorker() {
+            syncAppVersionFromSW();
 
             if ('serviceWorker' in navigator) {
                 let refreshing = false;
