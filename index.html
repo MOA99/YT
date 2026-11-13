@@ -2056,9 +2056,13 @@
                         }
 
                         document.getElementById('summary-lbl-1').innerText = '평균 총점';
-                        document.getElementById('summary-val-1').innerText = `${avgScore}점`;
+                        const val1El = document.getElementById('summary-val-1');
+                        val1El.innerText = `${avgScore}점`;
+                        val1El.className = `text-lg sm:text-xl font-bold mt-0.5 ${Number(avgScore) >= 80 ? 'text-emerald-600 dark:text-emerald-400' : Number(avgScore) >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`;
                         document.getElementById('summary-lbl-2').innerText = '평가 횟수';
-                        document.getElementById('summary-val-2').innerText = `${matchingItems.length}회`;
+                        const val2El = document.getElementById('summary-val-2');
+                        val2El.innerText = `${matchingItems.length}회`;
+                        val2El.className = 'text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5';
                         document.getElementById('summary-lbl-3').innerText = '최근 평가일';
                         
                         let shortLatestDate = latestItem.date;
@@ -2099,9 +2103,13 @@
 
                         document.getElementById('summary-desc').innerText = `총 ${matchingItems.length}건 평가 중 가장 많이 평가한 차량 통계입니다.`;
                         document.getElementById('summary-lbl-1').innerText = '최다 평가 YT';
-                        document.getElementById('summary-val-1').innerText = `YT ${topYtNum} (${ytCounts[topYtNum]}회)`;
+                        const val1El = document.getElementById('summary-val-1');
+                        val1El.innerText = `YT ${topYtNum} (${ytCounts[topYtNum]}회)`;
+                        val1El.className = 'text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5';
                         document.getElementById('summary-lbl-2').innerText = '해당 YT 평균';
-                        document.getElementById('summary-val-2').innerText = `${topYtAvgScore}점`;
+                        const val2El = document.getElementById('summary-val-2');
+                        val2El.innerText = `${topYtAvgScore}점`;
+                        val2El.className = `text-lg sm:text-xl font-bold mt-0.5 ${Number(topYtAvgScore) >= 80 ? 'text-emerald-600 dark:text-emerald-400' : Number(topYtAvgScore) >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`;
                         document.getElementById('summary-lbl-3').innerText = '최근 평가일';
                         
                         let shortLatestDate = latestItem.date;
